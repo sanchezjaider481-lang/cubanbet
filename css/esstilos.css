@@ -1,0 +1,391 @@
+/* ==========================================================================
+   ESTILOS GENERALES (Tema Oscuro Premium)
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #050b09;
+    color: #e2e8f0;
+}
+
+/* Encabezado */
+.header-app {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #0b1612;
+    border-bottom: 1px solid #142d24;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.logo span {
+    color: #8ce605;
+}
+
+.saldo-usuario {
+    font-size: 0.85rem;
+    background: #142d24;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #1e4235;
+    font-weight: 700;
+}
+
+#saldo-cup {
+    color: #8ce605;
+}
+
+/* Menú Superior de Deportes */
+.menu-deportes {
+    display: flex;
+    background-color: #0b1612;
+    padding: 6px 4px;
+    overflow-x: auto;
+    gap: 6px;
+}
+
+.menu-deportes::-webkit-scrollbar {
+    display: none;
+}
+
+.menu-deportes button {
+    flex: 1;
+    min-width: 85px;
+    background: none;
+    border: none;
+    color: #728a80;
+    padding: 10px 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.menu-deportes button i {
+    font-size: 1.1rem;
+}
+
+.menu-deportes button.active {
+    background-color: #142d24;
+    color: #8ce605;
+}
+
+/* Tarjetas de Partidos */
+main {
+    padding: 12px 12px 90px 12px !important; /* Espacio para que el menú inferior no tape contenido */
+}
+
+.tarjeta-partido {
+    background-color: #0b1612;
+    border: 1px solid #142d24;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.info-partido {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #728a80;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.en-vivo {
+    color: #8ce605;
+}
+
+.bloque-central {
+    margin-bottom: 12px;
+}
+
+.equipos-marcador {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fila-equipo {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.marcador-en-vivo {
+    color: #8ce605;
+    font-weight: 800;
+}
+
+/* Sistema Grid de Cuotas */
+.opciones-apuesta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.btn-cuota {
+    background-color: #142d24;
+    border: 1px solid #1e4235;
+    color: #fff;
+    padding: 10px 6px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-cuota:active {
+    background-color: #8ce605;
+    color: #000;
+}
+
+.indicador-tipo {
+    font-size: 0.75rem;
+    color: #728a80;
+    font-weight: bold;
+}
+
+.btn-cuota:active .indicador-tipo {
+    color: #000;
+}
+
+.cuota {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #8ce605;
+}
+
+.btn-cuota:active .cuota {
+    color: #000;
+}
+
+/* Boleto Flotante */
+.boleto-contenedor {
+    position: fixed;
+    bottom: 75px;
+    left: 4%;
+    width: 92%;
+    background-color: #0b1612;
+    border: 2px solid #8ce605;
+    border-radius: 14px;
+    z-index: 1000;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+}
+
+.boleto-header {
+    background-color: #142d24;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.boleto-header h3 {
+    font-size: 0.9rem;
+    color: #8ce605;
+}
+
+.boleto-header button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.boleto-cuerpo {
+    padding: 12px;
+    font-size: 0.85rem;
+}
+
+.b-partido {
+    color: #728a80;
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+}
+
+.b-monto-bloque {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.b-monto-bloque input {
+    background-color: #142d24;
+    border: 1px solid #1e4235;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    width: 100px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.b-retorno {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.b-retorno strong {
+    color: #8ce605;
+}
+
+.btn-enviar-apuesta {
+    width: 100%;
+    background-color: #8ce605;
+    color: #000;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Modales (Depósito / Retiro) */
+.modal-pantalla {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.modal-cuerpo {
+    background-color: #0b1612;
+    border: 1px solid #142d24;
+    border-radius: 14px;
+    padding: 16px;
+    width: 100%;
+    max-width: 340px;
+}
+
+.modal-cuerpo h3 {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #8ce605;
+}
+
+.modal-cuerpo label {
+    font-size: 0.8rem;
+    color: #728a80;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.modal-cuerpo input, .modal-cuerpo textarea {
+    width: 100%;
+    background-color: #142d24;
+    border: 1px solid #1e4235;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.nota-pago {
+    font-size: 0.72rem;
+    color: #728a80;
+    margin-bottom: 12px;
+}
+
+.modal-botones {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-cancelar {
+    flex: 1;
+    background: none;
+    border: 1px solid #142d24;
+    color: #728a80;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-confirmar {
+    flex: 1;
+    background-color: #8ce605;
+    color: #000;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Barra Fija Inferior */
+.nav-inferior {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background-color: #0b1612;
+    border-top: 1px solid #142d24;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 999;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: #728a80;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 20%;
+    height: 100%;
+}
+
+.nav-item i {
+    font-size: 1.2rem;
+}
+
+.nav-item.active, .nav-item:active {
+    color: #8ce605;
+}
