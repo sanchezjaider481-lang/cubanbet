@@ -1,22 +1,54 @@
 [
   {
     "id": 1,
-    "deporte": "Fútbol",
-    "liga": "Liga de Campeones UEFA",
-    "equipo1": "Real Madrid",
-    "equipo2": "Manchester City",
-    "cuota1": "1.65",
-    "cuotaX": "3.80",
-    "cuota2": "5.20"
+    "deporte": "futbol",
+    "liga": "Fútbol • Liga de Campeones UEFA",
+    "local": "Real Madrid",
+    "visitante": "Manchester City",
+    "marcadorLocal": "2",
+    "marcadorVisitante": "1",
+    "enVivo": true,
+    "cuotaLocal": "1.65",
+    "cuotaEmpate": "3.80",
+    "cuotaVisitante": "5.20",
+    "mercadosExtra": [
+      {
+        "titulo": "Doble Oportunidad",
+        "opciones": [
+          { "opc": "1X", "q": "1.22" },
+          { "opc": "12", "q": "1.25" },
+          { "opc": "X2", "q": "1.85" }
+        ]
+      },
+      {
+        "titulo": "Total de Goles",
+        "opciones": [
+          { "opc": "Más de 2.5", "q": "1.95" },
+          { "opc": "Menos de 2.5", "q": "1.80" }
+        ]
+      }
+    ]
   },
   {
     "id": 2,
-    "deporte": "Béisbol",
-    "liga": "Serie Nacional",
-    "equipo1": "Industriales",
-    "equipo2": "Santiago de Cuba",
-    "cuota1": "1.45",
-    "cuotaX": "-",
-    "cuota2": "2.60"
+    "deporte": "beisbol",
+    "liga": "Béisbol • Serie Nacional Cuba",
+    "local": "Industriales",
+    "visitante": "Santiago de Cuba",
+    "marcadorLocal": "5",
+    "marcadorVisitante": "3",
+    "enVivo": true,
+    "cuotaLocal": "1.55",
+    "cuotaEmpate": "—",
+    "cuotaVisitante": "2.40",
+    "mercadosExtra": [
+      {
+        "titulo": "Carreras Totales",
+        "opciones": [
+          { "opc": "Más de 8.5", "q": "1.85" },
+          { "opc": "Menos de 8.5", "q": "1.85" }
+        ]
+      }
+    ]
   }
 ]
