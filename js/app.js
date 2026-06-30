@@ -19,104 +19,61 @@ if (tg) {
 }
 
 let deporteActivo = 'futbol';
-
-// AQUÍ CAMBIA: Ahora es una lista (Array) para acumular múltiples selecciones en el Parlay
 let parlayApuestas = [];
 
-// ==========================================================================
-// 2. BASE DE DATOS MASIVA CON MERCADOS EXTRAS
-// ==========================================================================
-const partidosPrueba = [
-    {
-        id: 1,
-        deporte: 'futbol',
-        liga: 'Fútbol • Liga de Campeones UEFA',
-        local: 'Real Madrid',
-        visitante: 'Manchester City',
-        marcadorLocal: '2',
-        marcadorVisitante: '1',
-        enVivo: true,
-        cuotaLocal: '1.65',
-        cuotaEmpate: '3.80',
-        cuotaVisitante: '5.20',
-        mercadosExtra: [
-            { titulo: 'Doble Oportunidad', opciones: [{ opc: '1X', q: '1.22' }, { opc: '12', q: '1.25' }, { opc: 'X2', q: '1.85' }] },
-            { titulo: 'Total de Goles', opciones: [{ opc: 'Más de 2.5', q: '1.95' }, { opc: 'Menos de 2.5', q: '1.80' }] },
-            { titulo: 'Ambos Equipos Anotan', opciones: [{ opc: 'Sí', q: '1.68' }, { opc: 'No', q: '2.10' }] }
-        ]
-    },
-    {
-        id: 2,
-        deporte: 'beisbol',
-        liga: 'Béisbol • MLB Regular Season',
-        local: 'Yankees de Nueva York',
-        visitante: 'Medias Rojas de Boston',
-        marcadorLocal: '4',
-        marcadorVisitante: '2',
-        enVivo: true,
-        cuotaLocal: '1.75',
-        cuotaEmpate: '—', 
-        cuotaVisitante: '2.10',
-        mercadosExtra: [
-            { titulo: 'Carreras Totales', opciones: [{ opc: 'Más de 7.5', q: '1.85' }, { opc: 'Menos de 7.5', q: '1.95' }] },
-            { titulo: 'Hándicap de Carreras', opciones: [{ opc: 'Yankees -1.5', q: '2.30' }, { opc: 'Boston +1.5', q: '1.62' }] }
-        ]
-    },
-    {
-        id: 3,
-        deporte: 'basket',
-        liga: 'Basket • Finales NBA',
-        local: 'Lakers de Los Ángeles',
-        visitante: 'Celtics de Boston',
-        marcadorLocal: '98',
-        marcadorVisitante: '102',
-        enVivo: true,
-        cuotaLocal: '2.20',
-        cuotaEmpate: '—',
-        cuotaVisitante: '1.60',
-        mercadosExtra: [
-            { titulo: 'Puntos Totales', opciones: [{ opc: 'Más de 215.5', q: '1.90' }, { opc: 'Menos de 215.5', q: '1.90' }] },
-            { titulo: 'Hándicap de Puntos', opciones: [{ opc: 'Lakers +3.5', q: '1.90' }, { opc: 'Celtics -3.5', q: '1.90' }] }
-        ]
-    },
-    {
-        id: 4,
-        deporte: 'tenis',
-        liga: 'Tenis • Wimbledon',
-        local: 'Carlos Alcaraz',
-        visitante: 'Novak Djokovic',
-        marcadorLocal: '2',
-        marcadorVisitante: '1',
-        enVivo: true,
-        cuotaLocal: '1.90',
-        cuotaEmpate: '—',
-        cuotaVisitante: '1.90',
-        mercadosExtra: [
-            { titulo: 'Total de Juegos', opciones: [{ opc: 'Más de 38.5', q: '1.85' }, { opc: 'Menos de 38.5', q: '1.85' }] }
-        ]
-    }
-];
+// Aquí guardaremos los partidos que carguemos desde el archivo partidos.json
+let partidosPrueba = []; 
 
 // ==========================================================================
-// 3. LOGICA DE RENDERIZADO
+// 3. LOGICA DE RENDERIZADO Y CARGA DINÁMICA (JSON)
 // ==========================================================================
 function cambiarDeporte(deporte, botonPresionado) {
     deporteActivo = deporte;
     const botones = document.querySelectorAll('.menu-deportes button');
     botones.forEach(btn => btn.classList.remove('active'));
     botonPresionado.classList.add('active');
-    cargarPartidos();
+    renderizarPartidosFiltrados();
 }
 
-function cargarPartidos() {
+// NUEVA FUNCIÓN: Lee el archivo externo que vas a actualizar diariamente
+function cargarPartidosDesdeJSON() {
+    const contenedor = document.getElementById('lista-partidos');
+    if (contenedor) {
+        contenedor.innerHTML = `<p class="cargando">Cargando la cartelera de hoy...</p>`;
+    }
+
+    // Buscamos tu archivo en la raíz del proyecto
+    fetch('partidos.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("No se pudo cargar el archivo de partidos.");
+            }
+            return response.json();
+        })
+        .then(datos => {
+            partidosPrueba = datos; // Asignamos los datos del JSON a nuestra variable global
+            renderizarPartidosFiltrados(); // Pintamos los partidos en pantalla
+        })
+        .catch(error => {
+            console.error("Error cargando los partidos:", error);
+            if (contenedor) {
+                contenedor.innerHTML = `<p class="cargando" style="color: #ff4444;">Error al cargar la cartelera. Intenta de nuevo.</p>`;
+            }
+        });
+}
+
+// Esta función se encarga puramente de dibujar las tarjetas en la interfaz
+function renderizarPartidosFiltrados() {
     const contenedor = document.getElementById('lista-partidos');
     if (!contenedor) return;
     
     contenedor.innerHTML = ''; 
-    const partidosFiltrados = partidosPrueba.filter(p => p.deporte === deporteActivo);
+    
+    // Filtramos comparando en minúsculas para evitar errores tipográficos
+    const partidosFiltrados = partidosPrueba.filter(p => p.deporte.toLowerCase() === deporteActivo.toLowerCase());
 
     if (partidosFiltrados.length === 0) {
-        contenedor.innerHTML = `<p class="cargando">No hay partidos disponibles.</p>`;
+        contenedor.innerHTML = `<p class="cargando">No hay partidos de ${deporteActivo} programados para hoy.</p>`;
         return;
     }
 
@@ -124,9 +81,10 @@ function cargarPartidos() {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'tarjeta-partido';
 
-        const botonEmpateOculto = partido.cuotaEmpate === '—' 
+        const cuotaEmpateTxt = partido.cuotaEmpate || partido.cuotaX || '—';
+        const botonEmpateOculto = (cuotaEmpateTxt === '—' || cuotaEmpateTxt === '-') 
             ? `<button class="btn-cuota" disabled style="opacity: 0.25; cursor: not-allowed;"><span class="indicador-tipo">X</span><span class="cuota">—</span></button>`
-            : `<button class="btn-cuota" onclick="seleccionarJugada(${partido.id}, 'Empate', '${partido.cuotaEmpate}')"><span class="indicador-tipo">X</span><span class="cuota">${partido.cuotaEmpate}</span></button>`;
+            : `<button class="btn-cuota" onclick="seleccionarJugada(${partido.id}, 'Empate', '${cuotaEmpateTxt}')"><span class="indicador-tipo">X</span><span class="cuota">${cuotaEmpateTxt}</span></button>`;
 
         let htmlMercadosMúltiples = '';
         const mercadosAMostrar = partido.mercadosExtra || [];
@@ -153,6 +111,12 @@ function cargarPartidos() {
             `;
         });
 
+        // Tolerancia si los nombres en tu JSON vienen como 'local'/'visitante' o 'equipo1'/'equipo2'
+        const localName = partido.local || partido.equipo1 || "Local";
+        const visitanteName = partido.visitante || partido.equipo2 || "Visitante";
+        const marcadorL = partido.marcadorLocal !== undefined ? partido.marcadorLocal : "0";
+        const marcadorV = partido.marcadorVisitante !== undefined ? partido.marcadorVisitante : "0";
+
         tarjeta.innerHTML = `
             <div class="info-partido">
                 <span class="liga">${partido.liga}</span>
@@ -160,8 +124,8 @@ function cargarPartidos() {
             </div>
             <div class="bloque-central">
                 <div class="equipos-marcador">
-                    <div class="fila-equipo"><span>${partido.local}</span><span class="marcador-en-vivo">${partido.marcadorLocal}</span></div>
-                    <div class="fila-equipo"><span>${partido.visitante}</span><span class="marcador-en-vivo">${partido.marcadorVisitante}</span></div>
+                    <div class="fila-equipo"><span>${localName}</span><span class="marcador-en-vivo">${marcadorL}</span></div>
+                    <div class="fila-equipo"><span>${visitanteName}</span><span class="marcador-en-vivo">${marcadorV}</span></div>
                 </div>
             </div>
             <div class="opciones-apuesta">
@@ -188,14 +152,16 @@ function toggleMercadosExtra(partidoId) {
 }
 
 // ==========================================================================
-// 4. NUEVA LÓGICA DEL BOLETO: ENFOQUE PARLAY (COMBINADAS)
+// 4. LOGICA DEL BOLETO: ENFOQUE PARLAY (COMBINADAS)
 // ==========================================================================
 function seleccionarJugada(partidoId, opcion, cuota) {
     const partido = partidosPrueba.find(p => p.id === partidoId);
     if (!partido) return;
 
-    // Regla de Parlay: No se permite meter dos selecciones del mismo partido
-    const nombrePartido = `${partido.local} vs ${partido.visitante}`;
+    const localName = partido.local || partido.equipo1 || "Local";
+    const visitanteName = partido.visitante || partido.equipo2 || "Visitante";
+    const nombrePartido = `${localName} vs ${visitanteName}`;
+    
     const yaExistePartido = parlayApuestas.some(item => item.partido === nombrePartido);
 
     if (yaExistePartido) {
@@ -203,7 +169,6 @@ function seleccionarJugada(partidoId, opcion, cuota) {
         return;
     }
 
-    // Insertar la nueva selección al listado
     parlayApuestas.push({
         partido: nombrePartido,
         opcion: opcion,
@@ -220,7 +185,6 @@ function actualizarBoletoVista() {
         return;
     }
 
-    // Calcular la Cuota Total del Parlay multiplicando todos los logros entre sí
     let cuotaTotalParlay = 1;
     let htmlSelecciones = '';
 
@@ -240,13 +204,9 @@ function actualizarBoletoVista() {
         `;
     });
 
-    // Guardar el coeficiente total calculado en un atributo oculto para usarlo en las ganancias
     boleto.dataset.cuotaTotal = cuotaTotalParlay.toFixed(2);
-
-    // Cambiar dinámicamente el título del boleto según el tipo de jugada
     const tipoApuestaLabel = parlayApuestas.length > 1 ? `PARLAY (x${parlayApuestas.length} Logros)` : "Apuesta Derecha";
     
-    // Inyectar el cuerpo renderizado
     const cuerpoBoleto = document.querySelector('.boleto-cuerpo');
     cuerpoBoleto.innerHTML = `
         <div style="max-height: 140px; overflow-y: auto; margin-bottom: 10px;">
@@ -291,7 +251,7 @@ function calcularGanancia() {
 
 function cerrarBoleto() {
     document.getElementById('boleto-apuesta').style.display = 'none';
-    parlayApuestas = []; // Limpia el boleto por completo
+    parlayApuestas = []; 
 }
 
 // ==========================================================================
@@ -308,11 +268,9 @@ function enviarApuestaTelegram() {
     const cuotaFinal = parseFloat(boleto.dataset.cuotaTotal);
     const ganancia = (monto * cuotaFinal).toFixed(2);
 
-    // Determinar si es Derecho o Parlay para el formato del mensaje
     const esParlay = parlayApuestas.length > 1;
     let encabezadoTipo = esParlay ? `🔥 <b>¡NUEVO PARLAY COMBINADO!</b>` : `🎰 <b>¡APUESTA DERECHA REALIZADA!</b>`;
 
-    // Armar la tira de partidos uno a uno
     let cuerpoLogros = '';
     parlayApuestas.forEach((ap, i) => {
         cuerpoLogros += `\n🔸 <b>Logro #${i+1}:</b> ${ap.partido}\n   👉 <i>Selección: ${ap.opcion} (@${ap.cuota})</i>\n`;
@@ -368,4 +326,8 @@ function procesarRetiro(event) {
     cerrarModalRetiro();
 }
 
-window.onload = function() { cargarPartidos(); };
+// AQUÍ CAMBIA: Al cargar la página, se llama a la función que lee el JSON externo
+window.onload = function() { 
+    cargarPartidosDesdeJSON(); 
+};
+
