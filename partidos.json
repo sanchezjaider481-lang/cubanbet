@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "deporte": "Fútbol",
+    "liga": "Liga de Campeones UEFA",
+    "equipo1": "Real Madrid",
+    "equipo2": "Manchester City",
+    "cuota1": "1.65",
+    "cuotaX": "3.80",
+    "cuota2": "5.20"
+  },
+  {
+    "id": 2,
+    "deporte": "Béisbol",
+    "liga": "Serie Nacional",
+    "equipo1": "Industriales",
+    "equipo2": "Santiago de Cuba",
+    "cuota1": "1.45",
+    "cuotaX": "-",
+    "cuota2": "2.60"
+  }
+]
