@@ -1,39 +1,8 @@
 [
-  {
-    "id": 1,
-    "deporte": "futbol",
-    "liga": "Fútbol • Liga de Campeones UEFA",
-    "local": "Real Madrid",
-    "visitante": "Manchester City",
-    "marcadorLocal": "2",
-    "marcadorVisitante": "1",
-    "enVivo": true,
-    "cuotaLocal": "1.65",
-    "cuotaEmpate": "3.80",
-    "cuotaVisitante": "5.20",
-    "mercadosExtra": [
-      {
-        "titulo": "Doble Oportunidad",
-        "opciones": [
-          { "opc": "1X", "q": "1.22" },
-          { "opc": "12", "q": "1.25" },
-          { "opc": "X2", "q": "1.85" }
-        ]
-      },
-      {
-        "titulo": "Total de Goles",
-        "opciones": [
-          { "opc": "Más de 2.5", "q": "1.95" },
-          { "opc": "Menos de 2.5", "q": "1.80" }
-        ]
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "deporte": "beisbol",
-    "liga": "Béisbol • Serie Nacional Cuba",
-    "local": "Industriales",
+  { "id": 1, "deporte": "futbol", "local": "Real Madrid", "visitante": "Barcelona", "cuota_local": 1.5 },
+  { "id": 2, "deporte": "baloncesto", "local": "Lakers", "visitante": "Warriors", "cuota_local": 1.8 },
+  { "id": 3, "deporte": "tenis", "local": "Djokovic", "visitante": "Alcaraz", "cuota_local": 2.0 }
+]
     "visitante": "Santiago de Cuba",
     "marcadorLocal": "5",
     "marcadorVisitante": "3",
