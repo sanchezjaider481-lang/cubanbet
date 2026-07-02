@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBANBET</title>
+    <!-- Importamos iconos para el menú inferior -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; }
+        header { background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111; }
+        .logo { font-size: 20px; font-weight: 900; }
+        .saldo { background: #111; padding: 5px 10px; border-radius: 4px; border: 1px solid #333; color: #ccff00; font-weight: bold; }
+        
+        /* Banner Profesional */
+        .banner { position: relative; width: 100%; height: 250px; overflow: hidden; }
+        .banner img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
+        .banner-text { position: absolute; top: 30px; left: 20px; }
+        .banner-text h1 { margin: 0; font-size: 24px; line-height: 1.2; }
+        .btn-apuesta { background: #ccff00; color: #000; padding: 10px 20px; border: none; font-weight: 900; margin-top: 15px; cursor: pointer; }
+
+        /* Menú Inferior */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #222; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #888; font-weight: bold; }
+        .nav-item.active { color: #ccff00; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">CUBAN<span style="color: #ccff00;">BET</span></div>
+        <div class="saldo">$0.00</div>
+    </header>
+
+    <div class="banner">
+        <img src="https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=2000&auto=format&fit=crop" alt="Casino">
+        <div class="banner-text">
+            <h1>TODO TU DINERO<br>ESTÁ EN EL JUEGO</h1>
+            <button class="btn-apuesta">APUESTA AHORA</button>
+        </div>
+    </div>
+
+    <!-- Aquí se inyectarán tus partidos desde datos.js -->
+    <div id="partidos-container"></div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active"><i class="fas fa-home"></i>INICIO</div>
+        <div class="nav-item"><i class="fas fa-gamepad"></i>MINIJUEGOS</div>
+        <div class="nav-item"><i class="fas fa-ticket"></i>BOLETO</div>
+        <div class="nav-item"><i class="fas fa-list"></i>APUESTAS</div>
+        <div class="nav-item"><i class="fas fa-user"></i>PERFIL</div>
+    </nav>
+
+    <script src="js/datos.js"></script>
+    <script>
+        // Lógica para pintar los partidos
+        const container = document.getElementById('partidos-container');
+        if (typeof misPartidos !== 'undefined') {
+            container.innerHTML = misPartidos.map(p => `
+                <div style="background: #0a140a; padding: 15px; margin: 15px; border-radius: 8px;">
+                    <div style="color: #ccff00; font-size: 10px;">${p.campeonato}</div>
+                    <div style="font-weight: bold; margin: 5px 0;">${p.local} VS ${p.visitante}</div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
