@@ -2,30 +2,26 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUBANBET</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-    body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 70px; }
-    header { background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111; }
-    .bottom-nav { 
-        position: fixed; 
-        bottom: 0; 
-        width: 100%; 
-        background: #000; 
-        display: flex; 
-        justify-content: space-around; 
-        padding: 10px 0; 
-        border-top: 1px solid #222; 
-        z-index: 999;
-    }
-    .nav-item { 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        font-size: 10px; 
-        color: #fff; 
-        text-decoration: none;
-    }
-</style>
+        body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 70px; }
+        header { background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111; }
+        .logo { font-weight: 900; }
+        .saldo { background: #111; padding: 5px 10px; border: 1px solid #333; color: #ccff00; font-weight: bold; }
+        
+        .banner { width: 100%; height: 250px; background: #111; position: relative; }
+        .banner-text { position: absolute; top: 30px; left: 20px; }
+        .btn-apuesta { background: #ccff00; color: #000; padding: 10px 20px; border: none; font-weight: 900; margin-top: 15px; }
 
+        /* Menú Inferior */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #222; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #888; text-decoration: none; }
+        
+        /* Sección Cajero (Oculta por defecto) */
+        #cajero-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; box-sizing: border-box; }
+    </style>
 </head>
 <body>
 
@@ -35,47 +31,34 @@
     </header>
 
     <div class="banner">
-        <img src="https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=2000&auto=format&fit=crop" alt="Casino">
         <div class="banner-text">
             <h1>TODO TU DINERO<br>ESTÁ EN EL JUEGO</h1>
             <button class="btn-apuesta">APUESTA AHORA</button>
         </div>
     </div>
 
-    <!-- Aquí se inyectarán tus partidos desde datos.js -->
     <div id="partidos-container"></div>
-    <div style="background: #0a140a; margin: 15px; padding: 15px; border-radius: 8px; border: 1px solid #222;">
-        <h2 style="font-size: 14px; color: white; margin-top:0;">SOLICITAR DEPÓSITO</h2>
-        <div style="color: #ccff00; font-weight:bold; margin-bottom: 10px;">Tarjeta: 9238 1299 7498 4082</div>
+
+    <!-- Menú Inferior -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item"><i class="fas fa-home"></i>INICIO</a>
+        <a href="#" class="nav-item"><i class="fas fa-gamepad"></i>MINIJUEGOS</a>
+        <a href="#" class="nav-item" onclick="document.getElementById('cajero-modal').style.display='block'"><i class="fas fa-wallet"></i>CAJERO</a>
+        <a href="#" class="nav-item"><i class="fas fa-ticket"></i>BOLETO</a>
+        <a href="#" class="nav-item"><i class="fas fa-user"></i>PERFIL</a>
+    </nav>
+
+    <!-- Modal Cajero -->
+    <div id="cajero-modal">
+        <h2 style="color: #ccff00;">SOLICITAR DEPÓSITO</h2>
+        <p>Tarjeta: 9238 1299 7498 4082</p>
         <a href="https://t.me/tu_usuario_de_telegram" target="_blank" style="text-decoration:none;">
-            <button style="width:100%; background:#ccff00; border:none; padding:10px; font-weight:bold; cursor:pointer;">VERIFICAR EN TELEGRAM</button>
+            <button style="width:100%; padding:15px; background:#ccff00; border:none; font-weight:bold;">VERIFICAR EN TELEGRAM</button>
         </a>
+        <button onclick="document.getElementById('cajero-modal').style.display='none'" style="margin-top:20px; background:transparent; color:white; border:1px solid #555; width:100%; padding:10px;">CERRAR</button>
     </div>
 
-    <nav class="bottom-nav">
-    <a href="#" class="nav-item"><i class="fas fa-home"></i>INICIO</a>
-    <a href="#" class="nav-item"><i class="fas fa-gamepad"></i>MINIJUEGOS</a>
-    <!-- NUEVO BOTÓN CAJERO -->
-    <a href="https://t.me/tu_usuario_de_telegram" target="_blank" class="nav-item" style="color:#ccff00;">
-        <i class="fas fa-wallet"></i>CAJERO
-    </a>
-    <a href="#" class="nav-item"><i class="fas fa-ticket"></i>BOLETO</a>
-    <a href="#" class="nav-item"><i class="fas fa-user"></i>PERFIL</a>
-</nav>
-
-
     <script src="js/datos.js"></script>
-    <script>
-        // Lógica para pintar los partidos
-        const container = document.getElementById('partidos-container');
-        if (typeof misPartidos !== 'undefined') {
-            container.innerHTML = misPartidos.map(p => `
-                <div style="background: #0a140a; padding: 15px; margin: 15px; border-radius: 8px;">
-                    <div style="color: #ccff00; font-size: 10px;">${p.campeonato}</div>
-                    <div style="font-weight: bold; margin: 5px 0;">${p.local} VS ${p.visitante}</div>
-                </div>
-            `).join('');
-        }
-    </script>
 </body>
 </html>
+
