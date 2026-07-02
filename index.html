@@ -94,13 +94,21 @@
     });
 </script>
 <script>
-    // Prueba de detección
-    if (typeof misPartidos === 'undefined') {
-        console.log("¡ERROR! No encuentro el archivo datos.js");
-        document.getElementById('partidos-container').innerHTML = "<p style='color:red;'>Error: No encuentro los datos.</p>";
-    } else {
-        console.log("¡Éxito! Datos encontrados.");
-        document.getElementById('partidos-container').innerHTML = "<p style='color:green;'>Datos cargados correctamente. ¡Funcionando!</p>";
+    const container = document.getElementById('partidos-container');
+    
+    // Verificamos que misPartidos exista y el contenedor también
+    if (typeof misPartidos !== 'undefined' && container) {
+        container.innerHTML = misPartidos.map(p => `
+            <div class="partido-card" style="background:#0a140a; margin:15px; padding:15px; border-radius:8px; border:1px solid #222;">
+                <div style="color:#ccff00; font-size:10px; margin-bottom:5px;">${p.campeonato}</div>
+                <div style="font-weight:bold; font-size:16px; margin-bottom:15px;">${p.local} VS ${p.visitante}</div>
+                <div style="display:flex; gap:10px;">
+                    <button class="cuota-btn" style="flex:1; padding:10px; background:#111; color:white; border:1px solid #333; cursor:pointer;">${p.cuota1}</button>
+                    <button class="cuota-btn" style="flex:1; padding:10px; background:#111; color:white; border:1px solid #333; cursor:pointer;">${p.cuotaX}</button>
+                    <button class="cuota-btn" style="flex:1; padding:10px; background:#111; color:white; border:1px solid #333; cursor:pointer;">${p.cuota2}</button>
+                </div>
+            </div>
+        `).join('');
     }
 </script>
 
