@@ -59,69 +59,40 @@
 
     <script src="js/datos.js"></script>
     <script>
-    <script>
-    // 1. Variable global
+    // 1. Verificamos que los datos hayan cargado
+    window.onload = function() {
+        console.log("Datos cargados:", typeof misPartidos);
+        if (typeof misPartidos !== 'undefined') {
+            renderPartidos();
+        } else {
+            console.error("El archivo datos.js no se ha cargado correctamente.");
+        }
+    };
+
     let boleto = [];
 
-    // 2. Función para pintar los partidos
-    function renderPartidos(filtro = "") {
+    function renderPartidos() {
         const container = document.getElementById('partidos-container');
-        if (typeof misPartidos === 'undefined') return;
+        if (!container) return;
 
-        container.innerHTML = misPartidos.filter(p => 
-            p.local.toLowerCase().includes(filtro.toLowerCase())
-        ).map(p => `
-            <div class="partido-card">
-                <div style="font-weight: bold;">${p.local} VS ${p.visitante}</div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="cuota-btn" onclick="seleccionar('${p.id}', '${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
-                    <button class="cuota-btn" onclick="seleccionar('${p.id}', 'Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
-                    <button class="cuota-btn" onclick="seleccionar('${p.id}', '${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
+        container.innerHTML = misPartidos.map(p => `
+            <div class="partido-card" style="background:#1a1a1a; padding:15px; margin:10px; border-radius:10px; color:white;">
+                <div style="font-weight:bold; margin-bottom:10px;">${p.local} VS ${p.visitante}</div>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="seleccionar('${p.id}', '${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
+                    <button onclick="seleccionar('${p.id}', 'Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
+                    <button onclick="seleccionar('${p.id}', '${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
                 </div>
             </div>
         `).join('');
     }
 
-    // 3. ÚNICA función seleccionar (lógica de apuestas)
     function seleccionar(idPartido, equipo, cuota) {
-        if (boleto.find(item => item.idPartido === idPartido)) {
-            alert("Ya seleccionaste un evento de este partido.");
-            return;
-        }
-        boleto.push({idPartido, equipo, cuota});
-        actualizarTicket();
+        alert("Seleccionaste: " + equipo + " - Cuota: " + cuota);
+        // Aquí irá la lógica del boleto después
     }
-
-    // 4. Función para eliminar
-    function eliminarSeleccion(idPartido) {
-        boleto = boleto.filter(item => item.idPartido !== idPartido);
-        actualizarTicket();
-    }
-
-    // 5. Función para refrescar el ticket visualmente
-    function actualizarTicket() {
-        const ticket = document.getElementById('ticket-flotante');
-        const lista = document.getElementById('lista-selecciones');
-        
-        if (boleto.length === 0) {
-            ticket.style.display = 'none';
-        } else {
-            ticket.style.display = 'block';
-            lista.innerHTML = boleto.map(item => `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span>${item.equipo} (@${item.cuota})</span>
-                    <i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="eliminarSeleccion('${item.idPartido}')"></i>
-                </div>
-            `).join('');
-            let total = boleto.reduce((acc, item) => acc * parseFloat(item.cuota), 1);
-            document.getElementById('total-cuota').innerText = total.toFixed(2);
-        }
-    }
-
-    // Inicialización
-    document.getElementById('buscador').addEventListener('input', (e) => renderPartidos(e.target.value));
-    renderPartidos();
 </script>
+
 
     <div style="display: flex; gap: 10px;">
     <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.id}', '${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
