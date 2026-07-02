@@ -93,6 +93,16 @@
         }
     });
 </script>
+<script>
+    // Prueba de detección
+    if (typeof misPartidos === 'undefined') {
+        console.log("¡ERROR! No encuentro el archivo datos.js");
+        document.getElementById('partidos-container').innerHTML = "<p style='color:red;'>Error: No encuentro los datos.</p>";
+    } else {
+        console.log("¡Éxito! Datos encontrados.");
+        document.getElementById('partidos-container').innerHTML = "<p style='color:green;'>Datos cargados correctamente. ¡Funcionando!</p>";
+    }
+</script>
 
 </body>
 </html>
