@@ -14,6 +14,22 @@
         .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ccff00; text-decoration: none; font-weight: bold; }
         /* Nuevo estilo para ver mercados */
         .ver-mercados { text-align: center; color: #ccff00; font-size: 12px; margin-top: 10px; cursor: pointer; padding-top: 5px; border-top: 1px solid #222; }
+        /* Estilo para el Boleto Flotante */
+#ticket-flotante {
+    position: fixed;
+    bottom: 80px;
+    width: 95%;
+    left: 2.5%;
+    background: #1a1a1a;
+    border: 2px solid #ccff00;
+    border-radius: 10px;
+    padding: 15px;
+    display: none;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
+    z-index: 2000;
+}
+.btn-apostar { background: #ccff00; color: #000; width: 100%; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
     </style>
 </head>
 <body>
@@ -84,6 +100,47 @@
 
         document.getElementById('buscador').addEventListener('input', (e) => renderPartidos(e.target.value));
         renderPartidos();
+        let boleto = [];
+
+function seleccionar(equipo, cuota) {
+    boleto.push({equipo, cuota});
+    document.getElementById('ticket-flotante').style.display = 'block';
+    
+    let lista = document.getElementById('lista-selecciones');
+    lista.innerHTML = boleto.map(item => `<div>${item.equipo} (@${item.cuota})</div>`).join('');
+    
+    let total = boleto.reduce((acc, item) => acc * item.cuota, 1);
+    document.getElementById('total-cuota').innerText = total.toFixed(2);
+}
+
+function cerrarTicket() { document.getElementById('ticket-flotante').style.display = 'none'; }
+
+function generarIDTicket() {
+    return "CUB-" + Date.now().toString().slice(-8) + Math.floor(Math.random() * 100);
+}
+
+function realizarApuesta() {
+    let monto = document.getElementById('monto').value;
+    if (monto < 1) return alert("Ingresa un monto válido");
+    
+    let idTicket = generarIDTicket();
+    alert("¡Apuesta registrada con éxito!\n\nID de Ticket: " + idTicket + "\nTotal a apostar: $" + monto);
+    
+    boleto = [];
+    cerrarTicket();
+}
+
     </script>
+    <div id="ticket-flotante">
+    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-weight:bold;">TU BOLETO</span>
+        <span onclick="cerrarTicket()" style="cursor:pointer;">X</span>
+    </div>
+    <div id="lista-selecciones" style="font-size:12px; margin-bottom:10px;"></div>
+    <div style="font-weight:bold; margin-bottom:10px;">Cuota Total: <span id="total-cuota">1.00</span></div>
+    <input type="number" id="monto" placeholder="Monto a apostar ($)" style="width:100%; padding:8px; margin-bottom:10px; background:#000; border:1px solid #333; color:white;">
+    <button class="btn-apostar" onclick="realizarApuesta()">APOSTAR AHORA</button>
+</div>
+
 </body>
 </html>
