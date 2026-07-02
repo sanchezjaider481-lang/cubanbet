@@ -59,88 +59,70 @@
 
     <script src="js/datos.js"></script>
     <script>
-        function renderPartidos(filtro = "") {
-    const container = document.getElementById('partidos-container');
-    if (typeof misPartidos === 'undefined') return;
+    <script>
+    // 1. Variable global
+    let boleto = [];
 
-    container.innerHTML = misPartidos.filter(p => 
-        p.local.toLowerCase().includes(filtro.toLowerCase())
-    ).map(p => `
-        <div class="partido-card">
-            <div style="font-weight: bold;">${p.local} VS ${p.visitante}</div>
-            <div style="display: flex; gap: 10px;">
-                <button class="cuota-btn" onclick="seleccionar('${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
-                <button class="cuota-btn" onclick="seleccionar('Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
-                <button class="cuota-btn" onclick="seleccionar('${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
-            </div>
-        </div>
-    `).join('');
-}
-function seleccionar(equipo, cuota) {
-    alert("Seleccionaste: " + equipo + " con cuota " + cuota);
-                    }
+    // 2. Función para pintar los partidos
+    function renderPartidos(filtro = "") {
+        const container = document.getElementById('partidos-container');
+        if (typeof misPartidos === 'undefined') return;
 
-
-        // Función base para el calculador de apuestas
-        function seleccionar(equipo, cuota) {
-            console.log("Seleccionaste: " + equipo + " con cuota " + cuota);
-            alert("Añadido al boleto: " + equipo + " (Cuota " + cuota + ")");
-        }
-
-        document.getElementById('buscador').addEventListener('input', (e) => renderPartidos(e.target.value));
-        renderPartidos();
-        // Variable para guardar el boleto
-let boleto = [];
-
-function seleccionar(idPartido, equipo, cuota) {
-    // 1. Verificar si ya hay una apuesta de este mismo partido
-    const yaExiste = boleto.find(item => item.idPartido === idPartido);
-    
-    if (yaExiste) {
-        alert("Ya has seleccionado una opción para este partido. Por favor, elimina la anterior para cambiarla.");
-        return;
-    }
-
-    // 2. Si no existe, agregar al boleto
-    boleto.push({idPartido, equipo, cuota});
-    
-    // 3. Actualizar la vista
-    document.getElementById('ticket-flotante').style.display = 'block';
-    
-    let lista = document.getElementById('lista-selecciones');
-    lista.innerHTML = boleto.map(item => `
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-            <span>${item.equipo} (@${item.cuota})</span>
-        </div>
-    `).join('');
-    function eliminarSeleccion(idPartido) {
-    // Filtramos el boleto para eliminar la selección de ese partido
-    boleto = boleto.filter(item => item.idPartido !== idPartido);
-    
-    // Si el boleto queda vacío, cerramos el ticket
-    if (boleto.length === 0) {
-        cerrarTicket();
-    } else {
-        // Si aún quedan selecciones, actualizamos la vista y el total
-        let lista = document.getElementById('lista-selecciones');
-        lista.innerHTML = boleto.map(item => `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; background:#333; padding:5px; border-radius:4px;">
-                <span>${item.equipo} (@${item.cuota})</span>
-                <i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="eliminarSeleccion('${item.idPartido}')"></i>
+        container.innerHTML = misPartidos.filter(p => 
+            p.local.toLowerCase().includes(filtro.toLowerCase())
+        ).map(p => `
+            <div class="partido-card">
+                <div style="font-weight: bold;">${p.local} VS ${p.visitante}</div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="cuota-btn" onclick="seleccionar('${p.id}', '${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
+                    <button class="cuota-btn" onclick="seleccionar('${p.id}', 'Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
+                    <button class="cuota-btn" onclick="seleccionar('${p.id}', '${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
+                </div>
             </div>
         `).join('');
-        
-        let total = boleto.reduce((acc, item) => acc * item.cuota, 1);
-        document.getElementById('total-cuota').innerText = total.toFixed(2);
     }
-}
 
-    let total = boleto.reduce((acc, item) => acc * item.cuota, 1);
-    document.getElementById('total-cuota').innerText = total.toFixed(2);
-}
+    // 3. ÚNICA función seleccionar (lógica de apuestas)
+    function seleccionar(idPartido, equipo, cuota) {
+        if (boleto.find(item => item.idPartido === idPartido)) {
+            alert("Ya seleccionaste un evento de este partido.");
+            return;
+        }
+        boleto.push({idPartido, equipo, cuota});
+        actualizarTicket();
+    }
 
+    // 4. Función para eliminar
+    function eliminarSeleccion(idPartido) {
+        boleto = boleto.filter(item => item.idPartido !== idPartido);
+        actualizarTicket();
+    }
 
-    </script>
+    // 5. Función para refrescar el ticket visualmente
+    function actualizarTicket() {
+        const ticket = document.getElementById('ticket-flotante');
+        const lista = document.getElementById('lista-selecciones');
+        
+        if (boleto.length === 0) {
+            ticket.style.display = 'none';
+        } else {
+            ticket.style.display = 'block';
+            lista.innerHTML = boleto.map(item => `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span>${item.equipo} (@${item.cuota})</span>
+                    <i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="eliminarSeleccion('${item.idPartido}')"></i>
+                </div>
+            `).join('');
+            let total = boleto.reduce((acc, item) => acc * parseFloat(item.cuota), 1);
+            document.getElementById('total-cuota').innerText = total.toFixed(2);
+        }
+    }
+
+    // Inicialización
+    document.getElementById('buscador').addEventListener('input', (e) => renderPartidos(e.target.value));
+    renderPartidos();
+</script>
+
     <div style="display: flex; gap: 10px;">
     <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.id}', '${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
     <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.id}', 'Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
