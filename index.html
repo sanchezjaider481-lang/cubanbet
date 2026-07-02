@@ -2,87 +2,69 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CUBANBET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-    <style>
-    body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 90px; }
-    .banner { width: 100%; height: 200px; background: #111; display: flex; align-items: center; justify-content: center; }
-    
-    /* Estilo de la tarjeta de partido */
-    .partido-card { background: #1a1a1a; margin: 10px 15px; padding: 15px; border-radius: 10px; border: 1px solid #333; }
-    .liga-text { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 8px; }
-    .equipo-text { font-weight: bold; font-size: 15px; margin-bottom: 12px; }
-    
-    /* Estilo de botones de cuotas */
-    .cuotas-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-    .cuota-btn { background: #262626; color: #ccff00; border: none; padding: 10px; border-radius: 5px; font-weight: bold; text-align: center; }
-    
-    /* Botón de ver mercados */
-    .ver-mercados { text-align: center; color: #ccff00; font-size: 12px; margin-top: 15px; cursor: pointer; border-top: 1px solid #333; padding-top: 10px; }
-    
-    .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 2px solid #ccff00; z-index: 1000; }
-    .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ccff00; text-decoration: none; font-weight: bold; }
-</style>
-
+        body { margin: 0; background-color: #050a05; color: white; font-family: sans-serif; padding-bottom: 100px; }
+        .banner { width: 100%; height: 180px; background: url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=800') center/cover; position: relative; display: flex; align-items: center; justify-content: center; }
+        .banner::after { content: ""; position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }
+        .banner h1 { z-index: 1; text-align: center; font-size: 1.2rem; }
+        
+        /* Tarjeta de Partido */
+        .partido-card { background: #1a1a1a; margin: 10px; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        .bloqueado { opacity: 0.4; pointer-events: none; }
+        .grid-cuotas { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .btn-cuota { background: #262626; color: #ccff00; border: none; padding: 10px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        
+        .nav-bottom { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 2px solid #ccff00; }
+    </style>
 </head>
 <body>
 
-    <header style="padding: 15px; background: #000; display: flex; justify-content: space-between;">
-        <div style="font-weight: 900; font-size: 18px;">CUBAN<span style="color: #ccff00;">BET</span></div>
-        <div style="color: #ccff00; font-weight: bold;">$0.00</div>
-    </header>
-
-    <div class="banner">
-        <h1 style="font-size: 20px;">TODO TU DINERO<br>ESTÁ EN EL JUEGO</h1>
-    </div>
-
-    <div style="padding: 15px;">
-        <input type="text" id="buscador" placeholder="Buscar liga o equipo..." style="width: 100%; padding: 10px; background: #111; border: 1px solid #333; color: white; border-radius: 4px;">
-    </div>
-
+    <div class="banner"><h1>TODO TU DINERO<br>ESTÁ EN EL JUEGO</h1></div>
     <div id="partidos-container"></div>
 
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item"><i class="fas fa-home"></i>INICIO</a>
-        <a href="#" class="nav-item"><i class="fas fa-gamepad"></i>MINIJUEGOS</a>
-        <a href="#" class="nav-item"><i class="fas fa-wallet"></i>CAJERO</a>
-        <a href="#" class="nav-item"><i class="fas fa-ticket"></i>BOLETO</a>
-        <a href="#" class="nav-item"><i class="fas fa-user"></i>PERFIL</a>
+    <nav class="nav-bottom">
+        <a href="#" style="color:#ccff00; text-decoration:none;"><i class="fas fa-home"></i><br>INICIO</a>
+        <a href="#" style="color:#ccff00; text-decoration:none;"><i class="fas fa-calculator"></i><br>PARLAY</a>
+        <a href="#" style="color:#ccff00; text-decoration:none;"><i class="fas fa-gamepad"></i><br>JUEGOS</a>
     </nav>
 
     <script src="js/datos.js"></script>
     <script>
-    function renderPartidos(filtro = "") {
-        const container = document.getElementById('partidos-container');
-        if (typeof misPartidos === 'undefined') return;
+        function cargarPartidos() {
+            const container = document.getElementById('partidos-container');
+            const ahora = new Date();
 
-        container.innerHTML = misPartidos.filter(p => 
-            p.local.toLowerCase().includes(filtro.toLowerCase()) || 
-            p.campeonato.toLowerCase().includes(filtro.toLowerCase())
-        ).map(p => `
-            <div class="partido-card">
-                <div class="liga-text">${p.campeonato} • EN VIVO</div>
-                <div class="equipo-text">${p.local}<br>${p.visitante}</div>
+            container.innerHTML = misPartidos.map(p => {
+                const [h, m] = p.hora.split(':');
+                const horaInicio = new Date();
+                horaInicio.setHours(h, m, 0);
                 
-                <div class="cuotas-grid">
-                    <button class="cuota-btn">1<br>${p.cuota1}</button>
-                    <button class="cuota-btn">X<br>${p.cuotaX}</button>
-                    <button class="cuota-btn">2<br>${p.cuota2}</button>
-                </div>
+                const estaCerrado = ahora >= horaInicio;
                 
-                <div class="ver-mercados" onclick="alert('Abriendo mercados para: ${p.local}')">
-                    <i class="fas fa-chevron-down"></i> + Ver mercados
-                </div>
-            </div>
-        `).join('');
-    }
+                return `
+                    <div class="partido-card ${estaCerrado ? 'bloqueado' : ''}">
+                        <div style="font-size:10px; color:#ccff00;">${p.campeonato} • ${estaCerrado ? 'CERRADO' : p.hora}</div>
+                        <div style="font-weight:bold; margin:5px 0;">${p.local} VS ${p.visitante}</div>
+                        <div class="grid-cuotas">
+                            <button class="btn-cuota" onclick="agregarAlParlay('${p.local}', ${p.cuota1})">1<br>${p.cuota1}</button>
+                            <button class="btn-cuota" onclick="agregarAlParlay('Empate', ${p.cuotaX})">X<br>${p.cuotaX}</button>
+                            <button class="btn-cuota" onclick="agregarAlParlay('${p.visitante}', ${p.cuota2})">2<br>${p.cuota2}</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-    document.getElementById('buscador').addEventListener('input', (e) => renderPartidos(e.target.value));
-    renderPartidos();
-</script>
+        // Base para el calculador
+        let parlay = [];
+        function agregarAlParlay(equipo, cuota) {
+            parlay.push({equipo, cuota});
+            alert("Añadido: " + equipo + " (Cuota " + cuota + ")");
+        }
 
+        window.onload = cargarPartidos;
+    </script>
 </body>
 </html>
-
