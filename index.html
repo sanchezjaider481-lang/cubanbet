@@ -15,6 +15,7 @@
     </style>
 </head>
 <body>
+<div id="partidos-container"></div>
 
     <header style="padding: 15px; background: #000; display: flex; justify-content: space-between;">
         <div style="font-weight: 900; font-size: 18px;">CUBAN<span style="color: #ccff00;">BET</span></div>
@@ -33,6 +34,7 @@
 
     <nav class="bottom-nav">
         <a href="#" class="nav-item"><i class="fas fa-home"></i>INICIO</a>
+        <a href="#" class="nav-item"><i class="fas fa-gamepad"></i>MINIJUEGOS</a>
         <a href="#" class="nav-item"><i class="fas fa-wallet"></i>CAJERO</a>
         <a href="#" class="nav-item"><i class="fas fa-ticket"></i>BOLETO</a>
         <a href="#" class="nav-item"><i class="fas fa-user"></i>PERFIL</a>
@@ -71,6 +73,26 @@
 
         document.getElementById('buscador').addEventListener('input', (e) => renderPartidos(e.target.value));
         renderPartidos();
-    </script>
+    <script>
+    <script>
+    // Este pequeño script busca el hueco "partidos-container" y rellena los datos
+    document.addEventListener("DOMContentLoaded", function() {
+        const container = document.getElementById('partidos-container');
+        if (typeof misPartidos !== 'undefined' && container) {
+            container.innerHTML = misPartidos.map(p => `
+                <div class="partido-card">
+                    <div style="font-size: 10px; color: #888;">${p.campeonato}</div>
+                    <div style="font-weight: bold; margin: 5px 0;">${p.local} VS ${p.visitante}</div>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="cuota-btn">1: ${p.cuota1}</button>
+                        <button class="cuota-btn">X: ${p.cuotaX}</button>
+                        <button class="cuota-btn">2: ${p.cuota2}</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    });
+</script>
+
 </body>
 </html>
