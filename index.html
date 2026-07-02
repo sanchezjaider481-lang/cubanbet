@@ -63,7 +63,9 @@
     const container = document.getElementById('partidos-container');
     if (typeof misPartidos === 'undefined') return;
 
-    container.innerHTML = misPartidos.map(p => `
+    container.innerHTML = misPartidos.filter(p => 
+        p.local.toLowerCase().includes(filtro.toLowerCase())
+    ).map(p => `
         <div class="partido-card">
             <div style="font-weight: bold;">${p.local} VS ${p.visitante}</div>
             <div style="display: flex; gap: 10px;">
@@ -74,6 +76,9 @@
         </div>
     `).join('');
 }
+function seleccionar(equipo, cuota) {
+    alert("Seleccionaste: " + equipo + " con cuota " + cuota);
+                    }
 
 
         // Función base para el calculador de apuestas
