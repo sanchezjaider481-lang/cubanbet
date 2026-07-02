@@ -6,30 +6,29 @@
     <title>CUBANBET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 70px; }
-        header { background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111; }
-        .logo { font-weight: 900; }
-        .saldo { background: #111; padding: 5px 10px; border: 1px solid #333; color: #ccff00; font-weight: bold; }
-        
-        .banner { 
-    width: 100%; 
-    height: 250px; 
-    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=2000&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    position: relative; 
-}
+    body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 90px; }
+    /* Menú inferior más grande y verde neón */
+    .bottom-nav { 
+        position: fixed; bottom: 0; width: 100%; background: #000; display: flex; 
+        justify-content: space-around; padding: 15px 0; border-top: 2px solid #ccff00; z-index: 1000; 
+    }
+    .nav-item { 
+        display: flex; flex-direction: column; align-items: center; font-size: 12px; 
+        color: #ccff00; font-weight: bold; text-decoration: none; 
+    }
+    .nav-item i { font-size: 18px; margin-bottom: 5px; }
+    
+    /* Partidos más compactos */
+    .partido-card { 
+        background: #0a140a; margin: 10px 15px; padding: 10px; border-radius: 6px; 
+        border: 1px solid #222; font-size: 13px; 
+    }
+    .cuota-btn { 
+        flex: 1; padding: 8px; background: #111; color: white; border: 1px solid #333; 
+        font-size: 12px; cursor: pointer; border-radius: 3px; 
+    }
+</style>
 
-        .banner-text { position: absolute; top: 30px; left: 20px; }
-        .btn-apuesta { background: #ccff00; color: #000; padding: 10px 20px; border: none; font-weight: 900; margin-top: 15px; }
-
-        /* Menú Inferior */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #222; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: #888; text-decoration: none; }
-        
-        /* Sección Cajero (Oculta por defecto) */
-        #cajero-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; box-sizing: border-box; }
-    </style>
 </head>
 <body>
 
@@ -43,17 +42,34 @@
     style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: white; border-radius: 4px;">
 </div>
 <script>
-    // Buscador
-    document.getElementById('buscador').addEventListener('input', function(e) {
-        const busqueda = e.target.value.toLowerCase();
-        // Aquí filtrarías los partidos (lógica básica)
-    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const container = document.getElementById('partidos-container');
+        
+        if (typeof misPartidos !== 'undefined') {
+            container.innerHTML = misPartidos.map(p => {
+                // Aquí determinamos si el partido está activo o cerrado
+                const esActivo = p.estado === "activo";
+                const botonesDisabled = esActivo ? "" : "disabled style='opacity:0.3; cursor:not-allowed;'";
 
-    // Función de cálculo de ganancias
-    function calcularGanancia(monto, cuota) {
-        return (monto * cuota).toFixed(2);
-    }
+                return `
+                    <div class="partido-card">
+                        <div style="display: flex; justify-content: space-between; color: #888; margin-bottom: 5px;">
+                            <span style="font-size: 10px;">${p.campeonato}</span>
+                            <span style="font-size: 10px;">${p.hora}</span>
+                        </div>
+                        <div style="font-weight: bold; margin: 5px 0;">${p.local} VS ${p.visitante}</div>
+                        <div style="display: flex; gap: 5px; margin-top: 10px;">
+                            <button class="cuota-btn" ${botonesDisabled}>1: ${p.cuota1}</button>
+                            <button class="cuota-btn" ${botonesDisabled}>X: ${p.cuotaX}</button>
+                            <button class="cuota-btn" ${botonesDisabled}>2: ${p.cuota2}</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    });
 </script>
+
 
 
     <div class="banner">
