@@ -42,6 +42,18 @@
     <input type="text" id="buscador" placeholder="Buscar equipo o liga..." 
     style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: white; border-radius: 4px;">
 </div>
+<script>
+    // Buscador
+    document.getElementById('buscador').addEventListener('input', function(e) {
+        const busqueda = e.target.value.toLowerCase();
+        // Aquí filtrarías los partidos (lógica básica)
+    });
+
+    // Función de cálculo de ganancias
+    function calcularGanancia(monto, cuota) {
+        return (monto * cuota).toFixed(2);
+    }
+</script>
 
 
     <div class="banner">
