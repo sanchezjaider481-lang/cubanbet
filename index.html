@@ -6,123 +6,61 @@
     <title>CUBANBET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-    body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 90px; }
-    /* Menú inferior más grande y verde neón */
-    .bottom-nav { 
-        position: fixed; bottom: 0; width: 100%; background: #000; display: flex; 
-        justify-content: space-around; padding: 15px 0; border-top: 2px solid #ccff00; z-index: 1000; 
-    }
-    .nav-item { 
-        display: flex; flex-direction: column; align-items: center; font-size: 12px; 
-        color: #ccff00; font-weight: bold; text-decoration: none; 
-    }
-    .nav-item i { font-size: 18px; margin-bottom: 5px; }
-    
-    /* Partidos más compactos */
-    .partido-card { 
-        background: #0a140a; margin: 10px 15px; padding: 10px; border-radius: 6px; 
-        border: 1px solid #222; font-size: 13px; 
-    }
-    .cuota-btn { 
-        flex: 1; padding: 8px; background: #111; color: white; border: 1px solid #333; 
-        font-size: 12px; cursor: pointer; border-radius: 3px; 
-    }
-</style>
-
+        body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 80px; }
+        header { background: #000; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        
+        .banner { 
+            width: 100%; height: 250px; 
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=2000&auto=format&fit=crop'); 
+            background-size: cover; background-position: center; position: relative; padding: 20px; box-sizing: border-box; 
+        }
+        
+        /* Menú Inferior Fijo */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: #000; display: flex; justify-content: space-around; 
+            align-items: center; border-top: 2px solid #222; z-index: 1000; 
+        }
+        .nav-item { 
+            display: flex; flex-direction: column; align-items: center; 
+            font-size: 11px; color: #fff; text-decoration: none; font-weight: bold;
+        }
+        
+        /* Cajero Modal */
+        #cajero-modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; box-sizing: border-box;
+        }
+    </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">CUBAN<span style="color: #ccff00;">BET</span></div>
-        <div class="saldo">$0.00</div>
+        <div style="font-weight: 900; font-size: 20px;">CUBAN<span style="color: #ccff00;">BET</span></div>
+        <div style="background: #111; padding: 5px 10px; color: #ccff00; font-weight: bold; border-radius: 4px;">$0.00</div>
     </header>
-    <!-- Barra de búsqueda -->
-<div style="padding: 15px;">
-    <input type="text" id="buscador" placeholder="Buscar equipo o liga..." 
-    style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: white; border-radius: 4px;">
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const container = document.getElementById('partidos-container');
-        
-        if (typeof misPartidos !== 'undefined') {
-            container.innerHTML = misPartidos.map(p => {
-                // Aquí determinamos si el partido está activo o cerrado
-                const esActivo = p.estado === "activo";
-                const botonesDisabled = esActivo ? "" : "disabled style='opacity:0.3; cursor:not-allowed;'";
-
-                return `
-                    <div class="partido-card">
-                        <div style="display: flex; justify-content: space-between; color: #888; margin-bottom: 5px;">
-                            <span style="font-size: 10px;">${p.campeonato}</span>
-                            <span style="font-size: 10px;">${p.hora}</span>
-                        </div>
-                        <div style="font-weight: bold; margin: 5px 0;">${p.local} VS ${p.visitante}</div>
-                        <div style="display: flex; gap: 5px; margin-top: 10px;">
-                            <button class="cuota-btn" ${botonesDisabled}>1: ${p.cuota1}</button>
-                            <button class="cuota-btn" ${botonesDisabled}>X: ${p.cuotaX}</button>
-                            <button class="cuota-btn" ${botonesDisabled}>2: ${p.cuota2}</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-    });
-</script>
-
-
 
     <div class="banner">
-        <div class="banner-text">
-            <h1>TODO TU DINERO<br>ESTÁ EN EL JUEGO</h1>
-            <button class="btn-apuesta">APUESTA AHORA</button>
-        </div>
+        <h1 style="font-size: 24px; margin: 0;">TODO TU DINERO<br>ESTÁ EN EL JUEGO</h1>
+        <button style="background: #ccff00; border: none; padding: 10px 20px; font-weight: bold; margin-top: 15px;">APUESTA AHORA</button>
     </div>
 
-    <div id="partidos-container"></div>
+    <div id="partidos-container" style="padding: 10px;"></div>
 
-    <!-- Menú Inferior -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item"><i class="fas fa-home"></i>INICIO</a>
-        <a href="#" class="nav-item"><i class="fas fa-gamepad"></i>MINIJUEGOS</a>
-        <a href="#" class="nav-item" onclick="document.getElementById('cajero-modal').style.display='block'"><i class="fas fa-wallet"></i>CAJERO</a>
-        <a href="#" class="nav-item"><i class="fas fa-ticket"></i>BOLETO</a>
-        <a href="#" class="nav-item"><i class="fas fa-user"></i>PERFIL</a>
+        <a href="#" class="nav-item"><i class="fas fa-home" style="font-size: 18px; margin-bottom: 5px;"></i>INICIO</a>
+        <a href="#" class="nav-item"><i class="fas fa-gamepad" style="font-size: 18px; margin-bottom: 5px;"></i>MINIJUEGOS</a>
+        <a href="#" class="nav-item" onclick="document.getElementById('cajero-modal').style.display='flex'"><i class="fas fa-wallet" style="font-size: 18px; margin-bottom: 5px; color:#ccff00;"></i>CAJERO</a>
+        <a href="#" class="nav-item"><i class="fas fa-ticket" style="font-size: 18px; margin-bottom: 5px;"></i>BOLETO</a>
+        <a href="#" class="nav-item"><i class="fas fa-user" style="font-size: 18px; margin-bottom: 5px;"></i>PERFIL</a>
     </nav>
 
-    <!-- Modal Cajero -->
-    <div id="cajero-modal">
+    <div id="cajero-modal" style="flex-direction:column; justify-content:center; align-items:center;">
         <h2 style="color: #ccff00;">SOLICITAR DEPÓSITO</h2>
         <p>Tarjeta: 9238 1299 7498 4082</p>
-        <a href="https://t.me/tu_usuario_de_telegram" target="_blank" style="text-decoration:none;">
-            <button style="width:100%; padding:15px; background:#ccff00; border:none; font-weight:bold;">VERIFICAR EN TELEGRAM</button>
-        </a>
-        <button onclick="document.getElementById('cajero-modal').style.display='none'" style="margin-top:20px; background:transparent; color:white; border:1px solid #555; width:100%; padding:10px;">CERRAR</button>
+        <button onclick="document.getElementById('cajero-modal').style.display='none'" style="margin-bottom:20px; background:transparent; color:#fff; border:1px solid #555; padding:10px 20px;">CERRAR</button>
     </div>
 
     <script src="js/datos.js"></script>
-    <script>
-    // Aseguramos que el script se ejecute cuando cargue la página
-    document.addEventListener("DOMContentLoaded", function() {
-        const container = document.getElementById('partidos-container');
-        
-        // Verificamos si los datos existen
-        if (typeof misPartidos !== 'undefined') {
-            container.innerHTML = misPartidos.map(p => `
-                <div style="background: #0a140a; margin: 15px; padding: 15px; border-radius: 8px; border: 1px solid #222;">
-                    <div style="color: #ccff00; font-size: 10px; margin-bottom: 5px;">${p.campeonato}</div>
-                    <div style="font-weight: bold; font-size: 16px; margin-bottom: 15px;">${p.local} VS ${p.visitante}</div>
-                    <div style="display: flex; gap: 10px;">
-                        <button style="flex: 1; padding: 10px; background: #111; color: white; border: 1px solid #333; cursor: pointer;">${p.cuota1}</button>
-                        <button style="flex: 1; padding: 10px; background: #111; color: white; border: 1px solid #333; cursor: pointer;">${p.cuotaX}</button>
-                        <button style="flex: 1; padding: 10px; background: #111; color: white; border: 1px solid #333; cursor: pointer;">${p.cuota2}</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-    });
-</script>
-
 </body>
 </html>
-
