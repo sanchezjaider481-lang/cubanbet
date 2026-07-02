@@ -60,37 +60,21 @@
     <script src="js/datos.js"></script>
     <script>
         function renderPartidos(filtro = "") {
-            const container = document.getElementById('partidos-container');
-            if (typeof misPartidos === 'undefined') return;
+    const container = document.getElementById('partidos-container');
+    if (typeof misPartidos === 'undefined') return;
 
-            const ahora = new Date();
-            
-            container.innerHTML = misPartidos.filter(p => 
-                p.local.toLowerCase().includes(filtro.toLowerCase()) || 
-                p.campeonato.toLowerCase().includes(filtro.toLowerCase())
-            ).map(p => {
-                const [horas, mins] = p.hora.split(':');
-                const horaInicio = new Date();
-                horaInicio.setHours(horas, mins, 0);
-                const estaCerrado = ahora >= horaInicio;
-                const disabledAttr = estaCerrado ? "disabled style='opacity:0.3; cursor:not-allowed;'" : "";
+    container.innerHTML = misPartidos.map(p => `
+        <div class="partido-card">
+            <div style="font-weight: bold;">${p.local} VS ${p.visitante}</div>
+            <div style="display: flex; gap: 10px;">
+                <button class="cuota-btn" onclick="seleccionar('${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
+                <button class="cuota-btn" onclick="seleccionar('Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
+                <button class="cuota-btn" onclick="seleccionar('${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
+            </div>
+        </div>
+    `).join('');
+}
 
-                return `
-                    <div class="partido-card">
-                        <div style="font-size: 10px; color: #888; margin-bottom: 5px;">${p.campeonato} ${estaCerrado ? '- CERRADO' : '- ' + p.hora}</div>
-                        <div style="font-weight: bold; margin-bottom: 15px;">${p.local} VS ${p.visitante}</div>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
-                            <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
-                            <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
-                        </div>
-                        <div class="ver-mercados" onclick="alert('Cargando más mercados para ${p.local}...')">
-                            <i class="fas fa-chevron-down"></i> + Ver más mercados
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
 
         // Función base para el calculador de apuestas
         function seleccionar(equipo, cuota) {
