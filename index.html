@@ -6,16 +6,15 @@
     <title>CUBANBET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 80px; }
+        body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 90px; }
         .banner { width: 100%; height: 200px; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; padding: 20px; box-sizing: border-box; }
-        .partido-card { background: #0a140a; margin: 10px 15px; padding: 12px; border-radius: 6px; border: 1px solid #222; }
-        .cuota-btn { padding: 8px; background: #111; color: white; border: 1px solid #333; cursor: pointer; border-radius: 3px; flex: 1; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 2px solid #ccff00; }
+        .partido-card { background: #0a140a; margin: 10px 15px; padding: 15px; border-radius: 8px; border: 1px solid #222; }
+        .cuota-btn { flex: 1; padding: 10px; background: #111; color: white; border: 1px solid #333; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 2px solid #ccff00; z-index: 1000; }
         .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ccff00; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
-<div id="partidos-container"></div>
 
     <header style="padding: 15px; background: #000; display: flex; justify-content: space-between;">
         <div style="font-weight: 900; font-size: 18px;">CUBAN<span style="color: #ccff00;">BET</span></div>
@@ -44,24 +43,25 @@
     <script>
         function renderPartidos(filtro = "") {
             const container = document.getElementById('partidos-container');
-            const ahora = new Date(); // Hora actual del dispositivo (Cuba)
+            if (typeof misPartidos === 'undefined') return;
+
+            const ahora = new Date();
             
             container.innerHTML = misPartidos.filter(p => 
                 p.local.toLowerCase().includes(filtro.toLowerCase()) || 
                 p.campeonato.toLowerCase().includes(filtro.toLowerCase())
             ).map(p => {
-                // Lógica de cierre: comparamos hora actual vs hora inicio
                 const [horas, mins] = p.hora.split(':');
                 const horaInicio = new Date();
                 horaInicio.setHours(horas, mins, 0);
                 const estaCerrado = ahora >= horaInicio;
-                const disabledAttr = estaCerrado ? "disabled style='opacity:0.3'" : "";
+                const disabledAttr = estaCerrado ? "disabled style='opacity:0.3; cursor:not-allowed;'" : "";
 
                 return `
                     <div class="partido-card">
-                        <div style="font-size: 10px; color: #888;">${p.campeonato} - ${p.hora} ${estaCerrado ? '(CERRADO)' : ''}</div>
-                        <div style="font-weight: bold; margin: 5px 0;">${p.local} VS ${p.visitante}</div>
-                        <div style="display: flex; gap: 5px;">
+                        <div style="font-size: 10px; color: #888; margin-bottom: 5px;">${p.campeonato} ${estaCerrado ? '- CERRADO' : ''}</div>
+                        <div style="font-weight: bold; margin-bottom: 15px;">${p.local} VS ${p.visitante}</div>
+                        <div style="display: flex; gap: 10px;">
                             <button class="cuota-btn" ${disabledAttr}>1: ${p.cuota1}</button>
                             <button class="cuota-btn" ${disabledAttr}>X: ${p.cuotaX}</button>
                             <button class="cuota-btn" ${disabledAttr}>2: ${p.cuota2}</button>
@@ -73,44 +73,7 @@
 
         document.getElementById('buscador').addEventListener('input', (e) => renderPartidos(e.target.value));
         renderPartidos();
-    <script>
-    <script>
-    // Este pequeño script busca el hueco "partidos-container" y rellena los datos
-    document.addEventListener("DOMContentLoaded", function() {
-        const container = document.getElementById('partidos-container');
-        if (typeof misPartidos !== 'undefined' && container) {
-            container.innerHTML = misPartidos.map(p => `
-                <div class="partido-card">
-                    <div style="font-size: 10px; color: #888;">${p.campeonato}</div>
-                    <div style="font-weight: bold; margin: 5px 0;">${p.local} VS ${p.visitante}</div>
-                    <div style="display: flex; gap: 5px;">
-                        <button class="cuota-btn">1: ${p.cuota1}</button>
-                        <button class="cuota-btn">X: ${p.cuotaX}</button>
-                        <button class="cuota-btn">2: ${p.cuota2}</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-    });
-</script>
-<script>
-    const container = document.getElementById('partidos-container');
-    
-    // Verificamos que misPartidos exista y el contenedor también
-    if (typeof misPartidos !== 'undefined' && container) {
-        container.innerHTML = misPartidos.map(p => `
-            <div class="partido-card" style="background:#0a140a; margin:15px; padding:15px; border-radius:8px; border:1px solid #222;">
-                <div style="color:#ccff00; font-size:10px; margin-bottom:5px;">${p.campeonato}</div>
-                <div style="font-weight:bold; font-size:16px; margin-bottom:15px;">${p.local} VS ${p.visitante}</div>
-                <div style="display:flex; gap:10px;">
-                    <button class="cuota-btn" style="flex:1; padding:10px; background:#111; color:white; border:1px solid #333; cursor:pointer;">${p.cuota1}</button>
-                    <button class="cuota-btn" style="flex:1; padding:10px; background:#111; color:white; border:1px solid #333; cursor:pointer;">${p.cuotaX}</button>
-                    <button class="cuota-btn" style="flex:1; padding:10px; background:#111; color:white; border:1px solid #333; cursor:pointer;">${p.cuota2}</button>
-                </div>
-            </div>
-        `).join('');
-    }
-</script>
-
+    </script>
 </body>
 </html>
+
