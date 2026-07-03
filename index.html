@@ -3,104 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CUBANBET</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { margin: 0; background-color: #050a05; font-family: sans-serif; color: white; padding-bottom: 90px; }
-        .banner { width: 100%; height: 200px; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; padding: 20px; box-sizing: border-box; }
-        .partido-card { background: #0a140a; margin: 10px 15px; padding: 15px; border-radius: 8px; border: 1px solid #222; }
-        .cuota-btn { flex: 1; padding: 10px; background: #111; color: white; border: 1px solid #333; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 15px 0; border-top: 2px solid #ccff00; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ccff00; text-decoration: none; font-weight: bold; }
-        /* Nuevo estilo para ver mercados */
-        .ver-mercados { text-align: center; color: #ccff00; font-size: 12px; margin-top: 10px; cursor: pointer; padding-top: 5px; border-top: 1px solid #222; }
-        /* Estilo para el Boleto Flotante */
-#ticket-flotante {
-    position: fixed;
-    bottom: 80px;
-    width: 95%;
-    left: 2.5%;
-    background: #1a1a1a;
-    border: 2px solid #ccff00;
-    border-radius: 10px;
-    padding: 15px;
-    display: none;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
-    z-index: 2000;
-}
-.btn-apostar { background: #ccff00; color: #000; width: 100%; padding: 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
-
-    </style>
+    <title>CubanBet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#22C55E', // Tu verde claro profesional
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-gray-50 pb-20"> <!-- pb-20 para que el contenido no se tape con el menú -->
 
-    <header style="padding: 15px; background: #000; display: flex; justify-content: space-between;">
-        <div style="font-weight: 900; font-size: 18px;">CUBAN<span style="color: #ccff00;">BET</span></div>
-        <div style="color: #ccff00; font-weight: bold;">$0.00</div>
+    <!-- Aquí irá tu contenido -->
+    <header class="bg-white p-4 shadow-sm">
+        <h1 class="text-2xl font-bold text-primary">CubanBet</h1>
     </header>
 
-    <div class="banner">
-        <h1 style="font-size: 20px;">TODO TU DINERO<br>ESTÁ EN EL JUEGO</h1>
-    </div>
-
-    <div style="padding: 15px;">
-        <input type="text" id="buscador" placeholder="Buscar liga o equipo..." style="width: 100%; padding: 10px; background: #111; border: 1px solid #333; color: white; border-radius: 4px;">
-    </div>
-
-    <div id="partidos-container"></div>
-
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item"><i class="fas fa-home"></i>INICIO</a>
-        <a href="#" class="nav-item"><i class="fas fa-gamepad"></i>MINIJUEGOS</a>
-        <a href="#" class="nav-item"><i class="fas fa-wallet"></i>CAJERO</a>
-        <a href="#" class="nav-item"><i class="fas fa-ticket"></i>BOLETO</a>
-        <a href="#" class="nav-item"><i class="fas fa-user"></i>PERFIL</a>
+    <!-- Barra de navegación inferior -->
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3">
+        <button class="text-primary">Inicio</button>
+        <button class="text-gray-500">Juegos</button>
+        <button class="text-gray-500">Deportes</button>
+        <button class="text-gray-500">Boleta</button>
+        <button class="text-gray-500">Perfil</button>
     </nav>
-
-    <script src="js/datos.js"></script>
-    <script>
-    // 1. Verificamos que los datos hayan cargado
-    window.onload = function() {
-        console.log("Datos cargados:", typeof misPartidos);
-        if (typeof misPartidos !== 'undefined') {
-            renderPartidos();
-        } else {
-            console.error("El archivo datos.js no se ha cargado correctamente.");
-        }
-    };
-
-    let boleto = [];
-
-    function renderPartidos() {
-        const container = document.getElementById('partidos-container');
-        if (!container) return;
-
-        container.innerHTML = misPartidos.map(p => `
-            <div class="partido-card" style="background:#1a1a1a; padding:15px; margin:10px; border-radius:10px; color:white;">
-                <div style="font-weight:bold; margin-bottom:10px;">${p.local} VS ${p.visitante}</div>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="seleccionar('${p.id}', '${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
-                    <button onclick="seleccionar('${p.id}', 'Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
-                    <button onclick="seleccionar('${p.id}', '${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function seleccionar(idPartido, equipo, cuota) {
-        alert("Seleccionaste: " + equipo + " - Cuota: " + cuota);
-        // Aquí irá la lógica del boleto después
-    }
-</script>
-
-
-    <div style="display: flex; gap: 10px;">
-    <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.id}', '${p.local}', ${p.cuota1})">1: ${p.cuota1}</button>
-    <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.id}', 'Empate', ${p.cuotaX})">X: ${p.cuotaX}</button>
-    <button class="cuota-btn" ${disabledAttr} onclick="seleccionar('${p.id}', '${p.visitante}', ${p.cuota2})">2: ${p.cuota2}</button>
-</div>
-
-
 
 </body>
 </html>
