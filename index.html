@@ -94,20 +94,32 @@
 
     <!-- BARRA NAVEGACIÓN -->
     <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-2 py-3 shadow-lg">
-        <button onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
-        <button onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
-        <button onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
-        <button onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold">Boleta</button>
-        <button onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
-    </nav>
+    <button id="btn-inicio" onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
+    <button id="btn-minijuegos" onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
+    <button id="btn-deportes" onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
+    <button id="btn-boleta" onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold">Boleta</button>
+    <button id="btn-perfil" onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
+</nav>
+
 
     <script>
-        function cambiarTab(id) {
-            // Ocultar todo
-            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-            // Mostrar seleccionado
-            document.getElementById(id).classList.add('active');
-        }
-    </script>
+    function cambiarTab(id) {
+        // 1. Ocultar todas las secciones de contenido
+        document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+        
+        // 2. Mostrar la sección seleccionada
+        document.getElementById(id).classList.add('active');
+
+        // 3. Resetear todos los botones a color gris
+        const botones = ['btn-inicio', 'btn-minijuegos', 'btn-deportes', 'btn-boleta', 'btn-perfil'];
+        botones.forEach(btnId => {
+            document.getElementById(btnId).classList.replace('text-green-600', 'text-gray-500');
+        });
+
+        // 4. Poner el botón seleccionado en verde
+        document.getElementById('btn-' + id).classList.replace('text-gray-500', 'text-green-600');
+    }
+</script>
+
 </body>
 </html>
