@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "liga": "LIGA ESPAÑOLA",
+    "equipoA": "Real Madrid",
+    "equipoB": "Barcelona",
+    "marcador": "2 - 1",
+    "cuota1": "2.10",
+    "cuotaX": "3.40",
+    "cuota2": "3.20",
+    "estado": "EN VIVO"
+  },
+  {
+    "id": 2,
+    "liga": "PREMIER LEAGUE",
+    "equipoA": "Liverpool",
+    "equipoB": "Chelsea",
+    "marcador": "0 - 0",
+    "cuota1": "1.80",
+    "cuotaX": "3.80",
+    "cuota2": "4.10",
+    "estado": "PRE-PARTIDO"
+  }
+]
