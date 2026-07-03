@@ -6,32 +6,35 @@
     <title>CubanBet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#22C55E', // Tu verde claro profesional
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { primary: '#22C55E' } } } }
     </script>
 </head>
-<body class="bg-gray-50 pb-20"> <!-- pb-20 para que el contenido no se tape con el menú -->
+<body class="bg-gray-50 pb-20">
 
-    <!-- Aquí irá tu contenido -->
-    <header class="bg-white p-4 shadow-sm">
-        <h1 class="text-2xl font-bold text-primary">CubanBet</h1>
-    </header>
+    <!-- SECCIONES DE CONTENIDO -->
+    <main id="content" class="p-4">
+        <section id="inicio"><h1>Inicio</h1></section>
+        <section id="minijuegos" class="hidden"><h1>Minijuegos</h1></section>
+        <section id="deportes" class="hidden"><h1>Deportes</h1></section>
+        <section id="boleta" class="hidden"><h1>Boleta</h1></section>
+        <section id="perfil" class="hidden"><h1>Perfil</h1></section>
+    </main>
 
-    <!-- Barra de navegación inferior -->
+    <!-- BARRA DE NAVEGACIÓN -->
     <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3">
-        <button class="text-primary">Inicio</button>
-        <button class="text-gray-500">Juegos</button>
-        <button class="text-gray-500">Deportes</button>
-        <button class="text-gray-500">Boleta</button>
-        <button class="text-gray-500">Perfil</button>
+        <button onclick="mostrar('inicio')" class="text-primary">Inicio</button>
+        <button onclick="mostrar('minijuegos')" class="text-gray-500">Juegos</button>
+        <button onclick="mostrar('deportes')" class="text-gray-500">Deportes</button>
+        <button onclick="mostrar('boleta')" class="text-gray-500">Boleta</button>
+        <button onclick="mostrar('perfil')" class="text-gray-500">Perfil</button>
     </nav>
 
+    <!-- Script básico para cambiar secciones -->
+    <script>
+        function mostrar(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
