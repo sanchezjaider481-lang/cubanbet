@@ -4,36 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CubanBet</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { theme: { extend: { colors: { primary: '#22C55E' } } } }
-    </script>
+    <style>
+        /* Asegurar que el contenido ocupe la altura correcta */
+        body { margin: 0; font-family: sans-serif; background-color: #f3f4f6; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
 </head>
-<body class="bg-gray-50 pb-20">
+<body>
 
-    <!-- SECCIONES DE CONTENIDO -->
-    <main id="content" class="p-4">
-        <section id="inicio"><h1>Inicio</h1></section>
-        <section id="minijuegos" class="hidden"><h1>Minijuegos</h1></section>
-        <section id="deportes" class="hidden"><h1>Deportes</h1></section>
-        <section id="boleta" class="hidden"><h1>Boleta</h1></section>
-        <section id="perfil" class="hidden"><h1>Perfil</h1></section>
+    <!-- CONTENIDO -->
+    <main id="content" class="p-4 pb-20">
+        <section id="inicio" class="tab-content active">
+            <h2 class="text-2xl font-bold text-green-600">Inicio</h2>
+            <p class="text-gray-600">Bienvenido a CubanBet</p>
+        </section>
+        <section id="minijuegos" class="tab-content">
+            <h2 class="text-2xl font-bold text-green-600">Minijuegos</h2>
+        </section>
+        <section id="deportes" class="tab-content">
+            <h2 class="text-2xl font-bold text-green-600">Deportes</h2>
+        </section>
+        <section id="boleta" class="tab-content">
+            <h2 class="text-2xl font-bold text-green-600">Boleta</h2>
+        </section>
+        <section id="perfil" class="tab-content">
+            <h2 class="text-2xl font-bold text-green-600">Perfil</h2>
+        </section>
     </main>
 
-    <!-- BARRA DE NAVEGACIÓN -->
-    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3">
-        <button onclick="mostrar('inicio')" class="text-primary">Inicio</button>
-        <button onclick="mostrar('minijuegos')" class="text-gray-500">Juegos</button>
-        <button onclick="mostrar('deportes')" class="text-gray-500">Deportes</button>
-        <button onclick="mostrar('boleta')" class="text-gray-500">Boleta</button>
-        <button onclick="mostrar('perfil')" class="text-gray-500">Perfil</button>
+    <!-- BARRA NAVEGACIÓN -->
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-2 py-3 shadow-lg">
+        <button onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
+        <button onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
+        <button onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
+        <button onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold">Boleta</button>
+        <button onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
     </nav>
 
-    <!-- Script básico para cambiar secciones -->
     <script>
-        function mostrar(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+        function cambiarTab(id) {
+            // Ocultar todo
+            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+            // Mostrar seleccionado
+            document.getElementById(id).classList.add('active');
         }
     </script>
 </body>
