@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CubanBet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; font-family: sans-serif; background-color: #f9fafb; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <main id="content">
+        
+        <section id="inicio" class="tab-content active p-4">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-green-600">CubanBet</h1>
+                <div class="bg-gray-200 px-3 py-1 rounded-full text-sm font-bold">CUP 0.00</div>
+            </div>
+            <div class="mb-6">
+                <input type="text" placeholder="Buscar equipos o ligas..." class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:border-green-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-gray-500 text-xs">Apuestas Activas</p>
+                    <p class="text-xl font-bold">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <p class="text-gray-500 text-xs">Ganancia Potencial</p>
+                    <p class="text-xl font-bold text-green-600">CUP 0.00</p>
+                </div>
+            </div>
+            <h3 class="font-bold text-gray-700 mb-3">Promociones</h3>
+            <div class="bg-green-100 p-4 rounded-xl border border-green-200">
+                <p class="text-green-800 text-sm font-semibold">20% de reembolso instantáneo</p>
+                <p class="text-green-600 text-xs">Mejora tus apuestas con devoluciones.</p>
+            </div>
+        </section>
+
+        <section id="minijuegos" class="tab-content p-4">
+            <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
+                    <span class="text-4xl mb-2">🎰</span>
+                    <p class="font-bold text-gray-700">Ruleta</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
+                    <span class="text-4xl mb-2">🎲</span>
+                    <p class="font-bold text-gray-700">Dados</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
+                    <span class="text-4xl mb-2">🃏</span>
+                    <p class="font-bold text-gray-700">Cartas</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
+                    <span class="text-4xl mb-2">⚽</span>
+                    <p class="font-bold text-gray-700">Penaltis</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="deportes" class="tab-content p-4">
+            <h2 class="text-2xl font-bold text-green-600 mb-4">Deportes</h2>
+            <div class="flex space-x-2 mb-6 overflow-x-auto pb-2">
+                <button class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Fútbol</button>
+                <button class="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Béisbol</button>
+                <button class="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Baloncesto</button>
+                <button class="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Tenis</button>
+            </div>
+            <div id="lista-partidos" class="space-y-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs text-gray-400 font-bold">LIGA ESPAÑOLA</span>
+                        <span class="text-xs text-green-600 font-bold">EN VIVO</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <p class="font-bold">Real Madrid</p>
+                        <p class="text-xl font-black">2 - 1</p>
+                        <p class="font-bold">Barcelona</p>
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-2">
+                        <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: 2.10</button>
+                        <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: 3.40</button>
+                        <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">2: 3.20</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="boleta" class="tab-content p-4">
+            <h2 class="text-2xl font-bold text-green-600 mb-6">Tu Boleta</h2>
+            <div id="lista-boleta" class="space-y-4">
+                <p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>
+            </div>
+            <div class="mt-8 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
+                <div class="flex justify-between mb-2"> <span class="text-gray-600">Total cuota:</span> <span class="font-bold">0.00</span> </div>
+                <div class="flex justify-between mb-4"> <span class="text-gray-600">Ganancia estimada:</span> <span class="text-green-600 font-bold">CUP 0.00</span> </div>
+                <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Realizar Apuesta</button>
+            </div>
+        </section>
+
+        <section id="perfil" class="tab-content p-4">
+            <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 text-center">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">👤</div>
+                <h3 class="font-bold text-lg">Usuario</h3>
+                <p class="text-gray-500 text-sm">ID: <span id="user-id">CARGANDO...</span></p>
+            </div>
+            <div class="space-y-3">
+                <button class="w-full bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center text-gray-700 font-bold">Historial de Apuestas <span>›</span></button>
+                <button class="w-full bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center text-gray-700 font-bold">Recargar Saldo <span>›</span></button>
+                <button class="w-full bg-white p-4 rounded-xl border border-red-50 text-red-600 font-bold flex justify-between items-center">Cerrar Sesión <span>›</span></button>
+            </div>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-2 py-3 shadow-lg">
+        <button id="btn-inicio" onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
+        <button id="btn-minijuegos" onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
+        <button id="btn-deportes" onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
+        <button id="btn-boleta" onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold">Boleta</button>
+        <button id="btn-perfil" onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
+    </nav>
+
+    <script>
+        function cambiarTab(id) {
+            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const botones = ['btn-inicio', 'btn-minijuegos', 'btn-deportes', 'btn-boleta', 'btn-perfil'];
+            botones.forEach(btnId => {
+                document.getElementById(btnId).classList.replace('text-green-600', 'text-gray-500');
+            });
+            document.getElementById('btn-' + id).classList.replace('text-gray-500', 'text-green-600');
+        }
+    </script>
+</body>
+</html>
