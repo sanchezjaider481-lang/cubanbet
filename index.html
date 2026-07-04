@@ -72,15 +72,7 @@
             </div>
             <div id="lista-partidos" class="space-y-4">
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs text-gray-400 font-bold">LIGA ESPAÑOLA</span>
-                        <span class="text-xs text-green-600 font-bold">EN VIVO</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <p class="font-bold">Real Madrid</p>
-                        <p class="text-xl font-black">2 - 1</p>
-                        <p class="font-bold">Barcelona</p>
-                    </div>
+                
                     <div class="mt-4 grid grid-cols-3 gap-2">
                         <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: 2.10</button>
                         <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: 3.40</button>
@@ -126,15 +118,50 @@
     </nav>
 
     <script>
-        function cambiarTab(id) {
-            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            const botones = ['btn-inicio', 'btn-minijuegos', 'btn-deportes', 'btn-boleta', 'btn-perfil'];
-            botones.forEach(btnId => {
-                document.getElementById(btnId).classList.replace('text-green-600', 'text-gray-500');
-            });
-            document.getElementById('btn-' + id).classList.replace('text-gray-500', 'text-green-600');
+    // Función para cambiar pestañas (la que ya teníamos)
+    function cambiarTab(id) {
+        document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        const botones = ['btn-inicio', 'btn-minijuegos', 'btn-deportes', 'btn-boleta', 'btn-perfil'];
+        botones.forEach(btnId => {
+            document.getElementById(btnId).classList.replace('text-green-600', 'text-gray-500');
+        });
+        document.getElementById('btn-' + id).classList.replace('text-gray-500', 'text-green-600');
+    }
+
+    // NUEVA FUNCIÓN: Cargar partidos desde el JSON
+    async function cargarPartidos() {
+        try {
+            const respuesta = await fetch('partidos.json');
+            const partidos = await respuesta.json();
+            const contenedor = document.getElementById('lista-partidos');
+            
+            contenedor.innerHTML = partidos.map(p => `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs text-gray-400 font-bold">${p.liga}</span>
+                        <span class="text-xs ${p.estado === 'EN VIVO' ? 'text-green-600' : 'text-gray-500'} font-bold">${p.estado}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <p class="font-bold">${p.equipoA}</p>
+                        <p class="text-xl font-black">${p.marcador}</p>
+                        <p class="font-bold">${p.equipoB}</p>
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-2">
+                        <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: ${p.cuota1}</button>
+                        <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: ${p.cuotaX}</button>
+                        <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">2: ${p.cuota2}</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error("Error cargando partidos:", error);
         }
-    </script>
+    }
+
+    // Ejecutar al cargar la página
+    cargarPartidos();
+</script>
+
 </body>
 </html>
