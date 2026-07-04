@@ -133,16 +133,10 @@
         <script>
         // Lógica de carga (Splash Screen)
         window.addEventListener('load', () => {
-    // El tiempo está definido aquí en milisegundos (3000 = 3 segundos)
-    setTimeout(() => {
-        const loader = document.getElementById('loader');
-        if (loader) {
-            loader.style.opacity = '0';
-            loader.style.transition = 'opacity 0.5s ease';
-            setTimeout(() => { loader.style.display = 'none'; }, 500);
-        }
-    }, 3000); 
+    console.log("La página cargó correctamente");
+    // Ocultaremos esto manualmente luego
 });
+
 
 
         // Cambio de pestañas
