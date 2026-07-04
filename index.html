@@ -133,13 +133,18 @@
         document.getElementById('btn-' + id).classList.replace('text-gray-500', 'text-green-600');
     }
 window.addEventListener('load', () => {
-    const loader = document.getElementById('loader');
-    loader.style.opacity = '0';
-    loader.style.transition = 'opacity 0.5s ease';
-    setTimeout(() => {
-        loader.style.display = 'none';
-    }, 500);
-});
+        // Establecemos un tiempo de espera de 3000ms (3 segundos)
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            loader.style.transition = 'opacity 0.5s ease';
+            
+            // Eliminamos el loader del DOM después de la transición
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        }, 3000); // <-- ESTE NÚMERO ES EL TIEMPO EN MILISEGUNDOS (3000 = 3 segundos)
+    });
 
     // NUEVA FUNCIÓN: Cargar partidos desde el JSON
     async function cargarPartidos() {
