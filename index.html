@@ -163,11 +163,10 @@
                             <p class="font-bold">${p.equipoB}</p>
                         </div>
                         <div class="mt-4 grid grid-cols-3 gap-2">
-                            <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: ${p.cuota1}</button>
-                            <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: ${p.cuotaX}</button>
-                            <button class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">2: ${p.cuota2}</button>
-                        </div>
-                    </div>
+    <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '1', ${p.cuota1})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: ${p.cuota1}</button>
+    <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', 'X', ${p.cuotaX})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: ${p.cuotaX}</button>
+    <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '2', ${p.cuota2})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">2: ${p.cuota2}</button>
+</div>
                 `).join('');
             } catch (error) {
                 console.error("Error cargando partidos:", error);
