@@ -13,116 +13,61 @@
 </head>
 <body class="pb-20">
 
-    <!-- PANTALLA DE CARGA -->
     <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
         <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h1 class="text-3xl font-black text-green-600 tracking-tighter">CubanBet</h1>
     </div>
 
-    <!-- SECCIONES DE CONTENIDO -->
     <main id="content">
-        
-        <!-- INICIO -->
         <section id="inicio" class="tab-content active p-4">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-green-600">CubanBet</h1>
                 <div class="bg-gray-200 px-3 py-1 rounded-full text-sm font-bold">CUP 0.00</div>
             </div>
-            <div class="mb-6">
-                <input type="text" placeholder="Buscar equipos o ligas..." class="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:border-green-500">
-            </div>
+            <div class="mb-6"><input type="text" placeholder="Buscar..." class="w-full p-3 rounded-lg border border-gray-300"></div>
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <p class="text-gray-500 text-xs">Apuestas Activas</p>
-                    <p class="text-xl font-bold">0</p>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <p class="text-gray-500 text-xs">Ganancia Potencial</p>
-                    <p class="text-xl font-bold text-green-600">CUP 0.00</p>
-                </div>
-            </div>
-            <h3 class="font-bold text-gray-700 mb-3">Promociones</h3>
-            <div class="bg-green-100 p-4 rounded-xl border border-green-200">
-                <p class="text-green-800 text-sm font-semibold">20% de reembolso instantáneo</p>
-                <p class="text-green-600 text-xs">Mejora tus apuestas con devoluciones.</p>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Apuestas Activas</p><p class="text-xl font-bold">0</p></div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Ganancia Potencial</p><p class="text-xl font-bold text-green-600">CUP 0.00</p></div>
             </div>
         </section>
 
-        <!-- MINIJUEGOS -->
         <section id="minijuegos" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos</h2>
             <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
-                    <span class="text-4xl mb-2">🎰</span>
-                    <p class="font-bold text-gray-700">Ruleta</p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
-                    <span class="text-4xl mb-2">🎲</span>
-                    <p class="font-bold text-gray-700">Dados</p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
-                    <span class="text-4xl mb-2">🃏</span>
-                    <p class="font-bold text-gray-700">Cartas</p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center transition-transform hover:scale-105">
-                    <span class="text-4xl mb-2">⚽</span>
-                    <p class="font-bold text-gray-700">Penaltis</p>
-                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">🎰<p class="font-bold">Ruleta</p></div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">🎲<p class="font-bold">Dados</p></div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">🃏<p class="font-bold">Cartas</p></div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">⚽<p class="font-bold">Penaltis</p></div>
             </div>
         </section>
 
-        <!-- DEPORTES -->
         <section id="deportes" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-4">Deportes</h2>
-            <div class="flex space-x-2 mb-6 overflow-x-auto pb-2">
-                <button class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Fútbol</button>
-                <button class="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Béisbol</button>
-                <button class="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Baloncesto</button>
-                <button class="bg-gray-200 text-gray-600 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">Tenis</button>
-            </div>
-            <!-- Los partidos se cargarán aquí automáticamente desde partidos.json -->
             <div id="lista-partidos" class="space-y-4"></div>
         </section>
 
-        <!-- BOLETA -->
-        <section <div class="mt-8 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
-    <div class="mb-4">
-        <label class="text-xs text-gray-500 font-bold uppercase">Monto a apostar (CUP)</label>
-        <input type="number" id="input-monto" placeholder="Ej: 100" oninput="actualizarBoleta()"
-               class="w-full mt-1 p-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:border-green-500 font-bold">
-    </div>
-
-    <div class="flex justify-between mb-2"> 
-        <span class="text-gray-600">Total cuota:</span> 
-        <span id="display-total-cuota" class="font-bold">0.00</span> 
-    </div>
-    <div class="flex justify-between mb-4"> 
-        <span class="text-gray-600">Ganancia estimada:</span> 
-        <span id="display-ganancia" class="text-green-600 font-bold">CUP 0.00</span> 
-    </div>
-    <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Realizar Apuesta</button>
-</div>
-
+        <section id="boleta" class="tab-content p-4">
+            <h2 class="text-2xl font-bold text-green-600 mb-6">Tu Boleta</h2>
+            <div id="lista-boleta" class="space-y-4"><p class="text-gray-500 text-center py-10">Tu boleta está vacía</p></div>
+            <div class="mt-8 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
+                <div class="mb-4">
+                    <label class="text-xs text-gray-500 font-bold uppercase">Monto a apostar (CUP)</label>
+                    <input type="number" id="input-monto" placeholder="Ej: 100" oninput="actualizarBoleta()" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border border-gray-200 font-bold">
+                </div>
+                <div class="flex justify-between mb-2"><span>Total cuota:</span><span id="display-total-cuota" class="font-bold">0.00</span></div>
+                <div class="flex justify-between mb-4"><span>Ganancia:</span><span id="display-ganancia" class="text-green-600 font-bold">CUP 0.00</span></div>
+                <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">Realizar Apuesta</button>
+            </div>
         </section>
 
-        <!-- PERFIL -->
         <section id="perfil" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6 text-center">
-                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">👤</div>
-                <h3 class="font-bold text-lg">Usuario</h3>
-                <p class="text-gray-500 text-sm">ID: <span id="user-id">CARGANDO...</span></p>
-            </div>
-            <div class="space-y-3">
-                <button class="w-full bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center text-gray-700 font-bold">Historial de Apuestas <span>›</span></button>
-                <button class="w-full bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center text-gray-700 font-bold">Recargar Saldo <span>›</span></button>
-                <button class="w-full bg-white p-4 rounded-xl border border-red-50 text-red-600 font-bold flex justify-between items-center">Cerrar Sesión <span>›</span></button>
-            </div>
+            <div class="bg-white p-6 rounded-2xl text-center mb-6">👤<h3 class="font-bold">Usuario</h3></div>
+            <button class="w-full bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
         </section>
     </main>
 
-    <!-- BARRA NAVEGACIÓN -->
-    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-2 py-3 shadow-lg">
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-4 py-3 shadow-lg">
         <button id="btn-inicio" onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
         <button id="btn-minijuegos" onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
         <button id="btn-deportes" onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
@@ -130,112 +75,67 @@
         <button id="btn-perfil" onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
     </nav>
 
-        <script>
-        // Lógica de carga (Splash Screen)
+    <script>
         window.addEventListener('load', () => {
-    console.log("La página cargó correctamente");
-    // Ocultaremos esto manualmente luego
-});
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                loader.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => { loader.style.display = 'none'; }, 500);
+            }, 3000);
+        });
 
-
-
-        // Cambio de pestañas
         function cambiarTab(id) {
             document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            const botones = ['btn-inicio', 'btn-minijuegos', 'btn-deportes', 'btn-boleta', 'btn-perfil'];
-            botones.forEach(btnId => {
-                const btn = document.getElementById(btnId);
-                if(btn) btn.classList.replace('text-green-600', 'text-gray-500');
-            });
-            const actual = document.getElementById('btn-' + id);
-            if(actual) actual.classList.replace('text-gray-500', 'text-green-600');
+            // Resaltado de botones
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-600', 'text-gray-500'));
+            document.getElementById('btn-'+id).classList.replace('text-gray-500', 'text-green-600');
         }
 
-        // Cargar partidos desde el JSON
         async function cargarPartidos() {
             try {
-                const respuesta = await fetch('partidos.json');
-                if (!respuesta.ok) throw new Error("No se pudo cargar el archivo");
-                const partidos = await respuesta.json();
-                
-                const contenedor = document.getElementById('lista-partidos');
-                if (contenedor) {
-                    contenedor.innerHTML = partidos.map(p => `
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs text-gray-400 font-bold">${p.liga}</span>
-                                <span class="text-xs ${p.estado === 'EN VIVO' ? 'text-green-600' : 'text-gray-500'} font-bold">${p.estado}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <p class="font-bold">${p.equipoA}</p>
-                                <p class="text-xl font-black">${p.marcador}</p>
-                                <p class="font-bold">${p.equipoB}</p>
-                            </div>
-                            <div class="mt-4 grid grid-cols-3 gap-2">
-                                <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '1', ${p.cuota1})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: ${p.cuota1}</button>
-                                <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', 'X', ${p.cuotaX})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: ${p.cuotaX}</button>
-                                <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '2', ${p.cuota2})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">2: ${p.cuota2}</button>
-                            </div>
+                const res = await fetch('partidos.json');
+                const p = await res.json();
+                document.getElementById('lista-partidos').innerHTML = p.map(partido => `
+                    <div class="bg-white p-4 rounded-xl border border-gray-100">
+                        <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
+                        <div class="grid grid-cols-3 gap-2 mt-2">
+                            <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
+                            <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
+                            <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
                         </div>
-                    `).join('');
-                }
-            } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('lista-partidos').innerHTML = '<p class="text-center text-red-500">Error al cargar partidos.</p>';
-            }
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
         }
 
-        // --- LÓGICA DE BOLETA ---
         let boleta = [];
-        function agregarABoleta(equipoA, equipoB, seleccion, cuota) {
-            const idPartido = equipoA + equipoB;
-            boleta = boleta.filter(item => item.id !== idPartido);
-            boleta.push({ id: idPartido, equipoA, equipoB, seleccion, cuota: parseFloat(cuota) });
+        function agregarABoleta(a, b, sel, cuota) {
+            boleta = boleta.filter(i => i.id !== a+b);
+            boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
             actualizarBoleta();
         }
 
         function actualizarBoleta() {
-            const contenedor = document.getElementById('lista-boleta');
-                function actualizarBoleta() {
-            const contenedor = document.getElementById('lista-boleta');
-            const elTotalCuota = document.getElementById('display-total-cuota');
-            const elGanancia = document.getElementById('display-ganancia');
-            const inputMonto = document.getElementById('input-monto'); // Este es el campo nuevo
+            const cont = document.getElementById('lista-boleta');
+            const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
+            const monto = parseFloat(document.getElementById('input-monto').value) || 0;
             
-            if (boleta.length === 0) {
-                contenedor.innerHTML = '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>';
-                if(elTotalCuota) elTotalCuota.innerText = "0.00";
-                if(elGanancia) elGanancia.innerText = "CUP 0.00";
-                return;
-            }
-
-            // Multiplicación acumulada
-            const totalCuota = boleta.reduce((acc, item) => acc * item.cuota, 1);
+            cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
+                boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
             
-            // Calculamos ganancia basada en el input del usuario
-            const monto = parseFloat(inputMonto.value) || 0;
-            const ganancia = totalCuota * monto;
-
-            contenedor.innerHTML = boleta.map(item => `
-                <div class="bg-gray-50 p-3 rounded-lg flex justify-between items-center">
-                    <div><p class="text-sm font-bold">${item.equipoA} vs ${item.equipoB}</p><p class="text-xs text-green-600 font-bold">Selección: ${item.seleccion} (${item.cuota})</p></div>
-                    <button onclick="eliminarDeBoleta('${item.id}')" class="text-red-500 font-bold text-lg">×</button>
-                </div>
-            `).join('');
-
-            elTotalCuota.innerText = totalCuota.toFixed(2);
-            elGanancia.innerText = "CUP " + ganancia.toFixed(2);
+            document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
+            document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
         }
 
-
-        function eliminarDeBoleta(id) {
-            boleta = boleta.filter(item => item.id !== id);
+        function eliminar(id) {
+            boleta = boleta.filter(i => i.id !== id);
             actualizarBoleta();
         }
 
         cargarPartidos();
     </script>
-
 </body>
 </html>
+
