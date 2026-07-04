@@ -174,6 +174,38 @@
         }
 
         cargarPartidos();
+        let boleta = [];
+
+function agregarABoleta(equipoA, equipoB, seleccion, cuota) {
+    // Evitar añadir el mismo partido varias veces (regla de 1xBet: una selección por partido)
+    boleta = boleta.filter(item => item.partido !== `${equipoA} vs ${equipoB}`);
+    
+    boleta.push({ partido: `${equipoA} vs ${equipoB}`, seleccion, cuota });
+    
+    actualizarBoleta();
+    alert("¡Partido añadido a tu boleta!");
+}
+
+function actualizarBoleta() {
+    const contenedor = document.getElementById('lista-boleta');
+    const totalCuota = boleta.reduce((acc, item) => acc * item.cuota, 1);
+    
+    if (boleta.length === 0) {
+        contenedor.innerHTML = '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>';
+    } else {
+        contenedor.innerHTML = boleta.map(item => `
+            <div class="bg-gray-50 p-3 rounded-lg flex justify-between">
+                <span>${item.partido} <b>(${item.seleccion})</b></span>
+                <span class="font-bold">${item.cuota}</span>
+            </div>
+        `).join('');
+    }
+    
+    // Actualizar el resumen en el HTML (necesitamos poner IDs en esos elementos)
+    // Usaremos selectores directos para simplificar
+    document.querySelectorAll('.font-bold')[boleta.length > 0 ? 1 : 0].innerText = totalCuota.toFixed(2);
+}
+
     </script>
 </body>
 </html>
