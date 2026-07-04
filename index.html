@@ -87,18 +87,22 @@
         <!-- BOLETA -->
         <section id="boleta" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Tu Boleta</h2>
+            
             <div id="lista-boleta" class="space-y-4">
                 <p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>
             </div>
-            <div class="flex justify-between mb-2"> 
-    <span class="text-gray-600">Total cuota:</span> 
-    <span id="total-cuota" class="font-bold">0.00</span> 
-</div>
-<div class="flex justify-between mb-4"> 
-    <span class="text-gray-600">Ganancia estimada:</span> 
-    <span id="ganancia-total" class="text-green-600 font-bold">CUP 0.00</span> 
-</div>
 
+            <div class="mt-8 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
+                <div class="flex justify-between mb-2"> 
+                    <span class="text-gray-600">Total cuota:</span> 
+                    <span id="display-total-cuota" class="font-bold">0.00</span> 
+                </div>
+                <div class="flex justify-between mb-4"> 
+                    <span class="text-gray-600">Ganancia estimada:</span> 
+                    <span id="display-ganancia" class="text-green-600 font-bold">CUP 0.00</span> 
+                </div>
+                <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Realizar Apuesta</button>
+            </div>
         </section>
 
         <!-- PERFIL -->
@@ -181,29 +185,50 @@
         let boleta = [];
 
 function agregarABoleta(equipoA, equipoB, seleccion, cuota) {
-    // Evitar añadir el mismo partido varias veces (regla de 1xBet: una selección por partido)
-    boleta = boleta.filter(item => item.partido !== `${equipoA} vs ${equipoB}`);
-    
-    boleta.push({ partido: `${equipoA} vs ${equipoB}`, seleccion, cuota });
-    
-    actualizarBoleta();
-    alert("¡Partido añadido a tu boleta!");
-}
+            const idPartido = equipoA + equipoB; 
+            
+            // Elimina si ya existe para reemplazarlo (Evita duplicados)
+            boleta = boleta.filter(item => item.id !== idPartido);
+            
+            // Agrega la nueva selección
+            boleta.push({ id: idPartido, equipoA, equipoB, seleccion, cuota: parseFloat(cuota) });
+            
+            actualizarBoleta();
+        }
 
-function actualizarBoleta() {
-    const contenedor = document.getElementById('lista-boleta');
-    const totalCuota = boleta.reduce((acc, item) => acc * item.cuota, 1);
-    
-    if (boleta.length === 0) {
-        contenedor.innerHTML = '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>';
-    } else {
-        contenedor.innerHTML = boleta.map(item => `
-            <div class="bg-gray-50 p-3 rounded-lg flex justify-between">
-                <span>${item.partido} <b>(${item.seleccion})</b></span>
-                <span class="font-bold">${item.cuota}</span>
-            </div>
-        `).join('');
-    }
+        function actualizarBoleta() {
+            const contenedor = document.getElementById('lista-boleta');
+            const elTotalCuota = document.getElementById('display-total-cuota');
+            const elGanancia = document.getElementById('display-ganancia');
+            
+            if (boleta.length === 0) {
+                contenedor.innerHTML = '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>';
+                elTotalCuota.innerText = "0.00";
+                elGanancia.innerText = "CUP 0.00";
+                return;
+            }
+
+            // Multiplicación acumulada (Parlay)
+            const totalCuota = boleta.reduce((acc, item) => acc * item.cuota, 1);
+            
+            contenedor.innerHTML = boleta.map(item => `
+                <div class="bg-gray-50 p-3 rounded-lg flex justify-between items-center">
+                    <div>
+                        <p class="text-sm font-bold">${item.equipoA} vs ${item.equipoB}</p>
+                        <p class="text-xs text-green-600 font-bold">Selección: ${item.seleccion} (${item.cuota})</p>
+                    </div>
+                    <button onclick="eliminarDeBoleta('${item.id}')" class="text-red-500 font-bold text-lg">×</button>
+                </div>
+            `).join('');
+
+            elTotalCuota.innerText = totalCuota.toFixed(2);
+            elGanancia.innerText = "CUP " + (totalCuota * 100).toFixed(2);
+        }
+
+        function eliminarDeBoleta(id) {
+            boleta = boleta.filter(item => item.id !== id);
+            actualizarBoleta();
+        }
     
     // Actualizar el resumen en el HTML (necesitamos poner IDs en esos elementos)
     // Usaremos selectores directos para simplificar
