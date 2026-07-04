@@ -130,15 +130,18 @@
         <button id="btn-perfil" onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
     </nav>
 
-    <script>
+        <script>
         // Lógica de carga (Splash Screen)
         window.addEventListener('load', () => {
+            // Se asegura de quitar el loader sí o sí tras 3 segundos
             setTimeout(() => {
                 const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                loader.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => { loader.style.display = 'none'; }, 500);
-            }, 3000); // 3 segundos de espera
+                if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => { loader.style.display = 'none'; }, 500);
+                }
+            }, 3000); 
         });
 
         // Cambio de pestañas
@@ -147,52 +150,53 @@
             document.getElementById(id).classList.add('active');
             const botones = ['btn-inicio', 'btn-minijuegos', 'btn-deportes', 'btn-boleta', 'btn-perfil'];
             botones.forEach(btnId => {
-                document.getElementById(btnId).classList.replace('text-green-600', 'text-gray-500');
+                const btn = document.getElementById(btnId);
+                if(btn) btn.classList.replace('text-green-600', 'text-gray-500');
             });
-            document.getElementById('btn-' + id).classList.replace('text-gray-500', 'text-green-600');
+            const actual = document.getElementById('btn-' + id);
+            if(actual) actual.classList.replace('text-gray-500', 'text-green-600');
         }
 
         // Cargar partidos desde el JSON
         async function cargarPartidos() {
             try {
                 const respuesta = await fetch('partidos.json');
+                if (!respuesta.ok) throw new Error("No se pudo cargar el archivo");
                 const partidos = await respuesta.json();
-                const contenedor = document.getElementById('lista-partidos');
                 
-                contenedor.innerHTML = partidos.map(p => `
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs text-gray-400 font-bold">${p.liga}</span>
-                            <span class="text-xs ${p.estado === 'EN VIVO' ? 'text-green-600' : 'text-gray-500'} font-bold">${p.estado}</span>
+                const contenedor = document.getElementById('lista-partidos');
+                if (contenedor) {
+                    contenedor.innerHTML = partidos.map(p => `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs text-gray-400 font-bold">${p.liga}</span>
+                                <span class="text-xs ${p.estado === 'EN VIVO' ? 'text-green-600' : 'text-gray-500'} font-bold">${p.estado}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="font-bold">${p.equipoA}</p>
+                                <p class="text-xl font-black">${p.marcador}</p>
+                                <p class="font-bold">${p.equipoB}</p>
+                            </div>
+                            <div class="mt-4 grid grid-cols-3 gap-2">
+                                <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '1', ${p.cuota1})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: ${p.cuota1}</button>
+                                <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', 'X', ${p.cuotaX})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: ${p.cuotaX}</button>
+                                <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '2', ${p.cuota2})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">2: ${p.cuota2}</button>
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <p class="font-bold">${p.equipoA}</p>
-                            <p class="text-xl font-black">${p.marcador}</p>
-                            <p class="font-bold">${p.equipoB}</p>
-                        </div>
-                        <div class="mt-4 grid grid-cols-3 gap-2">
-    <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '1', ${p.cuota1})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">1: ${p.cuota1}</button>
-    <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', 'X', ${p.cuotaX})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">X: ${p.cuotaX}</button>
-    <button onclick="agregarABoleta('${p.equipoA}', '${p.equipoB}', '2', ${p.cuota2})" class="bg-gray-50 p-2 rounded-lg text-sm font-bold hover:bg-green-100">2: ${p.cuota2}</button>
-</div>
-                `).join('');
+                    `).join('');
+                }
             } catch (error) {
-                console.error("Error cargando partidos:", error);
+                console.error("Error:", error);
+                document.getElementById('lista-partidos').innerHTML = '<p class="text-center text-red-500">Error al cargar partidos.</p>';
             }
         }
 
-        cargarPartidos();
+        // --- LÓGICA DE BOLETA ---
         let boleta = [];
-
-function agregarABoleta(equipoA, equipoB, seleccion, cuota) {
-            const idPartido = equipoA + equipoB; 
-            
-            // Elimina si ya existe para reemplazarlo (Evita duplicados)
+        function agregarABoleta(equipoA, equipoB, seleccion, cuota) {
+            const idPartido = equipoA + equipoB;
             boleta = boleta.filter(item => item.id !== idPartido);
-            
-            // Agrega la nueva selección
             boleta.push({ id: idPartido, equipoA, equipoB, seleccion, cuota: parseFloat(cuota) });
-            
             actualizarBoleta();
         }
 
@@ -203,24 +207,17 @@ function agregarABoleta(equipoA, equipoB, seleccion, cuota) {
             
             if (boleta.length === 0) {
                 contenedor.innerHTML = '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>';
-                elTotalCuota.innerText = "0.00";
-                elGanancia.innerText = "CUP 0.00";
+                if(elTotalCuota) elTotalCuota.innerText = "0.00";
+                if(elGanancia) elGanancia.innerText = "CUP 0.00";
                 return;
             }
-
-            // Multiplicación acumulada (Parlay)
             const totalCuota = boleta.reduce((acc, item) => acc * item.cuota, 1);
-            
             contenedor.innerHTML = boleta.map(item => `
                 <div class="bg-gray-50 p-3 rounded-lg flex justify-between items-center">
-                    <div>
-                        <p class="text-sm font-bold">${item.equipoA} vs ${item.equipoB}</p>
-                        <p class="text-xs text-green-600 font-bold">Selección: ${item.seleccion} (${item.cuota})</p>
-                    </div>
+                    <div><p class="text-sm font-bold">${item.equipoA} vs ${item.equipoB}</p><p class="text-xs text-green-600 font-bold">Selección: ${item.seleccion} (${item.cuota})</p></div>
                     <button onclick="eliminarDeBoleta('${item.id}')" class="text-red-500 font-bold text-lg">×</button>
                 </div>
             `).join('');
-
             elTotalCuota.innerText = totalCuota.toFixed(2);
             elGanancia.innerText = "CUP " + (totalCuota * 100).toFixed(2);
         }
@@ -229,12 +226,9 @@ function agregarABoleta(equipoA, equipoB, seleccion, cuota) {
             boleta = boleta.filter(item => item.id !== id);
             actualizarBoleta();
         }
-    
-    // Actualizar el resumen en el HTML (necesitamos poner IDs en esos elementos)
-    // Usaremos selectores directos para simplificar
-    document.querySelectorAll('.font-bold')[boleta.length > 0 ? 1 : 0].innerText = totalCuota.toFixed(2);
-}
 
+        cargarPartidos();
     </script>
+
 </body>
 </html>
