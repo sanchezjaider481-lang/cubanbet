@@ -193,5 +193,38 @@
 
         cargarPartidos();
     </script>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getDatabase, ref, update, get, child } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
+    authDomain: "cubanbet-32254.firebaseapp.com",
+    projectId: "cubanbet-32254",
+    storageBucket: "cubanbet-32254.firebasestorage.app",
+    messagingSenderId: "470616151074",
+    appId: "1:470616151074:web:8624013ff21f5e3c85267b",
+    measurementId: "G-JZQRVYXEVM"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // FUNCIÓN PARA SUMAR SALDO (Úsala cuando verifiques el depósito)
+  window.sumarSaldo = async function(userId, monto) {
+    const dbRef = ref(db);
+    const snapshot = await get(child(dbRef, `usuarios/${userId}/saldo`));
+    
+    let saldoActual = snapshot.exists() ? snapshot.val() : 0;
+    let nuevoSaldo = saldoActual + parseFloat(monto);
+
+    await update(ref(db, `usuarios/${userId}`), {
+      saldo: nuevoSaldo
+    });
+    
+    alert("¡Saldo actualizado! Nuevo saldo: " + nuevoSaldo);
+  };
+</script>
+
 </body>
 </html>
