@@ -96,135 +96,107 @@
         <button id="btn-perfil" onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
     </nav>
 
-    <script>
-        // --- CONSTANTES TELEGRAM ---
-        const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
-        const CHAT_ID = "-1004432353397";
-
-        // --- SALDO ---
-        let saldo = parseFloat(localStorage.getItem('cubanbet_saldo')) || 0.00;
-        document.getElementById('display-saldo').innerText = "CUP " + saldo.toFixed(2);
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                loader.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => { loader.style.display = 'none'; }, 500);
-            }, 3000);
-        });
-
-        function cambiarTab(id) {
-            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-600', 'text-gray-500'));
-            document.getElementById('btn-'+id).classList.replace('text-gray-500', 'text-green-600');
-        }
-
-        // --- LÓGICA DE RECARGA ---
-        function mostrarDatos() {
-            const metodo = document.getElementById('metodo-pago').value;
-            const info = document.getElementById('info-pago');
-            const datos = document.getElementById('datos-cuenta');
-            if(!metodo) { info.classList.add('hidden'); return; }
-            info.classList.remove('hidden');
-            datos.innerText = (metodo === 'MITRANSFER') ? "Número: 58838866" : "Tarjeta: 9238 1299 7498 4082";
-        }
-
-        async function enviarSolicitud() {
-            const monto = parseFloat(document.getElementById('monto-recarga').value);
-            const user = document.getElementById('user-id').innerText;
-            const file = document.getElementById('comprobante').files[0];
-
-            if(isNaN(monto) || monto < 500 || monto > 4000) { alert("Monto entre $500 y $4000"); return; }
-            if(!file) { alert("Sube tu comprobante"); return; }
-
-            const formData = new FormData();
-            formData.append('chat_id', CHAT_ID);
-            formData.append('photo', file);
-            formData.append('caption', `SOLICITUD DE RECARGA\nUsuario: ${user}\nMonto: ${monto} CUP\n\n¿Aprobar?`);
-            formData.append('reply_markup', JSON.stringify({
-                inline_keyboard: [[{text: "✅ Aprobar", callback_data: "aprobar"}, {text: "❌ Denegar", callback_data: "denegar"}]]
-            }));
-
-            const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
-            if(res.ok) alert("Solicitud enviada al admin.");
-        }
-
-        // --- LÓGICA EXISTENTE ---
-        async function cargarPartidos() {
-            try {
-                const res = await fetch('partidos.json');
-                const p = await res.json();
-                document.getElementById('lista-partidos').innerHTML = p.map(partido => `
-                    <div class="bg-white p-4 rounded-xl border border-gray-100">
-                        <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
-                        <div class="grid grid-cols-3 gap-2 mt-2">
-                            <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
-                            <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
-                            <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (e) { console.error(e); }
-        }
-
-        let boleta = [];
-        function agregarABoleta(a, b, sel, cuota) {
-            boleta = boleta.filter(i => i.id !== a+b);
-            boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
-            actualizarBoleta();
-        }
-
-        function actualizarBoleta() {
-            const cont = document.getElementById('lista-boleta');
-            const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
-            const monto = parseFloat(document.getElementById('input-monto').value) || 0;
-            cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
-                boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
-            document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
-            document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
-        }
-
-        function eliminar(id) {
-            boleta = boleta.filter(i => i.id !== id);
-            actualizarBoleta();
-        }
-
-        cargarPartidos();
-    </script>
     <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-  import { getDatabase, ref, update, get, child } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
-    authDomain: "cubanbet-32254.firebaseapp.com",
-    projectId: "cubanbet-32254",
-    storageBucket: "cubanbet-32254.firebasestorage.app",
-    messagingSenderId: "470616151074",
-    appId: "1:470616151074:web:8624013ff21f5e3c85267b",
-    measurementId: "G-JZQRVYXEVM"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
+        authDomain: "cubanbet-32254.firebaseapp.com",
+        projectId: "cubanbet-32254",
+        storageBucket: "cubanbet-32254.firebasestorage.app",
+        messagingSenderId: "470616151074",
+        appId: "1:470616151074:web:8624013ff21f5e3c85267b",
+        measurementId: "G-JZQRVYXEVM"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // FUNCIÓN PARA SUMAR SALDO (Úsala cuando verifiques el depósito)
-  window.sumarSaldo = async function(userId, monto) {
-    const dbRef = ref(db);
-    const snapshot = await get(child(dbRef, `usuarios/${userId}/saldo`));
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
     
-    let saldoActual = snapshot.exists() ? snapshot.val() : 0;
-    let nuevoSaldo = saldoActual + parseFloat(monto);
+    // ID del usuario (esto identifica al usuario en Firebase)
+    const userId = "testuser1"; 
 
-    await update(ref(db, `usuarios/${userId}`), {
-      saldo: nuevoSaldo
+    // Leer saldo en tiempo real
+    onValue(ref(db, `usuarios/${userId}/saldo`), (snapshot) => {
+        const saldo = snapshot.val() || 0;
+        document.getElementById('display-saldo').innerText = "CUP " + parseFloat(saldo).toFixed(2);
     });
+
+    // --- FUNCIONES GLOBALES ---
+    const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
+    const CHAT_ID = "-1004432353397";
+
+    window.cambiarTab = function(id) {
+        document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-600', 'text-gray-500'));
+        document.getElementById('btn-'+id).classList.replace('text-gray-500', 'text-green-600');
+    };
+
+    window.enviarSolicitud = async function() {
+        const monto = parseFloat(document.getElementById('monto-recarga').value);
+        const user = document.getElementById('user-id').innerText;
+        const file = document.getElementById('comprobante').files[0];
+        if(isNaN(monto) || monto < 500 || monto > 4000) { alert("Monto entre $500 y $4000"); return; }
+        if(!file) { alert("Sube tu comprobante"); return; }
+        const formData = new FormData();
+        formData.append('chat_id', CHAT_ID);
+        formData.append('photo', file);
+        formData.append('caption', `SOLICITUD DE RECARGA\nUsuario: ${user}\nMonto: ${monto} CUP`);
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+        if(res.ok) alert("Solicitud enviada al admin.");
+    };
+
+    window.cargarPartidos = async function() {
+        try {
+            const res = await fetch('partidos.json');
+            const p = await res.json();
+            document.getElementById('lista-partidos').innerHTML = p.map(partido => `
+                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                    <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
+                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
+                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) { console.error(e); }
+    };
+
+    window.boleta = [];
+    window.agregarABoleta = function(a, b, sel, cuota) {
+        boleta = boleta.filter(i => i.id !== a+b);
+        boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
+        actualizarBoleta();
+    };
+
+    window.actualizarBoleta = function() {
+        const cont = document.getElementById('lista-boleta');
+        const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
+        const monto = parseFloat(document.getElementById('input-monto').value) || 0;
+        cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
+            boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
+        document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
+        document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
+    };
+
+    window.eliminar = function(id) {
+        boleta = boleta.filter(i => i.id !== id);
+        actualizarBoleta();
+    };
+
+    cargarPartidos();
     
-    alert("¡Saldo actualizado! Nuevo saldo: " + nuevoSaldo);
-  };
+    // Ocultar loader
+    setTimeout(() => {
+        const loader = document.getElementById('loader');
+        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
+    }, 3000);
 </script>
+
+
+        
 
 </body>
 </html>
