@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <!-- Pantalla de Login -->
+    <div id="loginSection">
+        <input type="email" id="email" placeholder="Tu correo admin">
+        <input type="password" id="pass" placeholder="Contraseña">
+        <button onclick="hacerLogin()">Entrar</button>
+    </div>
+
+    <!-- Pantalla de Panel (oculta al inicio) -->
+    <div id="adminPanel" style="display:none;">
+        <h3>Panel de Depósitos</h3>
+        <input type="text" id="userId" placeholder="ID del Usuario">
+        <input type="number" id="monto" placeholder="Monto">
+        <button onclick="procesarDeposito()">Sumar Saldo</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+        // COPIA ESTOS DATOS DE TU CONSOLA DE FIREBASE
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            projectId: "TU_PROJECT_ID",
+            databaseURL: "TU_DATABASE_URL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // Función para Loguearse
+        window.hacerLogin = () => {
+            const email = document.getElementById("email").value;
+            const pass = document.getElementById("pass").value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => {
+                    document.getElementById("loginSection").style.display = "none";
+                    document.getElementById("adminPanel").style.display = "block";
+                    alert("Sesión iniciada");
+                })
+                .catch(err => alert("Error al entrar: " + err.message));
+        };
+
+        // Función para Procesar Depósito
+        window.procesarDeposito = async () => {
+            const uid = document.getElementById("userId").value;
+            const cantidad = parseFloat(document.getElementById("monto").value);
+
+            const userRef = ref(db, 'usuarios/' + uid + '/saldo');
+            const snapshot = await get(userRef);
+            const saldoActual = snapshot.exists() ? snapshot.val() : 0;
+
+            try {
+                await update(ref(db, 'usuarios/' + uid), { saldo: saldoActual + cantidad });
+                alert("¡Depósito realizado!");
+            } catch (e) {
+                alert("No tienes permiso. ¿Iniciaste sesión?");
+            }
+        };
+    </script>
+</body>
+</html>
