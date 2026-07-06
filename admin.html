@@ -17,55 +17,23 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+  import { getDatabase, ref, update, get, child } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-        // COPIA ESTOS DATOS DE TU CONSOLA DE FIREBASE
-        const firebaseConfig = {
-    apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o", // Tu clave de Firebase
-    authDomain: "cubanbet-32254.firebaseapp.com",
-    projectId: "cubanbet-32254", // Tu ID de proyecto
-    databaseURL: "https://cubanbet-32254-default-rtdb.firebaseio.com/", // La dirección de tu BD
-    storageBucket: "cubanbet-32254.appspot.com",
-    messagingSenderId: "...",
-    appId: "..."
-};
+  const app = initializeApp({ /* Mismos datos de configuración de arriba */ });
+  const db = getDatabase(app);
 
+  window.aprobarRecarga = async function(userId, monto) {
+    const dbRef = ref(db);
+    const snapshot = await get(child(dbRef, `usuarios/${userId}/saldo`));
+    let saldoActual = snapshot.exists() ? snapshot.val() : 0;
+    
+    await update(ref(db, `usuarios/${userId}`), {
+      saldo: saldoActual + parseFloat(monto)
+    });
+    alert("Saldo sumado correctamente.");
+  };
+</script>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-
-        // Función para Loguearse
-        window.hacerLogin = () => {
-            const email = document.getElementById("email").value;
-            const pass = document.getElementById("pass").value;
-            signInWithEmailAndPassword(auth, email, pass)
-                .then(() => {
-                    document.getElementById("loginSection").style.display = "none";
-                    document.getElementById("adminPanel").style.display = "block";
-                    alert("Sesión iniciada");
-                })
-                .catch(err => alert("Error al entrar: " + err.message));
-        };
-
-        // Función para Procesar Depósito
-        window.procesarDeposito = async () => {
-            const uid = document.getElementById("userId").value;
-            const cantidad = parseFloat(document.getElementById("monto").value);
-
-            const userRef = ref(db, 'usuarios/' + uid + '/saldo');
-            const snapshot = await get(userRef);
-            const saldoActual = snapshot.exists() ? snapshot.val() : 0;
-
-            try {
-                await update(ref(db, 'usuarios/' + uid), { saldo: saldoActual + cantidad });
-                alert("¡Depósito realizado!");
-            } catch (e) {
-                alert("No tienes permiso. ¿Iniciaste sesión?");
-            }
-        };
-    </script>
 </body>
 </html>
