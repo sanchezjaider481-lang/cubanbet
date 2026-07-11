@@ -132,19 +132,17 @@
         document.getElementById('btn-'+id).classList.replace('text-gray-500', 'text-green-600');
     };
 
-    window.enviarSolicitud = async function() {
-        const monto = parseFloat(document.getElementById('monto-recarga').value);
-        const user = document.getElementById('user-id').innerText;
-        const file = document.getElementById('comprobante').files[0];
-        if(isNaN(monto) || monto < 500 || monto > 4000) { alert("Monto entre $500 y $4000"); return; }
-        if(!file) { alert("Sube tu comprobante"); return; }
-        const formData = new FormData();
-        formData.append('chat_id', CHAT_ID);
-        formData.append('photo', file);
-        formData.append('caption', `SOLICITUD DE RECARGA\nUsuario: ${user}\nMonto: ${monto} CUP`);
-        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
-        if(res.ok) alert("Solicitud enviada al admin.");
-    };
+    window.mostrarDatos = function() {
+    const metodo = document.getElementById('metodo-pago').value;
+    const infoPago = document.getElementById('info-pago');
+    if(metodo) {
+        infoPago.classList.remove('hidden');
+        // Aquí puedes actualizar el texto de "datos-cuenta" dinámicamente si quieres
+    } else {
+        infoPago.classList.add('hidden');
+    }
+};
+
 
     window.cargarPartidos = async function() {
         try {
