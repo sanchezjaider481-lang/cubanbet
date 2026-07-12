@@ -198,9 +198,18 @@
     if (metodo === "ENZONA") {
         referencia = "Nota:" + Math.floor(1000 + Math.random() * 9000);
         alert("Copia este concepto para tu transferencia: " + referencia);
-    } else {
-        referencia = prompt("Escribe tu número de teléfono de Transfermóvil:");
+        } else {
+        // AVISO PREVIO ANTES DE PEDIR EL NÚMERO
+        alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo registrado en tu cuenta de CubanBet.\n\nSi no coinciden, tu depósito no podrá ser aprobado.");
+        
+        datoExtra = prompt("Escribe el número de teléfono desde el cual harás la transferencia:");
+        
+        if (!datoExtra || datoExtra.length < 8) { 
+            alert("Necesitamos el número de teléfono correcto para validar tu pago."); 
+            return; 
+        }
     }
+
 
     // Aquí enviamos los datos a la carpeta 'pendientes' en Firebase
     push(ref(db, 'pendientes'), {
