@@ -14,9 +14,11 @@
 <body class="pb-20">
 
     <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
-        <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <h1 class="text-3xl font-black text-green-600 tracking-tighter">CubanBet</h1>
-    </div>
+    <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+    <h1 class="text-3xl font-black text-green-600 tracking-tighter">CubanBet</h1>
+    <p id="porcentaje" class="text-green-600 font-bold mt-2">0%</p>
+</div>
+
 
     <main id="content">
         <section id="inicio" class="tab-content active p-4">
@@ -166,22 +168,35 @@
         });
     };
 
-    // Cargar Partidos y ocultar loader
-    async function cargarPartidos() {
-        try {
-            const res = await fetch('partidos.json');
-            const p = await res.json();
-            document.getElementById('lista-partidos').innerHTML = p.map(partido => `
-                <div class="bg-white p-4 rounded-xl border border-gray-100">
-                    <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
-                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded">1: ${partido.cuota1}</button>
-                </div>
-            `).join('');
-        } catch (e) { console.error(e); }
-        
+    
+
+async function cargarPartidos() {
+    // Simulamos carga de 4 segundos
+    let progreso = 0;
+    const elementoPorcentaje = document.getElementById('porcentaje');
+    
+    const intervalo = setInterval(() => {
+        progreso += 1;
+        if(elementoPorcentaje) elementoPorcentaje.innerText = progreso + "%";
+        if(progreso >= 100) clearInterval(intervalo);
+    }, 40); // 40ms * 100 = 4000ms (4 segundos)
+
+    try {
+        const res = await fetch('partidos.json');
+        const p = await res.json();
+        // ... (tu código para mostrar partidos)
+    } catch (e) { console.error("Sin partidos, pero seguimos..."); }
+    
+    // El loader se quita solo cuando pasan los 4 segundos
+    setTimeout(() => {
         const loader = document.getElementById('loader');
-        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
-    }
+        if(loader) { 
+            loader.style.opacity = '0'; 
+            setTimeout(() => { loader.style.display = 'none'; }, 500); 
+        }
+    }, 4000);
+}
+
 
     cargarPartidos();
 </script>
