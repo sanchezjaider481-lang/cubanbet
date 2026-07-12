@@ -97,64 +97,49 @@
 
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
+const firebaseConfig = {
+    apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
+    authDomain: "cubanbet-32254.firebaseapp.com",
+    projectId: "cubanbet-32254",
+    storageBucket: "cubanbet-32254.firebasestorage.app",
+    messagingSenderId: "470616151074",
+    appId: "1:470616151074:web:8624013ff21f5e3c85267b",
+    measurementId: "G-JZQRVYXEVM"
+};
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
-        authDomain: "cubanbet-32254.firebaseapp.com",
-        projectId: "cubanbet-32254",
-        storageBucket: "cubanbet-32254.firebasestorage.app",
-        messagingSenderId: "470616151074",
-        appId: "1:470616151074:web:8624013ff21f5e3c85267b",
-        measurementId: "G-JZQRVYXEVM"
-    };
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const userId = "testuser1";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    
-    // ID del usuario (esto identifica al usuario en Firebase)
-    const userId = "testuser1"; 
+// Cargar Partidos (esto es lo que ocultaba el loader en tu código original)
+window.cargarPartidos = async function() {
+    try {
+        const res = await fetch('partidos.json');
+        const p = await res.json();
+        document.getElementById('lista-partidos').innerHTML = p.map(partido => `...`).join('');
+    } catch (e) { console.error(e); }
+    // Ocultar loader
+    const loader = document.getElementById('loader');
+    if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
+};
 
-    // Leer saldo en tiempo real
-    onValue(ref(db, `usuarios/${userId}/saldo`), (snapshot) => {
-        const saldo = snapshot.val() || 0;
-        document.getElementById('display-saldo').innerText = "CUP " + parseFloat(saldo).toFixed(2);
-    });
+window.cambiarTab = function(id) {
+    document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+};
 
-    // --- FUNCIONES GLOBALES ---
-    const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
-    const CHAT_ID = "-1004432353397";
-
-    window.cambiarTab = function(id) {
-        document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-green-600', 'text-gray-500'));
-        document.getElementById('btn-'+id).classList.replace('text-gray-500', 'text-green-600');
-    };
-
-    window.mostrarDatos = function() {
+window.mostrarDatos = function() {
     const metodo = document.getElementById('metodo-pago').value;
     const infoPago = document.getElementById('info-pago');
-    
     if(metodo) {
         infoPago.classList.remove('hidden');
-        
-        // Si elige BPA o BANDEC, le mostramos la advertencia del número de teléfono
-        if (metodo === "BPA" || metodo === "BANDEC") {
-            alert("IMPORTANTE:\n\nPara que tu depósito sea aprobado automáticamente:\n1. Al transferir, DEBES marcar la opción 'Compartir número de teléfono'.\n2. Usa el mismo número que tienes registrado en tu cuenta de CubanBet.");
-        } 
-        // Si elige ENZONA, le advertimos sobre el concepto
-        else if (metodo === "ENZONA") {
-            alert("IMPORTANTE:\n\nPara que tu depósito sea aprobado:\nDEBES poner el concepto que te daremos al presionar 'Verificar Depósito'.");
-        }
+        if (metodo === "BPA" || metodo === "BANDEC") alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
     } else {
         infoPago.classList.add('hidden');
     }
 };
-
-
-
     window.cargarPartidos = async function() {
         try {
             const res = await fetch('partidos.json');
