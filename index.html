@@ -183,6 +183,37 @@
         boleta = boleta.filter(i => i.id !== id);
         actualizarBoleta();
     };
+        window.enviarSolicitud = function() {
+    const metodo = document.getElementById('metodo-pago').value;
+    const monto = document.getElementById('monto-recarga').value;
+    
+    // Esto revisa que el usuario haya elegido un banco y puesto un monto
+    if (!metodo || !monto || monto < 500) {
+        alert("Selecciona un banco y pon un monto mayor a 500");
+        return;
+    }
+
+    // Aquí decidimos si pedir el teléfono (BPA) o generar un código (ENZONA)
+    let referencia = "";
+    if (metodo === "ENZONA") {
+        referencia = "Nota:" + Math.floor(1000 + Math.random() * 9000);
+        alert("Copia este concepto para tu transferencia: " + referencia);
+    } else {
+        referencia = prompt("Escribe tu número de teléfono de Transfermóvil:");
+    }
+
+    // Aquí enviamos los datos a la carpeta 'pendientes' en Firebase
+    push(ref(db, 'pendientes'), {
+        usuario: "testuser1",
+        metodo: metodo,
+        monto: monto,
+        referencia: referencia,
+        estado: "pendiente"
+    });
+
+    alert("Solicitud enviada. ¡Revisa tu Firebase!");
+};
+
 
     cargarPartidos();
     
@@ -191,6 +222,7 @@
         const loader = document.getElementById('loader');
         if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
     }, 3000);
+        
 </script>
 
 
