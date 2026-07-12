@@ -136,13 +136,23 @@
     window.mostrarDatos = function() {
     const metodo = document.getElementById('metodo-pago').value;
     const infoPago = document.getElementById('info-pago');
+    
     if(metodo) {
         infoPago.classList.remove('hidden');
-        // Aquí puedes actualizar el texto de "datos-cuenta" dinámicamente si quieres
+        
+        // Si elige BPA o BANDEC, le mostramos la advertencia del número de teléfono
+        if (metodo === "BPA" || metodo === "BANDEC") {
+            alert("IMPORTANTE:\n\nPara que tu depósito sea aprobado automáticamente:\n1. Al transferir, DEBES marcar la opción 'Compartir número de teléfono'.\n2. Usa el mismo número que tienes registrado en tu cuenta de CubanBet.");
+        } 
+        // Si elige ENZONA, le advertimos sobre el concepto
+        else if (metodo === "ENZONA") {
+            alert("IMPORTANTE:\n\nPara que tu depósito sea aprobado:\nDEBES poner el concepto que te daremos al presionar 'Verificar Depósito'.");
+        }
     } else {
         infoPago.classList.add('hidden');
     }
 };
+
 
 
     window.cargarPartidos = async function() {
@@ -187,11 +197,33 @@
     const metodo = document.getElementById('metodo-pago').value;
     const monto = document.getElementById('monto-recarga').value;
     
-    // Esto revisa que el usuario haya elegido un banco y puesto un monto
     if (!metodo || !monto || monto < 500) {
-        alert("Selecciona un banco y pon un monto mayor a 500");
+        alert("Selecciona un banco y un monto mayor a 500");
         return;
     }
+
+    let referencia = "";
+    if (metodo === "ENZONA") {
+        referencia = "Nota:" + Math.floor(1000 + Math.random() * 9000);
+        alert("Concepto para ENZONA: " + referencia);
+    } else {
+        referencia = prompt("Confirma el número de teléfono desde el que realizarás la transferencia:");
+    }
+
+    if (!referencia) return; // Si canceló el prompt, no enviamos nada
+
+    push(ref(db, 'pendientes'), {
+        usuario: "testuser1",
+        metodo: metodo,
+        monto: monto,
+        referencia: referencia,
+        estado: "pendiente",
+        timestamp: Date.now()
+    });
+
+    alert("Solicitud enviada. Realiza la transferencia ahora.");
+};
+
 
     // Aquí decidimos si pedir el teléfono (BPA) o generar un código (ENZONA)
     let referencia = "";
