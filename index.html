@@ -97,163 +97,95 @@
 
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
-    authDomain: "cubanbet-32254.firebaseapp.com",
-    projectId: "cubanbet-32254",
-    storageBucket: "cubanbet-32254.firebasestorage.app",
-    messagingSenderId: "470616151074",
-    appId: "1:470616151074:web:8624013ff21f5e3c85267b",
-    measurementId: "G-JZQRVYXEVM"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
+        authDomain: "cubanbet-32254.firebaseapp.com",
+        projectId: "cubanbet-32254",
+        storageBucket: "cubanbet-32254.firebasestorage.app",
+        messagingSenderId: "470616151074",
+        appId: "1:470616151074:web:8624013ff21f5e3c85267b",
+        measurementId: "G-JZQRVYXEVM"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const userId = "testuser1";
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    window.db = db; // Hacer db accesible globalmente
 
-// Cargar Partidos (esto es lo que ocultaba el loader en tu código original)
-window.cargarPartidos = async function() {
-    try {
-        const res = await fetch('partidos.json');
-        const p = await res.json();
-        document.getElementById('lista-partidos').innerHTML = p.map(partido => `...`).join('');
-    } catch (e) { console.error(e); }
-    // Ocultar loader
-    const loader = document.getElementById('loader');
-    if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
-}, 1000;
-};
+    // --- FUNCIONES ---
 
-window.cambiarTab = function(id) {
-    document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-};
+    window.cambiarTab = function(id) {
+        document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    };
 
-window.mostrarDatos = function() {
-    const metodo = document.getElementById('metodo-pago').value;
-    const infoPago = document.getElementById('info-pago');
-    if(metodo) {
-        infoPago.classList.remove('hidden');
-        if (metodo === "BPA" || metodo === "BANDEC") alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
-    } else {
-        infoPago.classList.add('hidden');
-    }
-};
-    window.cargarPartidos = async function() {
+    window.mostrarDatos = function() {
+        const metodo = document.getElementById('metodo-pago').value;
+        const infoPago = document.getElementById('info-pago');
+        if(metodo) {
+            infoPago.classList.remove('hidden');
+            if (metodo === "BPA" || metodo === "BANDEC") {
+                alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
+            }
+        } else {
+            infoPago.classList.add('hidden');
+        }
+    };
+
+    window.enviarSolicitud = function() {
+        const metodo = document.getElementById('metodo-pago').value;
+        const monto = document.getElementById('monto-recarga').value;
+        
+        if (!metodo || !monto || monto < 500) {
+            alert("Selecciona un banco y un monto mayor a 500");
+            return;
+        }
+
+        let referencia = "";
+        if (metodo === "ENZONA") {
+            referencia = "Nota:" + Math.floor(1000 + Math.random() * 9000);
+            alert("Copia este concepto para tu transferencia: " + referencia);
+        } else {
+            referencia = prompt("Escribe el número de teléfono desde el cual harás la transferencia:");
+            if (!referencia || referencia.length < 8) { 
+                alert("Necesitamos un número de teléfono válido."); 
+                return; 
+            }
+        }
+
+        push(ref(db, 'pendientes'), {
+            usuario: "testuser1",
+            metodo: metodo,
+            monto: monto,
+            referencia: referencia,
+            estado: "pendiente",
+            timestamp: Date.now()
+        }).then(() => {
+            alert("Solicitud enviada correctamente.");
+        });
+    };
+
+    // Cargar Partidos y ocultar loader
+    async function cargarPartidos() {
         try {
             const res = await fetch('partidos.json');
             const p = await res.json();
             document.getElementById('lista-partidos').innerHTML = p.map(partido => `
                 <div class="bg-white p-4 rounded-xl border border-gray-100">
                     <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
-                    <div class="grid grid-cols-3 gap-2 mt-2">
-                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
-                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
-                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
-                    </div>
+                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded">1: ${partido.cuota1}</button>
                 </div>
             `).join('');
         } catch (e) { console.error(e); }
-    };
-
-    window.boleta = [];
-    window.agregarABoleta = function(a, b, sel, cuota) {
-        boleta = boleta.filter(i => i.id !== a+b);
-        boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
-        actualizarBoleta();
-    };
-
-    window.actualizarBoleta = function() {
-        const cont = document.getElementById('lista-boleta');
-        const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
-        const monto = parseFloat(document.getElementById('input-monto').value) || 0;
-        cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
-            boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
-        document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
-        document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
-    };
-
-    window.eliminar = function(id) {
-        boleta = boleta.filter(i => i.id !== id);
-        actualizarBoleta();
-    };
-        window.enviarSolicitud = function() {
-    const metodo = document.getElementById('metodo-pago').value;
-    const monto = document.getElementById('monto-recarga').value;
-    
-    if (!metodo || !monto || monto < 500) {
-        alert("Selecciona un banco y un monto mayor a 500");
-        return;
-    }
-
-    let referencia = "";
-    if (metodo === "ENZONA") {
-        referencia = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-        alert("Concepto para ENZONA: " + referencia);
-    } else {
-        referencia = prompt("Confirma el número de teléfono desde el que realizarás la transferencia:");
-    }
-
-    if (!referencia) return; // Si canceló el prompt, no enviamos nada
-
-    push(ref(db, 'pendientes'), {
-        usuario: "testuser1",
-        metodo: metodo,
-        monto: monto,
-        referencia: referencia,
-        estado: "pendiente",
-        timestamp: Date.now()
-    });
-
-    alert("Solicitud enviada. Realiza la transferencia ahora.");
-};
-
-
-    // Aquí decidimos si pedir el teléfono (BPA) o generar un código (ENZONA)
-    let referencia = "";
-    if (metodo === "ENZONA") {
-        referencia = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-        alert("Copia este concepto para tu transferencia: " + referencia);
-        } else {
-        // AVISO PREVIO ANTES DE PEDIR EL NÚMERO
-        alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo registrado en tu cuenta de CubanBet.\n\nSi no coinciden, tu depósito no podrá ser aprobado.");
         
-        datoExtra = prompt("Escribe el número de teléfono desde el cual harás la transferencia:");
-        
-        if (!datoExtra || datoExtra.length < 8) { 
-            alert("Necesitamos el número de teléfono correcto para validar tu pago."); 
-            return; 
-        }
-    }
-
-
-    // Aquí enviamos los datos a la carpeta 'pendientes' en Firebase
-    push(ref(db, 'pendientes'), {
-        usuario: "testuser1",
-        metodo: metodo,
-        monto: monto,
-        referencia: referencia,
-        estado: "pendiente"
-    });
-
-    alert("Solicitud enviada. ¡Revisa tu Firebase!");
-};
-
-
-    cargarPartidos();
-    
-    // Ocultar loader
-    setTimeout(() => {
         const loader = document.getElementById('loader');
         if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
-    }, 3000);
-        
+    }
+
+    cargarPartidos();
 </script>
 
-
-        
 
 </body>
 </html>
