@@ -128,8 +128,10 @@
         if(metodo) {
             infoPago.classList.remove('hidden');
             if (metodo === "BPA" || metodo === "BANDEC") {
-                alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet(sino lo es configure su perfil y ponga el numero de telefono de TRANSFERMOVIL de donde hara la transferencia. \n3. ESTA OPCION ES OBLIGATORIA PORQUE AINO PUEDE SWR DENEGADO SU DEPOSITO");
+                alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet(sino lo es configure su perfil y ponga el numero de telefono de TRANSFERMOVIL de donde hara la transferencia. \n3. ESTA OPCION ES OBLIGATORIA PORQUE SINO PUEDE SER DENEGADO SU DEPOSITO");
             }
+            else if (metodo === "ENZONA") {
+            alert("IMPORTANTE:\n\nPara aprobar tu depósito de ENZONA:\nAl finalizar, verás un código de concepto único que DEBES escribir en tu transferencia. Sino pones el código dado para ENZONA puede ser denegado su depósito");
         } else {
             infoPago.classList.add('hidden');
         }
