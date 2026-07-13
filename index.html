@@ -215,33 +215,28 @@ window.enviarSolicitud = async function() {
     const file = document.getElementById('archivo-comprobante').files[0];
 
     if (!metodo || !monto || !file) { alert("Completa todos los campos"); return; }
+    
+    alert("Subiendo imagen...");
 
     try {
-        // 1. Subir a ImgBB
         const formData = new FormData();
         formData.append('image', file);
         const res = await fetch('https://api.imgbb.com/1/upload?key=87532298715785a9739097f48b941575', { method: 'POST', body: formData });
         const data = await res.json();
-        
-        if (!data.success) throw new Error("Error al subir imagen");
         const urlFoto = data.data.url;
 
-        // 2. Enviar a Telegram
         const mensaje = `Nueva Recarga\nMonto: ${monto} CUP\nBanco: ${metodo}`;
         const urlTelegram = `https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(mensaje)}`;
         
-        const resTel = await fetch(urlTelegram);
-        const dataTel = await resTel.json();
+        await fetch(urlTelegram);
+        push(ref(db, 'pendientes'), { metodo, monto, foto: urlFoto, timestamp: Date.now() });
         
-        console.log("Respuesta Telegram:", dataTel); // MIRA ESTO EN LA CONSOLA
-        if (!dataTel.ok) throw new Error("Error de Telegram: " + dataTel.description);
-
         alert("Solicitud enviada correctamente.");
-    } catch (error) {
-        console.error(error);
-        alert("Error: " + error.message);
+    } catch (e) {
+        alert("Error al enviar: " + e.message);
     }
 };
+
 
 
     // 2. Enviar a Telegram
