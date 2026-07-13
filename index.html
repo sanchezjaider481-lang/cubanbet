@@ -181,26 +181,36 @@ window.enviarSolicitud = async function() {
 
     if (!metodo || !monto || !file) { alert("Completa todos los campos"); return; }
     
-    alert("Subiendo imagen... no cierres esta ventana.");
+    alert("Procesando envío...");
 
     try {
+        // 1. Subir imagen
         const formData = new FormData();
         formData.append('image', file);
-        const res = await fetch('https://api.imgbb.com/1/upload?key=87532298715785a9739097f48b941575', { method: 'POST', body: formData });
-        const data = await res.json();
-        
-        if (!data.success) throw new Error("Error subiendo imagen");
-        const urlFoto = data.data.url;
+        const resImg = await fetch('https://api.imgbb.com/1/upload?key=87532298715785a9739097f48b941575', { method: 'POST', body: formData });
+        const dataImg = await resImg.json();
+        const urlFoto = dataImg.data.url;
 
-        const mensaje = `Nueva Recarga\nMonto: ${monto} CUP\nBanco: ${metodo}\nConcepto: ${window.codigoEnzona || 'N/A'}`;
-        const urlTelegram = `https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(mensaje)}`;
+        // 2. Preparar datos Telegram
+        const token = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
+        const chatId = "-1004432353397";
+        const texto = `Nueva Recarga: ${monto} CUP | Banco: ${metodo}`;
         
-        await fetch(urlTelegram);
-        push(ref(db, 'pendientes'), { metodo, monto, foto: urlFoto, timestamp: Date.now() });
+        // 3. Enviar foto a Telegram
+        const urlTel = `https://api.telegram.org/bot${token}/sendPhoto?chat_id=${chatId}&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(texto)}`;
         
-        alert("¡Solicitud enviada con éxito!");
+        const resTel = await fetch(urlTel);
+        const jsonTel = await resTel.json();
+
+        if (jsonTel.ok) {
+            alert("¡Éxito! Mensaje enviado a Telegram.");
+        } else {
+            console.error("Error Telegram:", jsonTel);
+            alert("Error Telegram: " + jsonTel.description);
+        }
     } catch (e) {
-        alert("Error al enviar: " + e.message);
+        console.error("Error general:", e);
+        alert("Error crítico: " + e.message);
     }
 };
 
