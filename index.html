@@ -117,8 +117,44 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 window.db = db;
 window.codigoEnzona = "";
+window.boleta = [];
 
-// NAVEGACIÓN
+// 1. CARGA (Loader y Partidos)
+async function iniciarApp() {
+    let progreso = 0;
+    const el = document.getElementById('porcentaje');
+    const interval = setInterval(() => {
+        progreso += 1;
+        if(el) el.innerText = progreso + "%";
+        if(progreso >= 100) clearInterval(interval);
+    }, 40);
+    
+    // Carga de partidos
+    try {
+        const res = await fetch('partidos.json');
+        const p = await res.json();
+        const contenedor = document.getElementById('lista-partidos');
+        if(contenedor) {
+            contenedor.innerHTML = p.map(partido => `
+                <div class="bg-white p-4 rounded-xl border border-gray-100">
+                    <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
+                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
+                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (e) { console.error("Error al cargar partidos:", e); }
+
+    setTimeout(() => {
+        const loader = document.getElementById('loader');
+        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
+    }, 4000);
+}
+
+// 2. NAVEGACIÓN Y FUNCIONES
 window.cambiarTab = function(id) {
     document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -127,7 +163,6 @@ window.cambiarTab = function(id) {
     document.getElementById('btn-'+id).classList.add('text-green-600');
 };
 
-// RECARGA, LOGOS Y TARJETAS
 window.mostrarDatos = function() {
     const select = document.getElementById('metodo-pago');
     const metodo = select.value;
@@ -141,36 +176,16 @@ window.mostrarDatos = function() {
         "ENZONA": "https://www.enzona.net/assets/images/logo-enzona.png"
     };
 
-    if(metodo) {
+    if(metodo && infoPago) {
         infoPago.classList.remove('hidden');
-        logo.src = logos[metodo];
-        logo.classList.remove('hidden');
+        if(logo) { logo.src = logos[metodo] || ""; logo.classList.remove('hidden'); }
+        if(tarjeta) tarjeta.innerText = select.options[select.selectedIndex].text.split('(')[1]?.replace(')', '') || "";
         
-        // Esto toma el texto del option seleccionado (ej: "BPA (Tarjeta: 9238...)")
-        tarjeta.innerText = select.options[select.selectedIndex].text.split('(')[1].replace(')', '');
-
         if (metodo === "ENZONA") {
             window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-            alert("AVISO ENZONA:\n\nTu código es: " + window.codigoEnzona + "\n(Anota este código antes de continuar)");
+            alert("AVISO ENZONA:\n\nTu código de concepto es: " + window.codigoEnzona + "\n(Anota este código antes de continuar)");
         }
-    } else {
-        infoPago.classList.add('hidden');
-    }
-};
-
-    if(metodo) {
-        infoPago.classList.remove('hidden');
-        logo.src = config[metodo].logo;
-        logo.classList.remove('hidden');
-        tarjeta.innerText = config[metodo].num;
-        
-        if (metodo === "BPA" || metodo === "BANDEC") {
-            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
-        } else if (metodo === "ENZONA") {
-            window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-            alert("AVISO ENZONA:\n\nTu código de concepto es: " + window.codigoEnzona + "\n\n(Anota este código antes de continuar)");
-        }
-    } else {
+    } else if (infoPago) {
         infoPago.classList.add('hidden');
     }
 };
@@ -179,16 +194,12 @@ window.enviarSolicitud = function() {
     const metodo = document.getElementById('metodo-pago').value;
     const monto = document.getElementById('monto-recarga').value;
     if (!metodo || !monto || monto < 500) { alert("Selecciona banco y monto mayor a 500"); return; }
-    
     let refPago = (metodo === "ENZONA") ? window.codigoEnzona : prompt("Escribe tu número de teléfono de Transfermóvil:");
     if (!refPago) return;
-
     push(ref(db, 'pendientes'), { usuario: "testuser1", metodo, monto, referencia: refPago, estado: "pendiente", timestamp: Date.now() })
     .then(() => alert("Solicitud enviada correctamente."));
 };
 
-// BOLETA
-window.boleta = [];
 window.agregarABoleta = function(a, b, sel, cuota) {
     boleta = boleta.filter(i => i.id !== a+b);
     boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
@@ -199,8 +210,10 @@ window.actualizarBoleta = function() {
     const cont = document.getElementById('lista-boleta');
     const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
     const monto = parseFloat(document.getElementById('input-monto').value) || 0;
-    cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
+    if(cont) {
+        cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
         boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
+    }
     document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
     document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
 };
@@ -210,32 +223,6 @@ window.eliminar = function(id) {
     actualizarBoleta();
 };
 
-// CARGA Y PARTIDOS
-async function iniciarApp() {
-    let progreso = 0;
-    const el = document.getElementById('porcentaje');
-    const interval = setInterval(() => { progreso++; if(el) el.innerText = progreso + "%"; if(progreso >= 100) clearInterval(interval); }, 40);
-    
-    try {
-        const res = await fetch('partidos.json');
-        const p = await res.json();
-        document.getElementById('lista-partidos').innerHTML = p.map(partido => `
-            <div class="bg-white p-4 rounded-xl border border-gray-100">
-                <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
-                <div class="grid grid-cols-3 gap-2 mt-2">
-                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
-                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
-                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
-                </div>
-            </div>
-        `).join('');
-    } catch (e) { console.error(e); }
-
-    setTimeout(() => {
-        const loader = document.getElementById('loader');
-        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
-    }, 4000);
-}
 iniciarApp();
 
 
