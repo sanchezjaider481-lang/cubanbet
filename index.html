@@ -63,9 +63,29 @@
         </section>
 
         <section id="perfil" class="tab-content p-4">
-            <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
-            <div class="bg-white p-6 rounded-2xl text-center mb-6">👤<h3 class="font-bold" id="user-id">Jugador_123</h3></div>
-            
+    <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
+    
+    <div id="seccion-recarga" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+        <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga</h3>
+        
+        <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+            <option value="">Selecciona el banco</option>
+            <option value="BPA">BPA</option>
+            <option value="BANDEC">BANDEC</option>
+            <option value="ENZONA">ENZONA</option>
+        </select>
+        
+        <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200 text-center">
+            <img id="logo-banco" src="" class="w-16 h-16 mx-auto mb-3 rounded-lg shadow-sm hidden">
+            <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
+            <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
+        </div>
+        
+        <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
+        <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold">Verificar Depósito</button>
+    </div>
+</section>
+
             <!-- FORMULARIO DE RECARGA INTEGRADO -->
             <div id="seccion-recarga" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
                 <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga</h3>
@@ -170,25 +190,31 @@ window.mostrarDatos = function() {
     const logo = document.getElementById('logo-banco');
     const tarjeta = document.getElementById('datos-tarjeta');
     
-    const logos = {
-        "BPA": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Banco_Popular_de_Ahorro_logo.png/240px-Banco_Popular_de_Ahorro_logo.png",
-        "BANDEC": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Banco_de_Cr%C3%A9dito_y_Comercio_logo.png/240px-Banco_de_Cr%C3%A9dito_y_Comercio_logo.png",
-        "ENZONA": "https://www.enzona.net/assets/images/logo-enzona.png"
+    // Configuración de logos y tarjetas
+    const config = {
+        "BPA": { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Banco_Popular_de_Ahorro_logo.png/240px-Banco_Popular_de_Ahorro_logo.png", num: "Tarjeta: 9238129974984082" },
+        "BANDEC": { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Banco_de_Cr%C3%A9dito_y_Comercio_logo.png/240px-Banco_de_Cr%C3%A9dito_y_Comercio_logo.png", num: "Tarjeta: 9234069994220535" },
+        "ENZONA": { logo: "https://www.enzona.net/assets/images/logo-enzona.png", num: "Tarjeta: 9238129974984082" }
     };
 
-    if(metodo && infoPago) {
+    if(metodo) {
         infoPago.classList.remove('hidden');
-        if(logo) { logo.src = logos[metodo] || ""; logo.classList.remove('hidden'); }
-        if(tarjeta) tarjeta.innerText = select.options[select.selectedIndex].text.split('(')[1]?.replace(')', '') || "";
-        
-        if (metodo === "ENZONA") {
+        logo.src = config[metodo].logo;
+        logo.classList.remove('hidden');
+        tarjeta.innerText = config[metodo].num;
+
+        // AVISOS ESPECÍFICOS
+        if (metodo === "BPA" || metodo === "BANDEC") {
+            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
+        } else if (metodo === "ENZONA") {
             window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
             alert("AVISO ENZONA:\n\nTu código de concepto es: " + window.codigoEnzona + "\n(Anota este código antes de continuar)");
         }
-    } else if (infoPago) {
+    } else {
         infoPago.classList.add('hidden');
     }
 };
+
 
 window.enviarSolicitud = function() {
     const metodo = document.getElementById('metodo-pago').value;
