@@ -207,8 +207,8 @@ window.enviarSolicitud = function() {
     push(ref(db, 'pendientes'), { usuario: "Jugador_123", metodo, monto, referencia: refPago, estado: "pendiente", timestamp: Date.now() });
 
     // Notificación Telegram (RECUERDA PONER TUS DATOS AQUÍ)
-    const token = "TU_TOKEN_AQUI"; 
-    const chatId = "TU_CHAT_ID_AQUI";
+    const token = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
+    const chatId = "-1004432353397";
     fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=Nueva+recarga:+${monto}+CUP+por+${metodo}+Ref:+${refPago}`);
     
     alert("Solicitud enviada correctamente.");
