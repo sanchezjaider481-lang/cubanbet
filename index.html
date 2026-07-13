@@ -75,15 +75,17 @@
     <option value="BANDEC">BANDEC (Tarjeta: 9234069994220535)</option>
     <option value="ENZONA">ENZONA(Tarjeta: 9238129974984082)</option>
                 </select>
-                <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200">
-                    <p id="datos-cuenta" class="font-bold text-gray-800"></p>
-                    <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
-                    <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
-                </div>
-                <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
-                <input type="file" id="comprobante" accept="image/*" class="w-full mb-4">
-                <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold">Verificar Depósito</button>
-            </div>
+                <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200 text-center">
+    <!-- El logo aparecerá aquí -->
+    <img id="logo-banco" src="" class="w-16 h-16 mx-auto mb-3 rounded-lg shadow-sm hidden">
+    
+    <!-- El número de tarjeta aparecerá aquí -->
+    <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
+    
+    <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
+    <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
+</div>
+
 
             <button class="w-full bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
         </section>
@@ -98,7 +100,7 @@
     </nav>
 
     <script type="module">
- import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -114,83 +116,121 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 window.db = db;
+window.codigoEnzona = "";
 
-// 1. NAVEGACIÓN (Corregido: cambia color a verde)
+// NAVEGACIÓN
 window.cambiarTab = function(id) {
     document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    
-    document.querySelectorAll('nav button').forEach(b => {
-        b.classList.remove('text-green-600');
-        b.classList.add('text-gray-500');
-    });
+    document.querySelectorAll('nav button').forEach(b => { b.classList.remove('text-green-600'); b.classList.add('text-gray-500'); });
     document.getElementById('btn-'+id).classList.remove('text-gray-500');
     document.getElementById('btn-'+id).classList.add('text-green-600');
 };
 
-// 2. AVISOS (Corregido: sale al seleccionar, antes de verificar)
-// Variable global para guardar el código generado
-window.codigoEnzona = "";
-
+// RECARGA, LOGOS Y TARJETAS
 window.mostrarDatos = function() {
-    const metodo = document.getElementById('metodo-pago').value;
+    const select = document.getElementById('metodo-pago');
+    const metodo = select.value;
     const infoPago = document.getElementById('info-pago');
+    const logo = document.getElementById('logo-banco');
+    const tarjeta = document.getElementById('datos-tarjeta');
     
+    const logos = {
+        "BPA": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Banco_Popular_de_Ahorro_logo.png/240px-Banco_Popular_de_Ahorro_logo.png",
+        "BANDEC": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Banco_de_Cr%C3%A9dito_y_Comercio_logo.png/240px-Banco_de_Cr%C3%A9dito_y_Comercio_logo.png",
+        "ENZONA": "https://www.enzona.net/assets/images/logo-enzona.png"
+    };
+
     if(metodo) {
         infoPago.classList.remove('hidden');
+        logo.src = logos[metodo];
+        logo.classList.remove('hidden');
         
-        if (metodo === "BPA" || metodo === "BANDEC") {
-            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
-        } 
-        else if (metodo === "ENZONA") {
-            // Generamos el código AQUÍ, al seleccionar, y lo guardamos
+        // Esto toma el texto del option seleccionado (ej: "BPA (Tarjeta: 9238...)")
+        tarjeta.innerText = select.options[select.selectedIndex].text.split('(')[1].replace(')', '');
+
+        if (metodo === "ENZONA") {
             window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-            alert("AVISO ENZONA:\n\nPara aprobar tu depósito, debes poner este código en el CONCEPTO de tu transferencia:\n\n" + window.codigoEnzona + "\n\n(Anota este código antes de continuar)");
+            alert("AVISO ENZONA:\n\nTu código es: " + window.codigoEnzona + "\n(Anota este código antes de continuar)");
         }
     } else {
         infoPago.classList.add('hidden');
     }
 };
 
+    if(metodo) {
+        infoPago.classList.remove('hidden');
+        logo.src = config[metodo].logo;
+        logo.classList.remove('hidden');
+        tarjeta.innerText = config[metodo].num;
+        
+        if (metodo === "BPA" || metodo === "BANDEC") {
+            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
+        } else if (metodo === "ENZONA") {
+            window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
+            alert("AVISO ENZONA:\n\nTu código de concepto es: " + window.codigoEnzona + "\n\n(Anota este código antes de continuar)");
+        }
+    } else {
+        infoPago.classList.add('hidden');
+    }
+};
 
-// 3. ENVIAR SOLICITUD
 window.enviarSolicitud = function() {
     const metodo = document.getElementById('metodo-pago').value;
     const monto = document.getElementById('monto-recarga').value;
-    
     if (!metodo || !monto || monto < 500) { alert("Selecciona banco y monto mayor a 500"); return; }
     
-    let referencia = "";
-    
-    if (metodo === "ENZONA") {
-        // Usamos el código que ya generamos al seleccionar
-        referencia = window.codigoEnzona; 
-    } else {
-        referencia = prompt("Escribe tu número de teléfono de Transfermóvil:");
-    }
+    let refPago = (metodo === "ENZONA") ? window.codigoEnzona : prompt("Escribe tu número de teléfono de Transfermóvil:");
+    if (!refPago) return;
 
-    if (!referencia) return;
-
-    push(ref(db, 'pendientes'), { 
-        usuario: "testuser1", 
-        metodo: metodo, 
-        monto: monto, 
-        referencia: referencia, 
-        estado: "pendiente", 
-        timestamp: Date.now() 
-    }).then(() => alert("Solicitud enviada correctamente."));
+    push(ref(db, 'pendientes'), { usuario: "testuser1", metodo, monto, referencia: refPago, estado: "pendiente", timestamp: Date.now() })
+    .then(() => alert("Solicitud enviada correctamente."));
 };
 
+// BOLETA
+window.boleta = [];
+window.agregarABoleta = function(a, b, sel, cuota) {
+    boleta = boleta.filter(i => i.id !== a+b);
+    boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
+    actualizarBoleta();
+};
 
-// 4. CARGA CON PORCENTAJE
+window.actualizarBoleta = function() {
+    const cont = document.getElementById('lista-boleta');
+    const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
+    const monto = parseFloat(document.getElementById('input-monto').value) || 0;
+    cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
+        boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
+    document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
+    document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
+};
+
+window.eliminar = function(id) {
+    boleta = boleta.filter(i => i.id !== id);
+    actualizarBoleta();
+};
+
+// CARGA Y PARTIDOS
 async function iniciarApp() {
     let progreso = 0;
-    const textoPorcentaje = document.getElementById('porcentaje');
-    const intervalo = setInterval(() => {
-        progreso += 1;
-        if(textoPorcentaje) textoPorcentaje.innerText = progreso + "%";
-        if(progreso >= 100) clearInterval(intervalo);
-    }, 40);
+    const el = document.getElementById('porcentaje');
+    const interval = setInterval(() => { progreso++; if(el) el.innerText = progreso + "%"; if(progreso >= 100) clearInterval(interval); }, 40);
+    
+    try {
+        const res = await fetch('partidos.json');
+        const p = await res.json();
+        document.getElementById('lista-partidos').innerHTML = p.map(partido => `
+            <div class="bg-white p-4 rounded-xl border border-gray-100">
+                <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
+                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
+                    <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) { console.error(e); }
+
     setTimeout(() => {
         const loader = document.getElementById('loader');
         if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
