@@ -122,88 +122,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 window.db = db;
-window.codigoEnzona = "";
 window.boleta = [];
 
-// 1. CARGA (Loader y Partidos)
 async function iniciarApp() {
     let progreso = 0;
     const el = document.getElementById('porcentaje');
-    
-    // Incremento manual que llegará a 100 sí o sí
     const interval = setInterval(() => {
-        progreso += 1;
+        progreso += 10;
         if(el) el.innerText = progreso + "%";
         if(progreso >= 100) clearInterval(interval);
-    }, 30);
+    }, 100);
     
-    try {
-        const res = await fetch('partidos.json');
-        if (!res.ok) throw new Error("No se pudo cargar el JSON");
-        const p = await res.json();
-        const contenedor = document.getElementById('lista-partidos');
-        if(contenedor) {
-            contenedor.innerHTML = p.map(partido => `
-                <div class="bg-white p-4 rounded-xl border border-gray-100">
-                    <p class="font-bold">${partido.equipoA} vs ${partido.equipoB}</p>
-                    <div class="grid grid-cols-3 gap-2 mt-2">
-                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '1', ${partido.cuota1})" class="bg-gray-100 p-2 rounded text-sm font-bold">1: ${partido.cuota1}</button>
-                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', 'X', ${partido.cuotaX})" class="bg-gray-100 p-2 rounded text-sm font-bold">X: ${partido.cuotaX}</button>
-                        <button onclick="agregarABoleta('${partido.equipoA}', '${partido.equipoB}', '2', ${partido.cuota2})" class="bg-gray-100 p-2 rounded text-sm font-bold">2: ${partido.cuota2}</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-    } catch (e) { 
-        console.error("Error al cargar partidos, continuando de todos modos...", e); 
-    }
-
-    // EL LOADER SE OCULTA SIEMPRE, HAYA CARGADO EL JSON O NO
     setTimeout(() => {
         const loader = document.getElementById('loader');
-        if(loader) { 
-            loader.style.opacity = '0'; 
-            setTimeout(() => { loader.style.display = 'none'; }, 500); 
-        }
-    }, 3500);
+        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
+    }, 1500);
 }
 
-
-// 2. NAVEGACIÓN Y FUNCIONES
 window.cambiarTab = function(id) {
     document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    document.querySelectorAll('nav button').forEach(b => { b.classList.remove('text-green-600'); b.classList.add('text-gray-500'); });
-    document.getElementById('btn-'+id).classList.remove('text-gray-500');
-    document.getElementById('btn-'+id).classList.add('text-green-600');
 };
 
-// Lógica de Recarga con logos y avisos
 window.mostrarDatos = function() {
     const metodo = document.getElementById('metodo-pago').value;
     const infoPago = document.getElementById('info-pago');
-    const logo = document.getElementById('logo-banco');
-    const tarjeta = document.getElementById('datos-tarjeta');
-    
-    // Cambia los nombres de los archivos si los subes a tu carpeta
-    const config = {
-        "BPA": { logo: "img/logo-bpa.png", num: "Tarjeta: 9238129974984082" },
-        "BANDEC": { logo: "img/logo-bandec.png", num: "Tarjeta: 9234069994220535" },
-        "ENZONA": { logo: "img/logo-enzona.png", num: "Tarjeta: 9238129974984082" }
-    };
-
+    const config = { "BPA": "9238129974984082", "BANDEC": "9234069994220535", "ENZONA": "9238129974984082" };
     if(metodo && config[metodo]) {
         infoPago.classList.remove('hidden');
-        logo.src = config[metodo].logo;
-        logo.classList.remove('hidden');
-        tarjeta.innerText = config[metodo].num;
-
-        if (metodo === "BPA" || metodo === "BANDEC") {
-            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
-        } else if (metodo === "ENZONA") {
-            window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-            alert("AVISO ENZONA:\n\nTu código de concepto es: " + window.codigoEnzona + "\n(Anota este código antes de continuar)");
-        }
+        document.getElementById('datos-tarjeta').innerText = "Tarjeta: " + config[metodo];
     } else {
         infoPago.classList.add('hidden');
     }
@@ -213,67 +160,22 @@ window.enviarSolicitud = async function() {
     const metodo = document.getElementById('metodo-pago').value;
     const monto = document.getElementById('monto-recarga').value;
     const file = document.getElementById('archivo-comprobante').files[0];
-
     if (!metodo || !monto || !file) { alert("Completa todos los campos"); return; }
-    
-    alert("Subiendo imagen...");
-
+    alert("Procesando...");
     try {
         const formData = new FormData();
         formData.append('image', file);
         const res = await fetch('https://api.imgbb.com/1/upload?key=87532298715785a9739097f48b941575', { method: 'POST', body: formData });
         const data = await res.json();
         const urlFoto = data.data.url;
-
-        const mensaje = `Nueva Recarga\nMonto: ${monto} CUP\nBanco: ${metodo}`;
-        const urlTelegram = `https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(mensaje)}`;
-        
-        await fetch(urlTelegram);
+        const msg = `Nueva Recarga: ${monto} CUP | Banco: ${metodo}`;
+        await fetch(`https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(msg)}`);
         push(ref(db, 'pendientes'), { metodo, monto, foto: urlFoto, timestamp: Date.now() });
-        
-        alert("Solicitud enviada correctamente.");
-    } catch (e) {
-        alert("Error al enviar: " + e.message);
-    }
+        alert("Solicitud enviada.");
+    } catch (e) { alert("Error: " + e.message); }
 };
 
-
-
-    // 2. Enviar a Telegram
-    const mensaje = `Nueva Recarga\nMonto: ${monto} CUP\nBanco: ${metodo}`;
-    const urlTelegram = `https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(mensaje)}`;
-    
-    await fetch(urlTelegram);
-    
-    // 3. Guardar en Firebase (como ya hacías)
-    push(ref(db, 'pendientes'), { metodo, monto, foto: urlFoto, timestamp: Date.now() });
-    
-    alert("Solicitud enviada correctamente.");
-};
-
-
-// Funciones de Boleta
-window.agregarABoleta = function(a, b, sel, cuota) {
-    boleta = boleta.filter(i => i.id !== a+b);
-    boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
-    actualizarBoleta();
-};
-
-window.actualizarBoleta = function() {
-    const cont = document.getElementById('lista-boleta');
-    const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
-    const monto = parseFloat(document.getElementById('input-monto').value) || 0;
-    if(cont) cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
-        boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
-    document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
-    document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
-};
-
-window.eliminar = function(id) {
-    boleta = boleta.filter(i => i.id !== id);
-    actualizarBoleta();
-};
-
+iniciarApp();
     </script>
 
 
