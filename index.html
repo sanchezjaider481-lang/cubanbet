@@ -129,14 +129,17 @@ window.boleta = [];
 async function iniciarApp() {
     let progreso = 0;
     const el = document.getElementById('porcentaje');
+    
+    // Incremento manual que llegará a 100 sí o sí
     const interval = setInterval(() => {
         progreso += 1;
         if(el) el.innerText = progreso + "%";
         if(progreso >= 100) clearInterval(interval);
-    }, 40);
+    }, 30);
     
     try {
         const res = await fetch('partidos.json');
+        if (!res.ok) throw new Error("No se pudo cargar el JSON");
         const p = await res.json();
         const contenedor = document.getElementById('lista-partidos');
         if(contenedor) {
@@ -151,13 +154,20 @@ async function iniciarApp() {
                 </div>
             `).join('');
         }
-    } catch (e) { console.error("Error al cargar partidos:", e); }
+    } catch (e) { 
+        console.error("Error al cargar partidos, continuando de todos modos...", e); 
+    }
 
+    // EL LOADER SE OCULTA SIEMPRE, HAYA CARGADO EL JSON O NO
     setTimeout(() => {
         const loader = document.getElementById('loader');
-        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
-    }, 4000);
+        if(loader) { 
+            loader.style.opacity = '0'; 
+            setTimeout(() => { loader.style.display = 'none'; }, 500); 
+        }
+    }, 3500);
 }
+
 
 // 2. NAVEGACIÓN Y FUNCIONES
 window.cambiarTab = function(id) {
