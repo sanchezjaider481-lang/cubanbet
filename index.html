@@ -180,35 +180,23 @@ window.enviarSolicitud = async function() {
     const file = document.getElementById('archivo-comprobante').files[0];
 
     if (!metodo || !monto || !file) { 
-        alert("Faltan datos"); 
+        alert("Completa todos los campos"); 
         return; 
     }
     
-    alert("Enviando...");
+    alert("Procesando solicitud...");
 
     try {
-        // 1. Subir a ImgBB
-        const formData = new FormData();
-        formData.append('image', file);
-        const resImg = await fetch('https://api.imgbb.com/1/upload?key=87532298715785a9739097f48b941575', { method: 'POST', body: formData });
-        const dataImg = await resImg.json();
-        const urlFoto = dataImg.data.url;
-
-        // 2. Enviar a Telegram usando el método GET (más compatible)
-        const msg = `💰 Nueva Recarga\nBanco: ${metodo}\nMonto: ${monto} CUP`;
-        const urlTelegram = `https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(msg)}`;
+        // Guardamos en Firebase (Esto SIEMPRE funciona)
+        push(ref(db, 'pendientes'), { 
+            metodo, 
+            monto, 
+            timestamp: Date.now() 
+        });
         
-        const resTel = await fetch(urlTelegram);
-        
-        // Verificamos si Telegram respondió correctamente
-        if (resTel.status === 200) {
-            alert("Solicitud enviada correctamente a Telegram.");
-            push(ref(db, 'pendientes'), { metodo, monto, foto: urlFoto, timestamp: Date.now() });
-        } else {
-            alert("Error al enviar a Telegram. Código: " + resTel.status);
-        }
+        alert("Solicitud recibida. Te notificaremos pronto.");
     } catch (e) {
-        alert("Error de conexión: " + e.message);
+        alert("Error: " + e.message);
     }
 };
 
