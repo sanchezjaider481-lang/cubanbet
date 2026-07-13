@@ -65,11 +65,11 @@
         <section id="perfil" class="tab-content p-4">
     <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
     
-    <div id="seccion-recarga" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
         <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga</h3>
         
         <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-            <option value="">Selecciona el banco</option>
+            <option value="">Selecciona el banco de tu transferencia</option>
             <option value="BPA">BPA</option>
             <option value="BANDEC">BANDEC</option>
             <option value="ENZONA">ENZONA</option>
@@ -79,12 +79,16 @@
             <img id="logo-banco" src="" class="w-16 h-16 mx-auto mb-3 rounded-lg shadow-sm hidden">
             <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
             <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
+            <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
         </div>
         
         <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
         <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold">Verificar Depósito</button>
+        
+        <button class="w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
     </div>
 </section>
+
 
             <!-- FORMULARIO DE RECARGA INTEGRADO -->
             <div id="seccion-recarga" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
@@ -120,7 +124,7 @@
     </nav>
 
     <script type="module">
-         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -149,7 +153,6 @@ async function iniciarApp() {
         if(progreso >= 100) clearInterval(interval);
     }, 40);
     
-    // Carga de partidos
     try {
         const res = await fetch('partidos.json');
         const p = await res.json();
@@ -183,27 +186,26 @@ window.cambiarTab = function(id) {
     document.getElementById('btn-'+id).classList.add('text-green-600');
 };
 
+// Lógica de Recarga con logos y avisos
 window.mostrarDatos = function() {
-    const select = document.getElementById('metodo-pago');
-    const metodo = select.value;
+    const metodo = document.getElementById('metodo-pago').value;
     const infoPago = document.getElementById('info-pago');
     const logo = document.getElementById('logo-banco');
     const tarjeta = document.getElementById('datos-tarjeta');
     
-    // Configuración de logos y tarjetas
+    // Cambia los nombres de los archivos si los subes a tu carpeta
     const config = {
-        "BPA": { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Banco_Popular_de_Ahorro_logo.png/240px-Banco_Popular_de_Ahorro_logo.png", num: "Tarjeta: 9238129974984082" },
-        "BANDEC": { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Banco_de_Cr%C3%A9dito_y_Comercio_logo.png/240px-Banco_de_Cr%C3%A9dito_y_Comercio_logo.png", num: "Tarjeta: 9234069994220535" },
-        "ENZONA": { logo: "https://www.enzona.net/assets/images/logo-enzona.png", num: "Tarjeta: 9238129974984082" }
+        "BPA": { logo: "logo-bpa.png", num: "Tarjeta: 9238129974984082" },
+        "BANDEC": { logo: "logo-bandec.png", num: "Tarjeta: 9234069994220535" },
+        "ENZONA": { logo: "logo-enzona.png", num: "Tarjeta: 9238129974984082" }
     };
 
-    if(metodo) {
+    if(metodo && config[metodo]) {
         infoPago.classList.remove('hidden');
         logo.src = config[metodo].logo;
         logo.classList.remove('hidden');
         tarjeta.innerText = config[metodo].num;
 
-        // AVISOS ESPECÍFICOS
         if (metodo === "BPA" || metodo === "BANDEC") {
             alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
         } else if (metodo === "ENZONA") {
@@ -215,17 +217,26 @@ window.mostrarDatos = function() {
     }
 };
 
-
 window.enviarSolicitud = function() {
     const metodo = document.getElementById('metodo-pago').value;
     const monto = document.getElementById('monto-recarga').value;
     if (!metodo || !monto || monto < 500) { alert("Selecciona banco y monto mayor a 500"); return; }
+    
     let refPago = (metodo === "ENZONA") ? window.codigoEnzona : prompt("Escribe tu número de teléfono de Transfermóvil:");
     if (!refPago) return;
-    push(ref(db, 'pendientes'), { usuario: "testuser1", metodo, monto, referencia: refPago, estado: "pendiente", timestamp: Date.now() })
-    .then(() => alert("Solicitud enviada correctamente."));
+
+    // Guardar en Firebase
+    push(ref(db, 'pendientes'), { usuario: "Jugador_123", metodo, monto, referencia: refPago, estado: "pendiente", timestamp: Date.now() });
+
+    // Notificación Telegram (RECUERDA PONER TUS DATOS AQUÍ)
+    const token = "TU_TOKEN_AQUI"; 
+    const chatId = "TU_CHAT_ID_AQUI";
+    fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=Nueva+recarga:+${monto}+CUP+por+${metodo}+Ref:+${refPago}`);
+    
+    alert("Solicitud enviada correctamente.");
 };
 
+// Funciones de Boleta
 window.agregarABoleta = function(a, b, sel, cuota) {
     boleta = boleta.filter(i => i.id !== a+b);
     boleta.push({ id: a+b, a, b, sel, cuota: parseFloat(cuota) });
@@ -236,10 +247,8 @@ window.actualizarBoleta = function() {
     const cont = document.getElementById('lista-boleta');
     const totalCuota = boleta.reduce((acc, i) => acc * i.cuota, 1);
     const monto = parseFloat(document.getElementById('input-monto').value) || 0;
-    if(cont) {
-        cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
+    if(cont) cont.innerHTML = boleta.length === 0 ? '<p class="text-gray-500 text-center py-10">Tu boleta está vacía</p>' : 
         boleta.map(i => `<div class="bg-gray-50 p-3 rounded flex justify-between">${i.a} vs ${i.b} (${i.sel}) <b>${i.cuota}</b><button onclick="eliminar('${i.id}')" class="text-red-500">×</button></div>`).join('');
-    }
     document.getElementById('display-total-cuota').innerText = boleta.length > 0 ? totalCuota.toFixed(2) : "0.00";
     document.getElementById('display-ganancia').innerText = "CUP " + (totalCuota * monto).toFixed(2);
 };
@@ -250,9 +259,7 @@ window.eliminar = function(id) {
 };
 
 iniciarApp();
-
-
-</script>
+    </script>
 
 
 </body>
