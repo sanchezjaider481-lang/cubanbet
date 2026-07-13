@@ -68,6 +68,7 @@
     <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
         <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga</h3>
         
+        <!-- SELECT ÚNICO -->
         <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
             <option value="">Selecciona el banco de tu transferencia</option>
             <option value="BPA">BPA</option>
@@ -75,6 +76,7 @@
             <option value="ENZONA">ENZONA</option>
         </select>
         
+        <!-- DIV DE INFORMACIÓN ÚNICO -->
         <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200 text-center">
             <img id="logo-banco" src="" class="w-16 h-16 mx-auto mb-3 rounded-lg shadow-sm hidden">
             <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
@@ -88,6 +90,7 @@
         <button class="w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
     </div>
 </section>
+
 
 
             <!-- FORMULARIO DE RECARGA INTEGRADO -->
