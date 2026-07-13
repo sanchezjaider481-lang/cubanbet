@@ -147,10 +147,28 @@ window.cambiarTab = function(id) {
 window.mostrarDatos = function() {
     const metodo = document.getElementById('metodo-pago').value;
     const infoPago = document.getElementById('info-pago');
-    const config = { "BPA": "9238129974984082", "BANDEC": "9234069994220535", "ENZONA": "9238129974984082" };
+    const logo = document.getElementById('logo-banco');
+    const tarjeta = document.getElementById('datos-tarjeta');
+    
+    const config = {
+        "BPA": { logo: "img/logo-bpa.png", num: "9238129974984082" },
+        "BANDEC": { logo: "img/logo-bandec.png", num: "9234069994220535" },
+        "ENZONA": { logo: "img/logo-enzona.png", num: "9238129974984082" }
+    };
+
     if(metodo && config[metodo]) {
         infoPago.classList.remove('hidden');
-        document.getElementById('datos-tarjeta').innerText = "Tarjeta: " + config[metodo];
+        logo.src = config[metodo].logo;
+        logo.classList.remove('hidden');
+        tarjeta.innerText = "Tarjeta: " + config[metodo].num;
+
+        // AQUÍ ESTÁN LAS ALERTAS QUE FALTABAN
+        if (metodo === "BPA" || metodo === "BANDEC") {
+            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
+        } else if (metodo === "ENZONA") {
+            window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
+            alert("AVISO ENZONA:\n\nTu código de concepto es: " + window.codigoEnzona + "\n(Anota este código antes de continuar)");
+        }
     } else {
         infoPago.classList.add('hidden');
     }
@@ -160,20 +178,32 @@ window.enviarSolicitud = async function() {
     const metodo = document.getElementById('metodo-pago').value;
     const monto = document.getElementById('monto-recarga').value;
     const file = document.getElementById('archivo-comprobante').files[0];
+
     if (!metodo || !monto || !file) { alert("Completa todos los campos"); return; }
-    alert("Procesando...");
+    
+    alert("Subiendo imagen... no cierres esta ventana.");
+
     try {
         const formData = new FormData();
         formData.append('image', file);
         const res = await fetch('https://api.imgbb.com/1/upload?key=87532298715785a9739097f48b941575', { method: 'POST', body: formData });
         const data = await res.json();
+        
+        if (!data.success) throw new Error("Error subiendo imagen");
         const urlFoto = data.data.url;
-        const msg = `Nueva Recarga: ${monto} CUP | Banco: ${metodo}`;
-        await fetch(`https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(msg)}`);
+
+        const mensaje = `Nueva Recarga\nMonto: ${monto} CUP\nBanco: ${metodo}\nConcepto: ${window.codigoEnzona || 'N/A'}`;
+        const urlTelegram = `https://api.telegram.org/bot8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo/sendPhoto?chat_id=-1004432353397&photo=${encodeURIComponent(urlFoto)}&caption=${encodeURIComponent(mensaje)}`;
+        
+        await fetch(urlTelegram);
         push(ref(db, 'pendientes'), { metodo, monto, foto: urlFoto, timestamp: Date.now() });
-        alert("Solicitud enviada.");
-    } catch (e) { alert("Error: " + e.message); }
+        
+        alert("¡Solicitud enviada con éxito!");
+    } catch (e) {
+        alert("Error al enviar: " + e.message);
+    }
 };
+
 
 iniciarApp();
     </script>
