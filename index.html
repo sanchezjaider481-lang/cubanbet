@@ -98,98 +98,68 @@
     </nav>
 
     <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
-        authDomain: "cubanbet-32254.firebaseapp.com",
-        projectId: "cubanbet-32254",
-        storageBucket: "cubanbet-32254.firebasestorage.app",
-        messagingSenderId: "470616151074",
-        appId: "1:470616151074:web:8624013ff21f5e3c85267b",
-        measurementId: "G-JZQRVYXEVM"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
+    authDomain: "cubanbet-32254.firebaseapp.com",
+    projectId: "cubanbet-32254",
+    storageBucket: "cubanbet-32254.firebasestorage.app",
+    messagingSenderId: "470616151074",
+    appId: "1:470616151074:web:8624013ff21f5e3c85267b",
+    measurementId: "G-JZQRVYXEVM"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    window.db = db; // Hacer db accesible globalmente
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window.db = db;
 
-    // --- FUNCIONES ---
+// --- FUNCIONES ---
+window.cambiarTab = function(id) {
+    document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+};
 
-    window.cambiarTab = function(id) {
-        document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    };
-
-    window.mostrarDatos = function() {
-        const metodo = document.getElementById('metodo-pago').value;
-        const infoPago = document.getElementById('info-pago');
-        if(metodo) {
-            infoPago.classList.remove('hidden');
-            if (metodo === "BPA" || metodo === "BANDEC") {
-                alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet(sino lo es configure su perfil y ponga el numero de telefono de TRANSFERMOVIL de donde hara la transferencia. \n3. ESTA OPCION ES OBLIGATORIA PORQUE SINO PUEDE SER DENEGADO SU DEPOSITO");
-            }
-            else if (metodo === "ENZONA") {
-            alert("IMPORTANTE:\n\nPara aprobar tu depósito de ENZONA:\nAl finalizar, verás un código de concepto único que DEBES escribir en tu transferencia. Sino pones el código dado para ENZONA puede ser denegado su depósito");
-        } else {
-            infoPago.classList.add('hidden');
+window.mostrarDatos = function() {
+    const metodo = document.getElementById('metodo-pago').value;
+    const infoPago = document.getElementById('info-pago');
+    if(metodo) {
+        infoPago.classList.remove('hidden');
+        if (metodo === "BPA" || metodo === "BANDEC") {
+            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
+        } else if (metodo === "ENZONA") {
+            alert("IMPORTANTE:\n\nPara aprobar tu depósito de ENZONA:\nAl finalizar, verás un código de concepto único que DEBES escribir en tu transferencia.");
         }
-    };
+    } else {
+        infoPago.classList.add('hidden');
+    }
+};
 
-    window.enviarSolicitud = function() {
-        const metodo = document.getElementById('metodo-pago').value;
-        const monto = document.getElementById('monto-recarga').value;
-        
-        if (!metodo || !monto || monto < 500) {
-            alert("Selecciona un banco y un monto mayor a 500");
-            return;
-        }
-
-        let referencia = "";
-        if (metodo === "ENZONA") {
-            referencia = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-            alert("Copia este concepto para tu transferencia: " + referencia);
-        } else {
-            referencia = prompt("Escribe el número de teléfono desde el cual harás la transferencia:");
-            if (!referencia || referencia.length < 8) { 
-                alert("Necesitamos un número de teléfono válido."); 
-                return; 
-            }
-        }
-
-        push(ref(db, 'pendientes'), {
-            usuario: "testuser1",
-            metodo: metodo,
-            monto: monto,
-            referencia: referencia,
-            estado: "pendiente",
-            timestamp: Date.now()
-        }).then(() => {
-            alert("Solicitud enviada correctamente.");
-        });
-    };
-
+window.enviarSolicitud = function() {
+    const metodo = document.getElementById('metodo-pago').value;
+    const monto = document.getElementById('monto-recarga').value;
+    if (!metodo || !monto || monto < 500) { alert("Selecciona banco y monto mayor a 500"); return; }
     
+    let referencia = (metodo === "ENZONA") ? "Nota:" + Math.floor(1000 + Math.random() * 9000) : prompt("Escribe tu número de teléfono de Transfermóvil:");
+    if (!referencia) return;
 
-async function cargarPartidos() {
-    // Simulamos carga de 4 segundos
+    push(ref(db, 'pendientes'), { usuario: "testuser1", metodo, monto, referencia, estado: "pendiente", timestamp: Date.now() })
+    .then(() => alert("Solicitud enviada. ¡Ya puedes hacer la transferencia!"));
+};
+
+// --- SIMULACIÓN DE CARGA ---
+async function iniciarApp() {
     let progreso = 0;
-    const elementoPorcentaje = document.getElementById('porcentaje');
+    const textoPorcentaje = document.getElementById('porcentaje');
     
     const intervalo = setInterval(() => {
         progreso += 1;
-        if(elementoPorcentaje) elementoPorcentaje.innerText = progreso + "%";
+        if(textoPorcentaje) textoPorcentaje.innerText = progreso + "%";
         if(progreso >= 100) clearInterval(intervalo);
-    }, 40); // 40ms * 100 = 4000ms (4 segundos)
+    }, 40);
 
-    try {
-        const res = await fetch('partidos.json');
-        const p = await res.json();
-        // ... (tu código para mostrar partidos)
-    } catch (e) { console.error("Sin partidos, pero seguimos..."); }
-    
-    // El loader se quita solo cuando pasan los 4 segundos
+    // Ocultar loader tras 4 segundos (4000ms)
     setTimeout(() => {
         const loader = document.getElementById('loader');
         if(loader) { 
@@ -199,8 +169,8 @@ async function cargarPartidos() {
     }, 4000);
 }
 
+iniciarApp();
 
-    cargarPartidos();
 </script>
 
 
