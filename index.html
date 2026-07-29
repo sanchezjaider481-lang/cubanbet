@@ -9,18 +9,63 @@
         body { margin: 0; font-family: sans-serif; background-color: #f9fafb; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        .auth-screen { display: none; }
+        .auth-screen.active { display: flex; }
     </style>
 </head>
 <body class="pb-20">
 
-    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white">
-    <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-    <h1 class="text-3xl font-black text-green-600 tracking-tighter">CubanBet</h1>
-    <p id="porcentaje" class="text-green-600 font-bold mt-2">0%</p>
-</div>
+    <!-- PANTALLA DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
+    <div id="auth-container" class="auth-screen fixed inset-0 z-50 bg-gray-900 flex-col items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl">
+            <h1 class="text-3xl font-black text-green-600 tracking-tighter text-center mb-6">CubanBet</h1>
+            
+            <!-- Selector de pestañas Auth -->
+            <div class="flex border-b mb-6">
+                <button onclick="mostrarAuthForm('login')" id="btn-tab-login" class="w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600">Iniciar Sesión</button>
+                <button onclick="mostrarAuthForm('registro')" id="btn-tab-registro" class="w-1/2 pb-2 font-bold text-gray-400">Crear Cuenta</button>
+            </div>
 
+            <!-- FORMULARIO DE INICIO DE SESIÓN -->
+            <div id="form-login" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label>
+                    <input type="tel" id="login-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                </div>
+                <button onclick="iniciarSesion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Entrar</button>
+            </div>
 
+            <!-- FORMULARIO DE REGISTRO -->
+            <div id="form-registro" class="space-y-4 hidden">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs text-gray-500 font-bold uppercase">Nombre</label>
+                        <input type="text" id="reg-nombre" placeholder="Tu nombre" class="w-full mt-1 p-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 font-bold uppercase">Apellidos</label>
+                        <input type="text" id="reg-apellidos" placeholder="Tus apellidos" class="w-full mt-1 p-3 rounded-xl border border-gray-200 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label>
+                    <input type="tel" id="reg-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                </div>
+                <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Registrarse y Obtener ID</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADER DE LA APP -->
+    <div id="loader" class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-white">
+        <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h1 class="text-3xl font-black text-green-600 tracking-tighter">CubanBet</h1>
+        <p id="porcentaje" class="text-green-600 font-bold mt-2">0%</p>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
     <main id="content">
+        <!-- INICIO -->
         <section id="inicio" class="tab-content active p-4">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-green-600">CubanBet</h1>
@@ -33,6 +78,7 @@
             </div>
         </section>
 
+        <!-- MINIJUEGOS -->
         <section id="minijuegos" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos</h2>
             <div class="grid grid-cols-2 gap-4">
@@ -43,18 +89,20 @@
             </div>
         </section>
 
+        <!-- DEPORTES -->
         <section id="deportes" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-4">Deportes</h2>
             <div id="lista-partidos" class="space-y-4"></div>
         </section>
 
+        <!-- BOLETA -->
         <section id="boleta" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Tu Boleta</h2>
             <div id="lista-boleta" class="space-y-4"><p class="text-gray-500 text-center py-10">Tu boleta está vacía</p></div>
             <div class="mt-8 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
                 <div class="mb-4">
                     <label class="text-xs text-gray-500 font-bold uppercase">Monto a apostar (CUP)</label>
-                    <input type="number" id="input-monto" placeholder="Ej: 100" oninput="actualizarBoleta()" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border border-gray-200 font-bold">
+                    <input type="number" id="input-monto" placeholder="Ej: 100" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border border-gray-200 font-bold">
                 </div>
                 <div class="flex justify-between mb-2"><span>Total cuota:</span><span id="display-total-cuota" class="font-bold">0.00</span></div>
                 <div class="flex justify-between mb-4"><span>Ganancia:</span><span id="display-ganancia" class="text-green-600 font-bold">CUP 0.00</span></div>
@@ -62,154 +110,368 @@
             </div>
         </section>
 
+        <!-- PERFIL Y RECARGAS MANUALES -->
         <section id="perfil" class="tab-content p-4">
-    <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
-    
-    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-        <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga</h3>
-        
-        <!-- SELECT ÚNICO -->
-        <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-            <option value="">Selecciona el banco de tu transferencia</option>
-            <option value="BPA">BPA</option>
-            <option value="BANDEC">BANDEC</option>
-            <option value="ENZONA">ENZONA</option>
-        </select>
-        
-        <!-- DIV DE INFORMACIÓN ÚNICO -->
-        <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200 text-center">
-            <img id="logo-banco" src="" class="w-16 h-16 mx-auto mb-3 rounded-lg shadow-sm hidden">
-            <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
-            <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
-            <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
-       </div>
-        
-        <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
-        <label class="block text-xs text-gray-500 font-bold uppercase mt-4">Comprobante de pago (Imagen)</label>
-<input type="file" id="archivo-comprobante" accept="image/*" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
+            <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
+                <h3 class="font-bold text-lg mb-2 text-green-700">Datos de Usuario</h3>
+                <p class="text-sm text-gray-600">Nombre: <span id="perfil-nombre" class="font-bold text-black"></span></p>
+                <p class="text-sm text-gray-600">Teléfono: <span id="perfil-telefono" class="font-bold text-black"></span></p>
+                <p class="text-sm text-gray-600">ID de Usuario: <span id="perfil-id" class="font-bold text-green-600"></span></p>
+            </div>
 
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga Manual</h3>
 
-        <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold">Verificar Depósito</button>
-        <!-- Botón de Atención al Cliente -->
-<div class="mt-6 border-t pt-4">
-    <p class="text-xs text-gray-500 font-bold uppercase mb-2 text-center">¿Problemas con tu recarga?</p>
-    <a href="https://t.me/CubanBetClubBot" target="_blank" class="block w-full text-center bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">
-        💬 Atención al Cliente
-    </a>
-</div>
+                <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                    <option value="">Selecciona el banco de tu transferencia</option>
+                    <option value="BPA">BPA</option>
+                    <option value="BANDEC">BANDEC</option>
+                    <option value="ENZONA">ENZONA</option>
+                </select>
+                
+                <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200 text-center">
+                    <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
+                    <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
+                    <p id="aviso-especial" class="text-blue-600 font-bold mt-2 text-xs"></p>
+                    <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
+                </div>
+                
+                <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
+                
+                <label class="block text-xs text-gray-500 font-bold uppercase mt-2 mb-1">Comprobante de pago (Captura)</label>
+                <input type="file" id="archivo-comprobante" accept="image/*" class="w-full p-3 mb-4 rounded-xl border border-gray-200 text-xs">
 
-        <button class="w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
-    </div>
-</section>
+                <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Depósito</button>
+                
+                <div class="mt-6 border-t pt-4">
+                    <p class="text-xs text-gray-500 font-bold uppercase mb-2 text-center">¿Problemas con tu recarga?</p>
+                    <a href="https://t.me/CubanBetClubBot" target="_blank" class="block w-full text-center bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">
+                        💬 Atención al Cliente
+                    </a>
+                </div>
 
+                <button onclick="cerrarSesion()" class="w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
+                
+                <!-- BOTÓN SECRETO PARA ADMIN -->
+                <div class="mt-8 text-center">
+                    <button onclick="activarAdmin()" class="text-xs text-gray-300 hover:text-gray-500">⚙️ Configuración del sistema</button>
+                </div>
+            </div>
+
+            <!-- PANEL ADMIN OCULTO -->
+            <div id="panel-admin" class="hidden mt-8 bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-lg text-green-400">Panel Admin (Depósitos Pendientes)</h3>
+                    <button onclick="cerrarAdmin()" class="text-red-400 text-xs font-bold">Ocultar [X]</button>
+                </div>
+                <div id="lista-admin-pendientes" class="space-y-3">
+                    <p class="text-xs text-gray-500">Cargando solicitudes...</p>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-4 py-3 shadow-lg">
-        <button id="btn-inicio" onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
-        <button id="btn-minijuegos" onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
-        <button id="btn-deportes" onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
-        <button id="btn-boleta" onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold">Boleta</button>
-        <button id="btn-perfil" onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
+    <!-- NAVEGACIÓN INFERIOR -->
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-4 py-3 shadow-lg z-30">
+        <button onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
+        <button onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
+        <button onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
+        <button onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold">Boleta</button>
+        <button onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
     </nav>
 
+    <!-- SCRIPT DE FIREBASE Y LÓGICA -->
     <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
-    authDomain: "cubanbet-32254.firebaseapp.com",
-    projectId: "cubanbet-32254",
-    storageBucket: "cubanbet-32254.firebasestorage.app",
-    messagingSenderId: "470616151074",
-    appId: "1:470616151074:web:8624013ff21f5e3c85267b",
-    measurementId: "G-JZQRVYXEVM"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
+            authDomain: "cubanbet-32254.firebaseapp.com",
+            projectId: "cubanbet-32254",
+            storageBucket: "cubanbet-32254.firebasestorage.app",
+            messagingSenderId: "470616151074",
+            appId: "1:470616151074:web:8624013ff21f5e3c85267b",
+            measurementId: "G-JZQRVYXEVM"
+        };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-window.db = db;
-window.boleta = [];
-
-async function iniciarApp() {
-    let progreso = 0;
-    const el = document.getElementById('porcentaje');
-    const interval = setInterval(() => {
-        progreso += 10;
-        if(el) el.innerText = progreso + "%";
-        if(progreso >= 100) clearInterval(interval);
-    }, 100);
-    
-    setTimeout(() => {
-        const loader = document.getElementById('loader');
-        if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
-    }, 1500);
-}
-
-window.cambiarTab = function(id) {
-    document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-};
-
-window.mostrarDatos = function() {
-    const metodo = document.getElementById('metodo-pago').value;
-    const infoPago = document.getElementById('info-pago');
-    const logo = document.getElementById('logo-banco');
-    const tarjeta = document.getElementById('datos-tarjeta');
-    
-    const config = {
-        "BPA": { logo: "img/logo-bpa.png", num: "9238129974984082" },
-        "BANDEC": { logo: "img/logo-bandec.png", num: "9234069994220535" },
-        "ENZONA": { logo: "img/logo-enzona.png", num: "9238129974984082" }
-    };
-
-    if(metodo && config[metodo]) {
-        infoPago.classList.remove('hidden');
-        logo.src = config[metodo].logo;
-        logo.classList.remove('hidden');
-        tarjeta.innerText = "Tarjeta: " + config[metodo].num;
-
-        // AQUÍ ESTÁN LAS ALERTAS QUE FALTABAN
-        if (metodo === "BPA" || metodo === "BANDEC") {
-            alert("IMPORTANTE:\n\n1. En Transfermóvil, DEBES marcar la casilla 'Compartir número de teléfono'.\n2. El número debe ser EXACTAMENTE el mismo que tienes en tu perfil de CubanBet.");
-        } else if (metodo === "ENZONA") {
-            window.codigoEnzona = "Nota:" + Math.floor(1000 + Math.random() * 9000);
-            alert("AVISO ENZONA:\n\nTu código de concepto es: " + window.codigoEnzona + "\n(Anota este código antes de continuar)");
-        }
-    } else {
-        infoPago.classList.add('hidden');
-    }
-};
-
-window.enviarSolicitud = async function() {
-    const metodo = document.getElementById('metodo-pago').value;
-    const monto = document.getElementById('monto-recarga').value;
-    const file = document.getElementById('archivo-comprobante').files[0];
-
-    if (!metodo || !monto || !file) { 
-        alert("Completa todos los campos"); 
-        return; 
-    }
-    
-    alert("Procesando solicitud...");
-
-    try {
-        // Guardamos en Firebase (Esto SIEMPRE funciona)
-        push(ref(db, 'pendientes'), { 
-            metodo, 
-            monto, 
-            timestamp: Date.now() 
-        });
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
         
-        alert("Solicitud recibida. Te notificaremos pronto.");
-    } catch (e) {
-        alert("Error: " + e.message);
-    }
-};
+        let codigoEnzonaGenerado = "";
 
-iniciarApp();
+        // Verificar si ya hay una sesión activa en el navegador
+        window.addEventListener('DOMContentLoaded', () => {
+            const usuarioGuardado = localStorage.getItem('cubanbet_usuario');
+            if (usuarioGuardado) {
+                const user = JSON.parse(usuarioGuardado);
+                cargarDatosUsuario(user);
+                document.getElementById('auth-container').classList.remove('active');
+                iniciarApp();
+            } else {
+                document.getElementById('auth-container').classList.add('active');
+                document.getElementById('loader').style.display = 'none';
+            }
+        });
+
+        window.mostrarAuthForm = function(tipo) {
+            if (tipo === 'login') {
+                document.getElementById('form-login').classList.remove('hidden');
+                document.getElementById('form-registro').classList.add('hidden');
+                document.getElementById('btn-tab-login').className = "w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600";
+                document.getElementById('btn-tab-registro').className = "w-1/2 pb-2 font-bold text-gray-400";
+            } else {
+                document.getElementById('form-registro').classList.remove('hidden');
+                document.getElementById('form-login').classList.add('hidden');
+                document.getElementById('btn-tab-registro').className = "w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600";
+                document.getElementById('btn-tab-login').className = "w-1/2 pb-2 font-bold text-gray-400";
+            }
+        };
+
+        // Crear Cuenta
+        window.crearCuenta = async function() {
+            const nombre = document.getElementById('reg-nombre').value.trim();
+            const apellidos = document.getElementById('reg-apellidos').value.trim();
+            const telefono = document.getElementById('reg-telefono').value.trim();
+
+            if (!nombre || !apellidos || !telefono) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, `usuarios/${telefono}`));
+            
+            if (snapshot.exists()) {
+                alert("Este número de teléfono ya está registrado. Inicia sesión.");
+                return;
+            }
+
+            // Generar ID único automático (Ej: CB-5942)
+            const idUnico = "CB-" + Math.floor(1000 + Math.random() * 9000);
+            
+            const nuevoUsuario = {
+                id: idUnico,
+                nombre: `${nombre} ${apellidos}`,
+                telefono: telefono,
+                saldo: 0.00
+            };
+
+            // Guardar en Firebase
+            await set(ref(db, 'usuarios/' + telefono), nuevoUsuario);
+
+            // Guardar sesión local y entrar
+            localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
+            cargarDatosUsuario(nuevoUsuario);
+            
+            document.getElementById('auth-container').classList.remove('active');
+            iniciarApp();
+        };
+
+        // Iniciar Sesión
+        window.iniciarSesion = async function() {
+            const telefono = document.getElementById('login-telefono').value.trim();
+            if (!telefono) {
+                alert("Introduce tu número de teléfono.");
+                return;
+            }
+
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, `usuarios/${telefono}`));
+
+            if (snapshot.exists()) {
+                const userData = snapshot.val();
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(userData));
+                cargarDatosUsuario(userData);
+                
+                document.getElementById('auth-container').classList.remove('active');
+                iniciarApp();
+            } else {
+                alert("No existe una cuenta con este teléfono. Regístrate primero.");
+            }
+        };
+
+        window.cerrarSesion = function() {
+            localStorage.removeItem('cubanbet_usuario');
+            location.reload();
+        };
+
+        function cargarDatosUsuario(user) {
+            document.getElementById('perfil-nombre').innerText = user.nombre;
+            document.getElementById('perfil-telefono').innerText = user.telefono;
+            document.getElementById('perfil-id').innerText = user.id;
+            document.getElementById('display-saldo').innerText = `CUP ${(user.saldo || 0).toFixed(2)}`;
+        }
+
+        function iniciarApp() {
+            let progreso = 0;
+            const el = document.getElementById('porcentaje');
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+            
+            const interval = setInterval(() => {
+                progreso += 25;
+                if(el) el.innerText = progreso + "%";
+                if(progreso >= 100) {
+                    clearInterval(interval);
+                    loader.style.opacity = '0';
+                    setTimeout(() => { loader.style.display = 'none'; }, 500);
+                }
+            }, 100);
+        }
+
+        window.cambiarTab = function(id) {
+            document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        };
+
+        window.mostrarDatos = function() {
+            const metodo = document.getElementById('metodo-pago').value;
+            const infoPago = document.getElementById('info-pago');
+            const tarjeta = document.getElementById('datos-tarjeta');
+            const aviso = document.getElementById('aviso-especial');
+            
+            const config = {
+                "BPA": { num: "9238129974984082", msg: "⚠️ En Transfermóvil marca 'Compartir número de teléfono'." },
+                "BANDEC": { num: "9234069994220535", msg: "⚠️ En Transfermóvil marca 'Compartir número de teléfono'." },
+                "ENZONA": { num: "9238129974984082", msg: "" }
+            };
+
+            if(metodo && config[metodo]) {
+                infoPago.classList.remove('hidden');
+                tarjeta.innerText = "Tarjeta: " + config[metodo].num;
+                
+                if (metodo === "ENZONA") {
+                    codigoEnzonaGenerado = "Nota:ENZ" + Math.floor(1000 + Math.random() * 9000);
+                    aviso.innerHTML = `🔑 Código único Enzona: <b class="text-black">${codigoEnzonaGenerado}</b>`;
+                } else {
+                    codigoEnzonaGenerado = "";
+                    aviso.innerText = config[metodo].msg;
+                }
+            } else {
+                infoPago.classList.add('hidden');
+            }
+        };
+
+        window.enviarSolicitud = async function() {
+            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+            const metodo = document.getElementById('metodo-pago').value;
+            const monto = document.getElementById('monto-recarga').value;
+            const fileInput = document.getElementById('archivo-comprobante');
+
+            if (!metodo || !monto) {
+                alert("Selecciona el banco y el monto.");
+                return;
+            }
+
+            if (monto < 500 || monto > 4000) {
+                alert("El monto debe estar entre $500 y $4000 CUP.");
+                return;
+            }
+
+            alert("Subiendo solicitud...");
+
+            let imagenBase64 = "";
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.readAsDataURL(fileInput.files[0]);
+                reader.onload = async function () {
+                    imagenBase64 = reader.result;
+                    await guardarEnFirebase(user, metodo, monto, imagenBase64);
+                };
+            } else {
+                await guardarEnFirebase(user, metodo, monto, "Sin imagen");
+            }
+        };
+
+        async function guardarEnFirebase(user, metodo, monto, imagen) {
+            try {
+                await push(ref(db, 'depositos_pendientes'), {
+                    usuarioId: user.id,
+                    usuarioNombre: user.nombre,
+                    usuarioTelefono: user.telefono,
+                    metodo,
+                    monto: Number(monto),
+                    codigoEnzona: codigoEnzonaGenerado,
+                    imagen,
+                    fecha: new Date().toLocaleString()
+                });
+                alert("¡Solicitud enviada! Un administrador la revisará.");
+                document.getElementById('monto-recarga').value = "";
+                document.getElementById('archivo-comprobante').value = "";
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
+        // Panel Admin
+        window.activarAdmin = function() {
+            const pin = prompt("Introduce la contraseña de Administrador:");
+            if (pin === "1234") {
+                document.getElementById('panel-admin').classList.remove('hidden');
+            } else if (pin !== null) {
+                alert("Contraseña incorrecta.");
+            }
+        };
+
+        window.cerrarAdmin = function() {
+            document.getElementById('panel-admin').classList.add('hidden');
+        };
+
+        const pendientesRef = ref(db, 'depositos_pendientes');
+        onValue(pendientesRef, (snapshot) => {
+            const contenedorAdmin = document.getElementById('lista-admin-pendientes');
+            contenedorAdmin.innerHTML = "";
+            
+            if (!snapshot.exists()) {
+                contenedorAdmin.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`;
+                return;
+            }
+
+            snapshot.forEach((childSnapshot) => {
+                const id = childSnapshot.key;
+                const data = childSnapshot.val();
+
+                const div = document.createElement('div');
+                div.className = "bg-gray-800 p-3 rounded-xl border border-gray-700 text-xs flex flex-col gap-2";
+                div.innerHTML = `
+                    <div><b>ID:</b> ${data.usuarioId} | <b>Nombre:</b> ${data.usuarioNombre}</div>
+                    <div><b>Tel:</b> ${data.usuarioTelefono} | <b>Monto:</b> $${data.monto} CUP (${data.metodo})</div>
+                    ${data.codigoEnzona ? `<div><b>Concepto:</b> ${data.codigoEnzona}</div>` : ''}
+                    <button onclick="aprobarDeposito('${id}', '${data.usuarioTelefono}', ${data.monto})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg text-center mt-1">
+                        ✅ Aprobar y Sumar Saldo
+                    </button>
+                `;
+                contenedorAdmin.appendChild(div);
+            });
+        });
+
+        window.aprobarDeposito = async function(id, telefonoUsuario, monto) {
+            if(confirm(`¿Aprobar $${monto} CUP para el usuario con teléfono ${telefonoUsuario}?`)) {
+                // Actualizar saldo en Firebase para ese usuario
+                const userRef = ref(db, `usuarios/${telefonoUsuario}`);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    let userData = snapshot.val();
+                    userData.saldo = (userData.saldo || 0) + monto;
+                    await set(userRef, userData);
+                    
+                    // Si es el usuario actual logueado en este dispositivo, actualizamos pantalla
+                    const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                    if (localUser && localUser.telefono === telefonoUsuario) {
+                        localStorage.setItem('cubanbet_usuario', JSON.stringify(userData));
+                        cargarDatosUsuario(userData);
+                    }
+                }
+
+                await remove(ref(db, 'depositos_pendientes/' + id));
+                alert(`¡Depósito aprobado con éxito!`);
+            }
+        };
     </script>
-
-
 </body>
-    </html>
+</html>
+
