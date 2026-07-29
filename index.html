@@ -93,25 +93,25 @@
             <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos y Casino</h2>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <div onclick="abrirMinijuego('ruleta')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
-                    <span class="text-4xl">🎰</span><p class="font-bold mt-2">Ruleta</p><span class="text-xs text-gray-400">Ventaja Casa 65%</span>
+                    <span class="text-4xl">🎰</span><p class="font-bold mt-2">Ruleta</p><span class="text-xs text-gray-400">Gira y gana</span>
                 </div>
                 <div onclick="abrirMinijuego('dados')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
-                    <span class="text-4xl">🎲</span><p class="font-bold mt-2">Dados</p><span class="text-xs text-gray-400">Ventaja Casa 65%</span>
+                    <span class="text-4xl">🎲</span><p class="font-bold mt-2">Dados</p><span class="text-xs text-gray-400">Suerte rápida</span>
                 </div>
                 <div onclick="abrirMinijuego('cartas')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
-                    <span class="text-4xl">🃏</span><p class="font-bold mt-2">Cartas</p><span class="text-xs text-gray-400">Suerte rápida</span>
+                    <span class="text-4xl">🃏</span><p class="font-bold mt-2">Cartas</p><span class="text-xs text-gray-400">Duelo de cartas</span>
                 </div>
                 <div onclick="abrirMinijuego('domino')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-200 bg-green-50 cursor-pointer hover:border-green-600 col-span-2">
-                    <span class="text-4xl">🁢🀰</span><p class="font-bold mt-2 text-green-800">Dominó Cubano (En Línea / Salas)</p><span class="text-xs text-green-600">Hasta 6/6 • Parejas o Individual • 150 a 600 CUP</span>
+                    <span class="text-4xl">🁢🀰</span><p class="font-bold mt-2 text-green-800">Dominó Cubano (Salas en Línea)</p><span class="text-xs text-green-600">Hasta 6/6 • Parejas o Individual • 150 a 600 CUP</span>
                 </div>
             </div>
         </section>
 
-        <!-- CONTENEDOR DE JUEGO ACTIVO CON ANIMACIONES REALISTAS -->
+        <!-- CONTENEDOR DE JUEGO ACTIVO CON ANIMACIONES -->
         <section id="sala-juego-azar" class="tab-content p-4">
             <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
             <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center">
-                <!-- Se inyecta dinámicamente con animaciones -->
+                <!-- Se inyecta dinámicamente -->
             </div>
         </section>
 
@@ -124,17 +124,17 @@
 
             <div id="domino-menu-principal" class="space-y-4">
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4 text-xs text-gray-600">
-                    <b>Reglas de la Casa:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. La casa retiene <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Fichas hasta el 6/6.
+                    <b>Reglas:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. Comisión de la casa: <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Fichas hasta el 6/6.
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-green-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-green-700" onclick="prepararCrearUnirseSala('aleatoria')">
                         <h3 class="font-black text-lg mb-1">🎲 Sala Aleatoria</h3>
-                        <p class="text-xs text-green-100">Juega contra el mundo en matchmaking automático.</p>
+                        <p class="text-xs text-green-100">Matchmaking automático contra jugadores.</p>
                     </div>
                     <div class="bg-emerald-700 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-emerald-800" onclick="prepararCrearUnirseSala('publica')">
                         <h3 class="font-black text-lg mb-1">🌐 Sala Pública</h3>
-                        <p class="text-xs text-emerald-100">Crea una sala y comparte el código de invitación con amigos.</p>
+                        <p class="text-xs text-emerald-100">Crea una sala y comparte el código con amigos.</p>
                     </div>
                     <div class="bg-yellow-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-yellow-700" onclick="prepararCrearUnirseSala('privada')">
                         <h3 class="font-black text-lg mb-1">🔒 Sala Privada</h3>
@@ -142,7 +142,7 @@
                     </div>
                     <div class="bg-blue-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-blue-700" onclick="mostrarBuscadorSalas()">
                         <h3 class="font-black text-lg mb-1">🔍 Buscar Sala</h3>
-                        <p class="text-xs text-blue-100">Busca salas activas por código para unirte.</p>
+                        <p class="text-xs text-blue-100">Busca salas activas por código.</p>
                     </div>
                 </div>
             </div>
@@ -198,7 +198,7 @@
                     </div>
                 </div>
 
-                <button id="btn-iniciar-partida-mesa" onclick="iniciarPartidaDominoAccion()" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-md">Comenzar Partida (Simulación Automática)</button>
+                <button id="btn-iniciar-partida-mesa" onclick="iniciarPartidaDominoAccion()" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-md">Comenzar Partida</button>
             </div>
 
             <div id="domino-buscar-sala-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
@@ -529,7 +529,7 @@
         };
 
         // ==========================================
-        // GESTIÓN DE RECARGAS Y BANCOS (BPA, BANDEC, ENZONA)
+        // GESTIÓN DE RECARGAS Y BANCOS CON TARJETAS REALES
         // ==========================================
         window.mostrarDatos = function() {
             const metodo = document.getElementById('metodo-pago').value;
@@ -544,15 +544,15 @@
 
             infoPago.classList.remove('hidden');
             if (metodo === 'BPA') {
-                datosTarjeta.innerText = "Tarjeta BPA: 9234 5678 9012 3456";
-                avisoEspecial.innerText = "Se validará automáticamente verificando el número de teléfono, monto, número de tarjeta y demás datos que llegan en el SMS de confirmación.";
+                datosTarjeta.innerText = "Tarjeta BPA: 9238 1299 7498 4082";
+                avisoEspecial.innerText = "Validación automática flexible por SMS analizando número de teléfono, monto, tarjeta y datos de confirmación.";
             } else if (metodo === 'BANDEC') {
-                datosTarjeta.innerText = "Tarjeta BANDEC: 4532 8812 3341 9091";
-                avisoEspecial.innerText = "Se validará automáticamente mediante el SMS de confirmación de la transferencia.";
+                datosTarjeta.innerText = "Tarjeta BANDEC: 9234 0699 9422 0535";
+                avisoEspecial.innerText = "Validación automática mediante notificación SMS de la transferencia.";
             } else if (metodo === 'ENZONA') {
                 codigoEnzonaGenerado = "ENZ-" + Math.floor(1000 + Math.random() * 9000);
-                datosTarjeta.innerText = `Código ENZONA: ${codigoEnzonaGenerado}`;
-                avisoEspecial.innerText = "En Enzona se validará mediante el código generado para la operación.";
+                datosTarjeta.innerText = `Tarjeta ENZONA: 9238 1299 7498 4082 | Código: ${codigoEnzonaGenerado}`;
+                avisoEspecial.innerText = "Validación mediante código generado y verificación en Enzona.";
             }
         };
 
@@ -588,7 +588,7 @@
         };
 
         // ==========================================
-        // MINIJUEGOS CON ANIMACIONES Y VENTAJA 65%
+        // MINIJUEGOS (SIN MENCIONAR MARGEN DE CASA)
         // ==========================================
         window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') {
@@ -603,19 +603,19 @@
             if (tipo === 'ruleta') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎰 Ruleta de la Fortuna</h2>
-                    <p class="text-xs text-gray-500 mb-4">Ventaja de la casa: 65%</p>
+                    <p class="text-xs text-gray-500 mb-4">Prueba tu suerte y multiplica tu saldo.</p>
                     <div class="mb-4">
                         <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
                         <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
                     <div id="azar-animacion" class="my-6 text-6xl transition-all duration-300">🎰</div>
-                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Gira la ruleta para probar tu suerte</div>
+                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Gira la ruleta</div>
                     <button id="btn-jugar" onclick="jugarAzar('ruleta')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Ruleta</button>
                 `;
             } else if (tipo === 'dados') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Lanzamiento de Dados</h2>
-                    <p class="text-xs text-gray-500 mb-4">Ventaja de la casa: 65%</p>
+                    <p class="text-xs text-gray-500 mb-4">Lanza los dados y acierta.</p>
                     <div class="mb-4">
                         <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
                         <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
@@ -657,26 +657,21 @@
             const resultadoEl = document.getElementById('azar-resultado');
 
             btn.disabled = true;
-            resultadoEl.innerText = "Girando / Lanzando...";
+            resultadoEl.innerText = "Jugando...";
 
-            if (tipo === 'ruleta') {
-                animacionEl.className = "my-6 text-6xl animate-spin-fast";
-            } else if (tipo === 'dados') {
-                animacionEl.innerHTML = "🎲 [ ⚂ ] [ ⚄ ]";
-            } else if (tipo === 'cartas') {
-                animacionEl.innerHTML = "🎴 [ 🔄 ] vs [ 🔄 ]";
-            }
+            if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl animate-spin-fast";
+            else if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ ⚂ ] [ ⚄ ]";
+            else if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 🔄 ] vs [ 🔄 ]";
 
             setTimeout(async () => {
-                const factorCasa = Math.random();
-                const usuarioGana = factorCasa > 0.65; // 65% margen de la casa
+                const usuarioGana = Math.random() > 0.45; // Balance dinámico de juego limpio
 
                 let userRef = ref(db, `usuarios/${user.telefono}`);
                 let nuevoSaldo = user.saldo - montoInput;
                 let ganancia = 0;
 
                 if (usuarioGana) {
-                    ganancia = montoInput * 1.6;
+                    ganancia = montoInput * 1.8;
                     nuevoSaldo += ganancia;
                     user.dineroGanado = (user.dineroGanado || 0) + (ganancia - montoInput);
                     
@@ -684,14 +679,14 @@
                     if (tipo === 'ruleta') animacionEl.innerHTML = "🏆";
                     if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ ⚅ ] [ ⚅ ]";
                     if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ A♥ ] vs [ 10♠ ]";
-                    resultadoEl.innerHTML = `<span class="text-green-600 text-lg">¡Felicidades! Has ganado ${ganancia.toFixed(2)} CUP 🎉</span>`;
+                    resultadoEl.innerHTML = `<span class="text-green-600 text-lg">¡Has ganado ${ganancia.toFixed(2)} CUP 🎉</span>`;
                 } else {
                     user.dineroPerdido = (user.dineroPerdido || 0) + montoInput;
                     if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl";
                     if (tipo === 'ruleta') animacionEl.innerHTML = "❌";
                     if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ ⚀ ] [ ⚁ ]";
                     if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 4♣ ] vs [ K♠ ]";
-                    resultadoEl.innerHTML = `<span class="text-red-600 text-lg">La casa gana esta vez (Margen 65%). ¡Inténtalo de nuevo! 🏠</span>`;
+                    resultadoEl.innerHTML = `<span class="text-red-600 text-lg">No has tenido suerte esta vez. ¡Inténtalo de nuevo!</span>`;
                 }
 
                 user.saldo = nuevoSaldo;
@@ -761,7 +756,7 @@
             document.getElementById('domino-config-sala').classList.add('hidden');
             document.getElementById('domino-mesa-activa').classList.remove('hidden');
             document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigoSala} (${modalidad})`;
-            document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión Casa: 50 CUP`;
+            document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión: 50 CUP`;
 
             if (tipoSalaSeleccionada === 'publica' || tipoSalaSeleccionada === 'privada') {
                 document.getElementById('codigo-invitacion-box').classList.remove('hidden');
@@ -829,7 +824,7 @@
         };
 
         // ==========================================
-        // PANEL ADMIN CON GESTIÓN COMPLETA DE USUARIOS
+        // PANEL ADMIN
         // ==========================================
         window.activarAdmin = function() {
             const pin = prompt("Contraseña de Administrador:");
@@ -921,6 +916,7 @@
     </script>
 </body>
 </html>
+
 
 
 
