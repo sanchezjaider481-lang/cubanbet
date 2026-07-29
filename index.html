@@ -15,13 +15,13 @@
 </head>
 <body class="pb-20">
 
-    <!-- PANTALLA DE AUTENTICACIÓN (LOGIN / REGISTRO) -->
+    <!-- PANTALLA DE AUTENTICACIÓN (LOGIN / REGISTRO / RECUPERACIÓN) -->
     <div id="auth-container" class="auth-screen fixed inset-0 z-50 bg-gray-900 flex-col items-center justify-center p-4">
         <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl">
             <h1 class="text-3xl font-black text-green-600 tracking-tighter text-center mb-6">CubanBet</h1>
             
             <!-- Selector de pestañas Auth -->
-            <div class="flex border-b mb-6">
+            <div id="auth-tabs" class="flex border-b mb-6">
                 <button onclick="mostrarAuthForm('login')" id="btn-tab-login" class="w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600">Iniciar Sesión</button>
                 <button onclick="mostrarAuthForm('registro')" id="btn-tab-registro" class="w-1/2 pb-2 font-bold text-gray-400">Crear Cuenta</button>
             </div>
@@ -29,29 +29,77 @@
             <!-- FORMULARIO DE INICIO DE SESIÓN -->
             <div id="form-login" class="space-y-4">
                 <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label>
-                    <input type="tel" id="login-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                    <label class="text-xs text-gray-500 font-bold uppercase">Usuario, Teléfono o Correo</label>
+                    <input type="text" id="login-identificador" placeholder="Tu usuario, tel o correo" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Contraseña</label>
+                    <input type="password" id="login-password" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                </div>
+                <div class="text-right">
+                    <button onclick="mostrarAuthForm('recuperar')" class="text-xs text-green-600 font-bold hover:underline">¿Olvidó su contraseña?</button>
                 </div>
                 <button onclick="iniciarSesion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Entrar</button>
             </div>
 
             <!-- FORMULARIO DE REGISTRO -->
-            <div id="form-registro" class="space-y-4 hidden">
+            <div id="form-registro" class="space-y-3 hidden">
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="text-xs text-gray-500 font-bold uppercase">Nombre</label>
-                        <input type="text" id="reg-nombre" placeholder="Tu nombre" class="w-full mt-1 p-3 rounded-xl border border-gray-200 text-sm">
+                        <input type="text" id="reg-nombre" placeholder="Tu nombre" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
                     </div>
                     <div>
                         <label class="text-xs text-gray-500 font-bold uppercase">Apellidos</label>
-                        <input type="text" id="reg-apellidos" placeholder="Tus apellidos" class="w-full mt-1 p-3 rounded-xl border border-gray-200 text-sm">
+                        <input type="text" id="reg-apellidos" placeholder="Tus apellidos" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
                     </div>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label>
-                    <input type="tel" id="reg-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                    <label class="text-xs text-gray-500 font-bold uppercase">Nombre de Usuario</label>
+                    <input type="text" id="reg-username" placeholder="Ej: user123" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
                 </div>
-                <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Registrarse y Obtener ID</button>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Correo Electrónico</label>
+                    <input type="email" id="reg-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label>
+                    <input type="tel" id="reg-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Contraseña</label>
+                    <input type="password" id="reg-password" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Confirmar Contraseña</label>
+                    <input type="password" id="reg-confirmar" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
+                </div>
+                <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md mt-2">Registrarse y Obtener ID</button>
+            </div>
+
+            <!-- FORMULARIO DE RECUPERACIÓN DE CONTRASEÑA -->
+            <div id="form-recuperar" class="space-y-4 hidden">
+                <p class="text-xs text-gray-600">Introduce tu correo electrónico registrado para enviarte un código de verificación de Gmail.</p>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Correo Electrónico</label>
+                    <input type="email" id="rec-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                </div>
+                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Enviar Código a Gmail</button>
+                <button onclick="mostrarAuthForm('login')" class="w-full bg-gray-200 text-gray-700 py-2 rounded-xl font-bold text-sm">Volver al Login</button>
+            </div>
+
+            <!-- FORMULARIO DE NUEVA CONTRASEÑA -->
+            <div id="form-nueva-pass" class="space-y-4 hidden">
+                <p class="text-xs text-gray-600">Introduce el código de 4 dígitos enviado a tu Gmail y tu nueva contraseña.</p>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Código de Verificación</label>
+                    <input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Nueva Contraseña</label>
+                    <input type="password" id="rec-nueva" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                </div>
+                <button onclick="cambiarContraseñaNueva()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Restablecer Contraseña</button>
             </div>
         </div>
     </div>
@@ -73,8 +121,8 @@
             </div>
             <div class="mb-6"><input type="text" placeholder="Buscar..." class="w-full p-3 rounded-lg border border-gray-300"></div>
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Apuestas Activas</p><p class="text-xl font-bold">0</p></div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Ganancia Potencial</p><p class="text-xl font-bold text-green-600">CUP 0.00</p></div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Apuestas Activas</p><p class="text-xl font-bold" id="stat-activas">0</p></div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Ganancia Potencial</p><p class="text-xl font-bold text-green-600" id="stat-ganancia-pot">CUP 0.00</p></div>
             </div>
         </section>
 
@@ -117,6 +165,8 @@
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
                 <h3 class="font-bold text-lg mb-2 text-green-700">Datos de Usuario</h3>
                 <p class="text-sm text-gray-600">Nombre: <span id="perfil-nombre" class="font-bold text-black"></span></p>
+                <p class="text-sm text-gray-600">Usuario: <span id="perfil-username" class="font-bold text-black"></span></p>
+                <p class="text-sm text-gray-600">Correo: <span id="perfil-correo" class="font-bold text-black"></span></p>
                 <p class="text-sm text-gray-600">Teléfono: <span id="perfil-telefono" class="font-bold text-black"></span></p>
                 <p class="text-sm text-gray-600">ID de Usuario: <span id="perfil-id" class="font-bold text-green-600"></span></p>
             </div>
@@ -161,13 +211,28 @@
             </div>
 
             <!-- PANEL ADMIN OCULTO -->
-            <div id="panel-admin" class="hidden mt-8 bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-lg text-green-400">Panel Admin (Depósitos Pendientes)</h3>
+            <div id="panel-admin" class="hidden mt-8 bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-green-400">Panel de Administración</h3>
                     <button onclick="cerrarAdmin()" class="text-red-400 text-xs font-bold">Ocultar [X]</button>
                 </div>
-                <div id="lista-admin-pendientes" class="space-y-3">
-                    <p class="text-xs text-gray-500">Cargando solicitudes...</p>
+
+                <!-- SECCIÓN 1: DEPÓSITOS PENDIENTES -->
+                <div>
+                    <h4 class="text-sm font-bold text-yellow-400 mb-2 uppercase tracking-wide">📥 Depósitos Pendientes</h4>
+                    <div id="lista-admin-pendientes" class="space-y-4">
+                        <p class="text-xs text-gray-500">Cargando solicitudes...</p>
+                    </div>
+                </div>
+
+                <hr class="border-gray-700">
+
+                <!-- SECCIÓN 2: GESTIÓN Y ESTADÍSTICAS DE USUARIOS -->
+                <div>
+                    <h4 class="text-sm font-bold text-blue-400 mb-2 uppercase tracking-wide">👥 Gestión de Usuarios y Balances</h4>
+                    <div id="lista-admin-usuarios" class="space-y-3">
+                        <p class="text-xs text-gray-500">Cargando usuarios...</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -201,8 +266,10 @@
         const db = getDatabase(app);
         
         let codigoEnzonaGenerado = "";
+        let codigoRecuperacionTemporal = null;
+        let telefonoUsuarioRecuperando = null;
 
-        // Verificar si ya hay una sesión activa en el navegador
+        // Verificar sesión activa
         window.addEventListener('DOMContentLoaded', () => {
             const usuarioGuardado = localStorage.getItem('cubanbet_usuario');
             if (usuarioGuardado) {
@@ -217,16 +284,33 @@
         });
 
         window.mostrarAuthForm = function(tipo) {
+            const login = document.getElementById('form-login');
+            const registro = document.getElementById('form-registro');
+            const recuperar = document.getElementById('form-recuperar');
+            const nuevaPass = document.getElementById('form-nueva-pass');
+            const tabs = document.getElementById('auth-tabs');
+
+            login.classList.add('hidden');
+            registro.classList.add('hidden');
+            recuperar.classList.add('hidden');
+            nuevaPass.classList.add('hidden');
+
             if (tipo === 'login') {
-                document.getElementById('form-login').classList.remove('hidden');
-                document.getElementById('form-registro').classList.add('hidden');
+                login.classList.remove('hidden');
+                tabs.classList.remove('hidden');
                 document.getElementById('btn-tab-login').className = "w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600";
                 document.getElementById('btn-tab-registro').className = "w-1/2 pb-2 font-bold text-gray-400";
-            } else {
-                document.getElementById('form-registro').classList.remove('hidden');
-                document.getElementById('form-login').classList.add('hidden');
+            } else if (tipo === 'registro') {
+                registro.classList.remove('hidden');
+                tabs.classList.remove('hidden');
                 document.getElementById('btn-tab-registro').className = "w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600";
                 document.getElementById('btn-tab-login').className = "w-1/2 pb-2 font-bold text-gray-400";
+            } else if (tipo === 'recuperar') {
+                recuperar.classList.remove('hidden');
+                tabs.classList.add('hidden');
+            } else if (tipo === 'nueva-pass') {
+                nuevaPass.classList.remove('hidden');
+                tabs.classList.add('hidden');
             }
         };
 
@@ -234,35 +318,46 @@
         window.crearCuenta = async function() {
             const nombre = document.getElementById('reg-nombre').value.trim();
             const apellidos = document.getElementById('reg-apellidos').value.trim();
+            const username = document.getElementById('reg-username').value.trim();
+            const correo = document.getElementById('reg-correo').value.trim();
             const telefono = document.getElementById('reg-telefono').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirmar = document.getElementById('reg-confirmar').value;
 
-            if (!nombre || !apellidos || !telefono) {
+            if (!nombre || !apellidos || !username || !correo || !telefono || !password || !confirmar) {
                 alert("Por favor completa todos los campos.");
                 return;
             }
 
-            const dbRef = ref(db);
-            const snapshot = await get(child(dbRef, `usuarios/${telefono}`));
-            
-            if (snapshot.exists()) {
-                alert("Este número de teléfono ya está registrado. Inicia sesión.");
+            if (password !== confirmar) {
+                alert("Las contraseñas no coinciden.");
                 return;
             }
 
-            // Generar ID único automático (Ej: CB-5942)
+            const dbRef = ref(db);
+            const snapshotTel = await get(child(dbRef, `usuarios/${telefono}`));
+            if (snapshotTel.exists()) {
+                alert("Este número de teléfono ya está registrado.");
+                return;
+            }
+
             const idUnico = "CB-" + Math.floor(1000 + Math.random() * 9000);
             
             const nuevoUsuario = {
                 id: idUnico,
                 nombre: `${nombre} ${apellidos}`,
+                username: username,
+                correo: correo,
                 telefono: telefono,
-                saldo: 0.00
+                password: password,
+                saldo: 0.00,
+                dineroApostado: 0.00,
+                dineroGanado: 0.00,
+                dineroPerdido: 0.00,
+                apuestasActivas: 0
             };
 
-            // Guardar en Firebase
             await set(ref(db, 'usuarios/' + telefono), nuevoUsuario);
-
-            // Guardar sesión local y entrar
             localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
             cargarDatosUsuario(nuevoUsuario);
             
@@ -272,24 +367,99 @@
 
         // Iniciar Sesión
         window.iniciarSesion = async function() {
-            const telefono = document.getElementById('login-telefono').value.trim();
-            if (!telefono) {
-                alert("Introduce tu número de teléfono.");
+            const identificador = document.getElementById('login-identificador').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!identificador || !password) {
+                alert("Introduce tu usuario/teléfono/correo y contraseña.");
                 return;
             }
 
             const dbRef = ref(db);
-            const snapshot = await get(child(dbRef, `usuarios/${telefono}`));
+            const snapshot = await get(child(dbRef, 'usuarios'));
+
+            if (!snapshot.exists()) {
+                alert("No hay usuarios registrados en el sistema.");
+                return;
+            }
+
+            let usuarioEncontrado = null;
+            snapshot.forEach((childSnap) => {
+                const user = childSnap.val();
+                if (user.username === identificador || user.telefono === identificador || user.correo === identificador) {
+                    usuarioEncontrado = user;
+                }
+            });
+
+            if (usuarioEncontrado) {
+                if (usuarioEncontrado.password === password) {
+                    localStorage.setItem('cubanbet_usuario', JSON.stringify(usuarioEncontrado));
+                    cargarDatosUsuario(usuarioEncontrado);
+                    document.getElementById('auth-container').classList.remove('active');
+                    iniciarApp();
+                } else {
+                    alert("Contraseña incorrecta.");
+                }
+            } else {
+                alert("No se encontró ninguna cuenta con ese usuario, teléfono o correo.");
+            }
+        };
+
+        // Recuperar Contraseña
+        window.enviarCodigoRecuperacion = async function() {
+            const correo = document.getElementById('rec-correo').value.trim();
+            if (!correo) {
+                alert("Introduce tu correo electrónico.");
+                return;
+            }
+
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, 'usuarios'));
+            let usuarioEncontrado = null;
 
             if (snapshot.exists()) {
-                const userData = snapshot.val();
-                localStorage.setItem('cubanbet_usuario', JSON.stringify(userData));
-                cargarDatosUsuario(userData);
-                
-                document.getElementById('auth-container').classList.remove('active');
-                iniciarApp();
-            } else {
-                alert("No existe una cuenta con este teléfono. Regístrate primero.");
+                snapshot.forEach((childSnap) => {
+                    const user = childSnap.val();
+                    if (user.correo === correo) {
+                        usuarioEncontrado = user;
+                    }
+                });
+            }
+
+            if (!usuarioEncontrado) {
+                alert("Este correo electrónico no está registrado en ninguna cuenta.");
+                return;
+            }
+
+            telefonoUsuarioRecuperando = usuarioEncontrado.telefono;
+            codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
+
+            alert(`[SIMULACIÓN GMAIL] Código enviado a ${correo}.\nCódigo temporal: ${codigoRecuperacionTemporal}`);
+            mostrarAuthForm('nueva-pass');
+        };
+
+        window.cambiarContraseñaNueva = async function() {
+            const codigoIngresado = document.getElementById('rec-codigo-ingresado').value.trim();
+            const nuevaPass = document.getElementById('rec-nueva').value;
+
+            if (!codigoIngresado || !nuevaPass) {
+                alert("Introduce el código y la nueva contraseña.");
+                return;
+            }
+
+            if (Number(codigoIngresado) !== codigoRecuperacionTemporal) {
+                alert("Código de verificación incorrecto.");
+                return;
+            }
+
+            const userRef = ref(db, `usuarios/${telefonoUsuarioRecuperando}`);
+            const snapshot = await get(userRef);
+            if (snapshot.exists()) {
+                let userData = snapshot.val();
+                userData.password = nuevaPass;
+                await set(userRef, userData);
+                alert("¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.");
+                mostrarAuthForm('login');
             }
         };
 
@@ -300,9 +470,13 @@
 
         function cargarDatosUsuario(user) {
             document.getElementById('perfil-nombre').innerText = user.nombre;
+            document.getElementById('perfil-username').innerText = user.username;
+            document.getElementById('perfil-correo').innerText = user.correo;
             document.getElementById('perfil-telefono').innerText = user.telefono;
             document.getElementById('perfil-id').innerText = user.id;
             document.getElementById('display-saldo').innerText = `CUP ${(user.saldo || 0).toFixed(2)}`;
+            document.getElementById('stat-activas').innerText = user.apuestasActivas || 0;
+            document.getElementById('stat-ganancia-pot').innerText = `CUP ${(user.dineroGanado || 0).toFixed(2)}`;
         }
 
         function iniciarApp() {
@@ -371,24 +545,24 @@
                 return;
             }
 
-            alert("Subiendo solicitud...");
-
-            let imagenBase64 = "";
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.readAsDataURL(fileInput.files[0]);
-                reader.onload = async function () {
-                    imagenBase64 = reader.result;
-                    await guardarEnFirebase(user, metodo, monto, imagenBase64);
-                };
-            } else {
-                await guardarEnFirebase(user, metodo, monto, "Sin imagen");
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert("Debes adjuntar la captura del comprobante de pago.");
+                return;
             }
+
+            alert("Subiendo solicitud con comprobante...");
+
+            const reader = new FileReader();
+            reader.readAsDataURL(fileInput.files[0]);
+            reader.onload = async function () {
+                const imagenBase64 = reader.result;
+                await guardarEnFirebase(user, metodo, monto, imagenBase64);
+            };
         };
 
         async function guardarEnFirebase(user, metodo, monto, imagen) {
             try {
-                await push(ref(db, 'depositos_pendientes'), {
+                await push(ref(db, 'deposits_pendientes'), {
                     usuarioId: user.id,
                     usuarioNombre: user.nombre,
                     usuarioTelefono: user.telefono,
@@ -406,11 +580,12 @@
             }
         }
 
-        // Panel Admin
+        // Panel Admin protegido con contraseña Rediaj041007
         window.activarAdmin = function() {
             const pin = prompt("Introduce la contraseña de Administrador:");
-            if (pin === "1234") {
+            if (pin === "Rediaj041007") {
                 document.getElementById('panel-admin').classList.remove('hidden');
+                alert("Panel de Admin desbloqueado.");
             } else if (pin !== null) {
                 alert("Contraseña incorrecta.");
             }
@@ -420,7 +595,8 @@
             document.getElementById('panel-admin').classList.add('hidden');
         };
 
-        const pendientesRef = ref(db, 'depositos_pendientes');
+        // Escuchar depósitos pendientes en tiempo real
+        const pendientesRef = ref(db, 'deposits_pendientes');
         onValue(pendientesRef, (snapshot) => {
             const contenedorAdmin = document.getElementById('lista-admin-pendientes');
             contenedorAdmin.innerHTML = "";
@@ -435,12 +611,19 @@
                 const data = childSnapshot.val();
 
                 const div = document.createElement('div');
-                div.className = "bg-gray-800 p-3 rounded-xl border border-gray-700 text-xs flex flex-col gap-2";
+                div.className = "bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-3";
                 div.innerHTML = `
-                    <div><b>ID:</b> ${data.usuarioId} | <b>Nombre:</b> ${data.usuarioNombre}</div>
+                    <div class="flex justify-between">
+                        <div><b>ID:</b> ${data.usuarioId} | <b>Nombre:</b> ${data.usuarioNombre}</div>
+                        <div class="text-gray-400">${data.fecha}</div>
+                    </div>
                     <div><b>Tel:</b> ${data.usuarioTelefono} | <b>Monto:</b> $${data.monto} CUP (${data.metodo})</div>
                     ${data.codigoEnzona ? `<div><b>Concepto:</b> ${data.codigoEnzona}</div>` : ''}
-                    <button onclick="aprobarDeposito('${id}', '${data.usuarioTelefono}', ${data.monto})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg text-center mt-1">
+                    <div>
+                        <p class="font-bold text-gray-300 mb-1">Comprobante de pago:</p>
+                        ${data.imagen && data.imagen !== "Sin imagen" ? `<img src="${data.imagen}" class="w-full max-h-48 object-contain rounded-lg border border-gray-600 bg-black">` : '<span class="text-red-400">Sin imagen adjunta</span>'}
+                    </div>
+                    <button onclick="aprobarDeposito('${id}', '${data.usuarioTelefono}', ${data.monto})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 px-3 rounded-lg text-center">
                         ✅ Aprobar y Sumar Saldo
                     </button>
                 `;
@@ -448,9 +631,48 @@
             });
         });
 
+        // Escuchar usuarios registrados para supervisión completa y gestión de saldos en tiempo real
+        const usuariosRef = ref(db, 'usuarios');
+        onValue(usuariosRef, (snapshot) => {
+            const contenedorUsuarios = document.getElementById('lista-admin-usuarios');
+            contenedorUsuarios.innerHTML = "";
+
+            if (!snapshot.exists()) {
+                contenedorUsuarios.innerHTML = `<p class="text-xs text-gray-500">No hay usuarios registrados.</p>`;
+                return;
+            }
+
+            snapshot.forEach((childSnapshot) => {
+                const userTel = childSnapshot.key;
+                const u = childSnapshot.val();
+
+                const div = document.createElement('div');
+                div.className = "bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2";
+                div.innerHTML = `
+                    <div class="grid grid-cols-2 gap-1 pb-2 border-b border-gray-700">
+                        <div><b>ID:</b> ${u.id || 'N/A'}</div>
+                        <div><b>Usuario:</b> ${u.username || 'N/A'}</div>
+                        <div><b>Nombre:</b> ${u.nombre || 'N/A'}</div>
+                        <div><b>Tel:</b> ${u.telefono || 'N/A'}</div>
+                        <div class="col-span-2"><b>Correo:</b> ${u.correo || 'N/A'}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 text-gray-300">
+                        <div>💰 Saldo Actual: <b class="text-green-400">$${(u.saldo || 0).toFixed(2)} CUP</b></div>
+                        <div>📉 Dinero Perdido: <b class="text-red-400">$${(u.dineroPerdido || 0).toFixed(2)} CUP</b></div>
+                        <div>📈 Dinero Ganado: <b class="text-green-400">$${(u.dineroGanado || 0).toFixed(2)} CUP</b></div>
+                        <div>🎲 Dinero Apostado: <b class="text-blue-400">$${(u.dineroApostado || 0).toFixed(2)} CUP</b></div>
+                    </div>
+                    <div class="flex gap-2 mt-2 pt-2 border-t border-gray-700">
+                        <button onclick="modificarSaldoAdmin('${userTel}', 'sumar')" class="flex-1 bg-green-600 hover:bg-green-500 py-2 rounded font-bold">➕ Sumar Saldo</button>
+                        <button onclick="modificarSaldoAdmin('${userTel}', 'restar')" class="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded font-bold">➖ Restirar Saldo</button>
+                    </div>
+                `;
+                contenedorUsuarios.appendChild(div);
+            });
+        });
+
         window.aprobarDeposito = async function(id, telefonoUsuario, monto) {
             if(confirm(`¿Aprobar $${monto} CUP para el usuario con teléfono ${telefonoUsuario}?`)) {
-                // Actualizar saldo en Firebase para ese usuario
                 const userRef = ref(db, `usuarios/${telefonoUsuario}`);
                 const snapshot = await get(userRef);
                 
@@ -459,7 +681,6 @@
                     userData.saldo = (userData.saldo || 0) + monto;
                     await set(userRef, userData);
                     
-                    // Si es el usuario actual logueado en este dispositivo, actualizamos pantalla
                     const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                     if (localUser && localUser.telefono === telefonoUsuario) {
                         localStorage.setItem('cubanbet_usuario', JSON.stringify(userData));
@@ -467,12 +688,53 @@
                     }
                 }
 
-                await remove(ref(db, 'depositos_pendientes/' + id));
+                await remove(ref(db, 'deposits_pendientes/' + id));
                 alert(`¡Depósito aprobado con éxito!`);
+            }
+        };
+
+        // Función para sumar o restar saldo manualmente desde el panel de admin por errores o correcciones
+        window.modificarSaldoAdmin = async function(telefonoUsuario, accion) {
+            const cantidadStr = prompt(accion === 'sumar' ? "Introduce la cantidad a sumar (CUP):" : "Introduce la cantidad a restar/eliminar (CUP):");
+            if (!cantidadStr) return;
+
+            const cantidad = Number(cantidadStr);
+            if (isNaN(cantidad) || cantidad <= 0) {
+                alert("Introduce una cantidad válida.");
+                return;
+            }
+
+            const userRef = ref(db, `usuarios/${telefonoUsuario}`);
+            const snapshot = await get(userRef);
+
+            if (snapshot.exists()) {
+                let userData = snapshot.val();
+                let saldoActual = userData.saldo || 0;
+
+                if (accion === 'sumar') {
+                    userData.saldo = saldoActual + cantidad;
+                } else {
+                    if (cantidad > saldoActual) {
+                        alert("El usuario no tiene tanto saldo disponible para descontar.");
+                        return;
+                    }
+                    userData.saldo = saldoActual - cantidad;
+                }
+
+                await set(userRef, userData);
+
+                const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                if (localUser && localUser.telefono === telefonoUsuario) {
+                    localStorage.setItem('cubanbet_usuario', JSON.stringify(userData));
+                    cargarDatosUsuario(userData);
+                }
+
+                alert(`Saldo actualizado correctamente para el usuario.`);
             }
         };
     </script>
 </body>
 </html>
+
 
 
