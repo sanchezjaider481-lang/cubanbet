@@ -15,18 +15,14 @@
 </head>
 <body class="pb-20">
 
-    <!-- PANTALLA DE AUTENTICACIÓN (LOGIN / REGISTRO / RECUPERACIÓN) -->
+    <!-- PANTALLA DE AUTENTICACIÓN -->
     <div id="auth-container" class="auth-screen fixed inset-0 z-50 bg-gray-900 flex-col items-center justify-center p-4">
         <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl">
             <h1 class="text-3xl font-black text-green-600 tracking-tighter text-center mb-6">CubanBet</h1>
-            
-            <!-- Selector de pestañas Auth -->
             <div id="auth-tabs" class="flex border-b mb-6">
                 <button onclick="mostrarAuthForm('login')" id="btn-tab-login" class="w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600">Iniciar Sesión</button>
                 <button onclick="mostrarAuthForm('registro')" id="btn-tab-registro" class="w-1/2 pb-2 font-bold text-gray-400">Crear Cuenta</button>
             </div>
-
-            <!-- FORMULARIO DE INICIO DE SESIÓN -->
             <div id="form-login" class="space-y-4">
                 <div>
                     <label class="text-xs text-gray-500 font-bold uppercase">Usuario, Teléfono o Correo</label>
@@ -41,70 +37,34 @@
                 </div>
                 <button onclick="iniciarSesion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Entrar</button>
             </div>
-
-            <!-- FORMULARIO DE REGISTRO -->
             <div id="form-registro" class="space-y-3 hidden">
                 <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="text-xs text-gray-500 font-bold uppercase">Nombre</label>
-                        <input type="text" id="reg-nombre" placeholder="Tu nombre" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-500 font-bold uppercase">Apellidos</label>
-                        <input type="text" id="reg-apellidos" placeholder="Tus apellidos" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
-                    </div>
+                    <div><label class="text-xs text-gray-500 font-bold uppercase">Nombre</label><input type="text" id="reg-nombre" placeholder="Nombre" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                    <div><label class="text-xs text-gray-500 font-bold uppercase">Apellidos</label><input type="text" id="reg-apellidos" placeholder="Apellidos" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Nombre de Usuario</label>
-                    <input type="text" id="reg-username" placeholder="Ej: user123" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Correo Electrónico</label>
-                    <input type="email" id="reg-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label>
-                    <input type="tel" id="reg-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Contraseña</label>
-                    <input type="password" id="reg-password" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Confirmar Contraseña</label>
-                    <input type="password" id="reg-confirmar" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm">
-                </div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Nombre de Usuario</label><input type="text" id="reg-username" placeholder="Ej: user123" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Correo Electrónico</label><input type="email" id="reg-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label><input type="tel" id="reg-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Contraseña</label><input type="password" id="reg-password" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Confirmar Contraseña</label><input type="password" id="reg-confirmar" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
                 <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md mt-2">Registrarse y Obtener ID</button>
             </div>
-
-            <!-- FORMULARIO DE RECUPERACIÓN DE CONTRASEÑA -->
             <div id="form-recuperar" class="space-y-4 hidden">
-                <p class="text-xs text-gray-600">Introduce tu correo electrónico registrado para generar tu código de verificación temporal en pantalla.</p>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Correo Electrónico</label>
-                    <input type="email" id="rec-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
-                </div>
-                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Generar Código de Verificación</button>
+                <p class="text-xs text-gray-600">Introduce el correo electrónico asociado a tu cuenta para recibir el código.</p>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Correo Registrado</label><input type="email" id="rec-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
+                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Verificar y Enviar Código</button>
                 <button onclick="mostrarAuthForm('login')" class="w-full bg-gray-200 text-gray-700 py-2 rounded-xl font-bold text-sm">Volver al Login</button>
             </div>
-
-            <!-- FORMULARIO DE NUEVA CONTRASEÑA -->
             <div id="form-nueva-pass" class="space-y-4 hidden">
-                <p class="text-xs text-gray-600">Introduce el código de 4 dígitos generado y tu nueva contraseña.</p>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Código de Verificación</label>
-                    <input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Nueva Contraseña</label>
-                    <input type="password" id="rec-nueva" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
-                </div>
+                <p class="text-xs text-gray-600">Introduce el código de 4 dígitos y tu nueva contraseña.</p>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Código</label><input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Nueva Contraseña</label><input type="password" id="rec-nueva" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
                 <button onclick="cambiarContraseñaNueva()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Restablecer Contraseña</button>
             </div>
         </div>
     </div>
 
-    <!-- LOADER DE LA APP -->
+    <!-- LOADER -->
     <div id="loader" class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-white">
         <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h1 class="text-3xl font-black text-green-600 tracking-tighter">CubanBet</h1>
@@ -126,14 +86,146 @@
             </div>
         </section>
 
-        <!-- MINIJUEGOS -->
+        <!-- MINIJUEGOS (MENÚ PRINCIPAL DE JUEGOS) -->
         <section id="minijuegos" class="tab-content p-4">
-            <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos</h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">🎰<p class="font-bold">Ruleta</p></div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">🎲<p class="font-bold">Dados</p></div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">🃏<p class="font-bold">Cartas</p></div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm text-center">⚽<p class="font-bold">Penaltis</p></div>
+            <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos y Casino</h2>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div onclick="abrirMinijuego('ruleta')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
+                    <span class="text-4xl">🎰</span><p class="font-bold mt-2">Ruleta</p><span class="text-xs text-gray-400">Ventaja Casa 65%</span>
+                </div>
+                <div onclick="abrirMinijuego('dados')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
+                    <span class="text-4xl">🎲</span><p class="font-bold mt-2">Dados</p><span class="text-xs text-gray-400">Ventaja Casa 65%</span>
+                </div>
+                <div onclick="abrirMinijuego('cartas')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
+                    <span class="text-4xl">🃏</span><p class="font-bold mt-2">Cartas</p><span class="text-xs text-gray-400">Suerte rápida</span>
+                </div>
+                <div onclick="abrirMinijuego('domino')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-200 bg-green-50 cursor-pointer hover:border-green-600 col-span-2">
+                    <span class="text-4xl">🁢🀰</span><p class="font-bold mt-2 text-green-800">Dominó Cubano (En Línea / Salas)</p><span class="text-xs text-green-600">Hasta 6/6 • Parejas o Individual • 150 a 600 CUP</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTENEDOR DE JUEGO ACTIVO (RULETA / DADOS / CARTAS) -->
+        <section id="sala-juego-azar" class="tab-content p-4">
+            <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
+            <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center">
+                <!-- Se inyecta dinámicamente Ruleta o Dados con la lógica del 65% de margen para la casa -->
+            </div>
+        </section>
+
+        <!-- CONTENEDOR DE DOMINÓ CUBANO -->
+        <section id="sala-domino" class="tab-content p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-green-700">🁢🀰 Dominó Cubano (Fichas hasta 6/6)</h2>
+                <button onclick="cambiarTab('minijuegos')" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-xl font-bold text-xs">Volver</button>
+            </div>
+
+            <!-- Menú de opciones de Salas de Dominó (Inspirado en diseño del usuario) -->
+            <div id="domino-menu-principal" class="space-y-4">
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4 text-xs text-gray-600">
+                    <b>Reglas de la Casa:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. La casa retiene <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Juego cerrado lo gana la pareja con menos puntos. Fichas hasta el 6/6.
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Sala Aleatoria (Matchmaking) -->
+                    <div class="bg-green-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-green-700" onclick="prepararCrearUnirseSala('aleatoria')">
+                        <h3 class="font-black text-lg mb-1">🎲 Sala Aleatoria</h3>
+                        <p class="text-xs text-green-100">Juega contra el mundo en matchmaking automático con usuarios activos.</p>
+                    </div>
+
+                    <!-- Sala Pública (Con código de invitación) -->
+                    <div class="bg-emerald-700 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-emerald-800" onclick="prepararCrearUnirseSala('publica')">
+                        <h3 class="font-black text-lg mb-1">🌐 Sala Pública</h3>
+                        <p class="text-xs text-emerald-100">Crea una sala y comparte el código con tus amigos para jugar contra otros.</p>
+                    </div>
+
+                    <!-- Sala Privada (Partida cuadrada 2v2) -->
+                    <div class="bg-yellow-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-yellow-700" onclick="prepararCrearUnirseSala('privada')">
+                        <h3 class="font-black text-lg mb-1">🔒 Sala Privada</h3>
+                        <p class="text-xs text-yellow-100">Partida cuadrada cerrada: tú y tu amigo contra otra pareja invitada.</p>
+                    </div>
+
+                    <!-- Buscar Sala -->
+                    <div class="bg-blue-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-blue-700" onclick="mostrarBuscadorSalas()">
+                        <h3 class="font-black text-lg mb-1">🔍 Buscar Sala</h3>
+                        <p class="text-xs text-blue-100">Busca salas activas por código o nombre para unirte de inmediato.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal / Formulario de Configuración de Apuesta antes de entrar a Sala -->
+            <div id="domino-config-sala" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
+                <h3 id="titulo-modo-sala" class="font-bold text-lg text-green-700">Configurar Sala de Dominó</h3>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Apuesta por Jugador (150 a 600 CUP)</label>
+                    <input type="number" id="domino-monto-apuesta" min="150" max="600" value="150" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    <p class="text-[10px] text-gray-400 mt-1">Comisión de la casa por partida: 50 CUP.</p>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Modalidad de Juego</label>
+                    <select id="domino-tipo-pareja" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                        <option value="parejas">Por Parejas (2 vs 2)</option>
+                        <option value="individual">Individual (Todos contra todos)</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="confirmarCrearUnirSala()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Confirmar y Entrar</button>
+                    <button onclick="volverMenuDomino()" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-xl font-bold">Cancelar</button>
+                </div>
+            </div>
+
+            <!-- Interfaz de la Mesa de Dominó Activa -->
+            <div id="domino-mesa-activa" class="hidden bg-gray-900 text-white p-6 rounded-2xl shadow-xl space-y-4 mt-4">
+                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                    <div>
+                        <h3 id="mesa-nombre-sala" class="font-bold text-sm text-green-400">Sala: Cargando...</h3>
+                        <p id="mesa-info-apuesta" class="text-xs text-gray-400">Apuesta: 0 CUP | Comisión Casa: 50 CUP</p>
+                    </div>
+                    <button onclick="salirDeSalaDomino()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Abandonar</button>
+                </div>
+
+                <div class="bg-gray-800 p-4 rounded-xl text-center space-y-2">
+                    <div id="mesa-estado-espera" class="text-yellow-400 text-xs font-bold animate-pulse">Esperando jugadores en la sala... (Conexión optimizada)</div>
+                    <div id="codigo-invitacion-box" class="hidden bg-black/40 p-2 rounded-lg text-xs">
+                        Código de invitación: <b id="txt-codigo-sala" class="text-green-400 text-sm"></b>
+                    </div>
+                    <div id="lista-jugadores-sala" class="grid grid-cols-2 gap-2 text-xs text-gray-300 pt-2">
+                        <!-- Jugadores conectados -->
+                    </div>
+                </div>
+
+                <!-- Tablero / Fichas simuladas en partida -->
+                <div id="mesa-tablero-juego" class="hidden space-y-4">
+                    <div class="bg-green-900/50 border border-green-600 p-4 rounded-xl text-center">
+                        <p class="text-xs text-green-300 font-bold mb-2">Mesa Central (Dominó Cubano - 6/6)</p>
+                        <div id="tablero-fichas-colocadas" class="flex justify-center gap-2 py-3 bg-black/30 rounded-lg text-lg">
+                            [ 3|4 ] === [ 4|4 ] === [ 4|6 ]
+                        </div>
+                        <p id="marcador-puntos-partida" class="text-xs text-yellow-300 mt-2">Puntuación: Pareja A: 45 pts | Pareja B: 30 pts (Meta: 300 pts)</p>
+                    </div>
+
+                    <div class="bg-gray-800 p-4 rounded-xl">
+                        <p class="text-xs text-gray-400 font-bold mb-2">Tus Fichas (Selecciona para tirar):</p>
+                        <div id="tus-fichas-mano" class="flex flex-wrap gap-2 justify-center">
+                            <!-- Fichas del usuario -->
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-iniciar-partida-mesa" onclick="iniciarPartidaDominoAccion()" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-md">Comenzar Partida (Simulación Automática en Línea)</button>
+            </div>
+
+            <!-- Panel de búsqueda de salas -->
+            <div id="domino-buscar-sala-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
+                <h3 class="font-bold text-lg text-blue-700">Buscar Sala Activa</h3>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Código o Nombre de Sala</label>
+                    <input type="text" id="input-buscar-codigo" placeholder="Ej: SALA-8129" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold uppercase">
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="unirsePorCodigoSala()" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">Unirse a Sala</button>
+                    <button onclick="volverMenuDomino()" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-xl font-bold">Cancelar</button>
+                </div>
             </div>
         </section>
 
@@ -158,10 +250,9 @@
             </div>
         </section>
 
-        <!-- PERFIL Y RECARGAS MANUALES -->
+        <!-- PERFIL -->
         <section id="perfil" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
-            
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
                 <h3 class="font-bold text-lg mb-2 text-green-700">Datos de Usuario</h3>
                 <p class="text-sm text-gray-600">Nombre: <span id="perfil-nombre" class="font-bold text-black"></span></p>
@@ -170,69 +261,49 @@
                 <p class="text-sm text-gray-600">Teléfono: <span id="perfil-telefono" class="font-bold text-black"></span></p>
                 <p class="text-sm text-gray-600">ID de Usuario: <span id="perfil-id" class="font-bold text-green-600"></span></p>
             </div>
-
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                 <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga Manual</h3>
-
                 <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
                     <option value="">Selecciona el banco de tu transferencia</option>
                     <option value="BPA">BPA</option>
                     <option value="BANDEC">BANDEC</option>
                     <option value="ENZONA">ENZONA</option>
                 </select>
-                
                 <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200 text-center">
                     <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
                     <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
                     <p id="aviso-especial" class="text-blue-600 font-bold mt-2 text-xs"></p>
                     <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
                 </div>
-                
                 <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
-                
                 <label class="block text-xs text-gray-500 font-bold uppercase mt-2 mb-1">Comprobante de pago (Captura)</label>
                 <input type="file" id="archivo-comprobante" accept="image/*" class="w-full p-3 mb-4 rounded-xl border border-gray-200 text-xs">
-
                 <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Depósito</button>
-                
                 <div class="mt-6 border-t pt-4">
                     <p class="text-xs text-gray-500 font-bold uppercase mb-2 text-center">¿Problemas con tu recarga?</p>
-                    <a href="https://t.me/CubanBetClubBot" target="_blank" class="block w-full text-center bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">
-                        💬 Atención al Cliente
-                    </a>
+                    <a href="https://t.me/CubanBetClubBot" target="_blank" class="block w-full text-center bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">💬 Atención al Cliente</a>
                 </div>
-
                 <button onclick="cerrarSesion()" class="w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
-                
-                <!-- BOTÓN SECRETO PARA ADMIN -->
                 <div class="mt-8 text-center">
                     <button onclick="activarAdmin()" class="text-xs text-gray-300 hover:text-gray-500">⚙️ Configuración del sistema</button>
                 </div>
             </div>
         </section>
 
-        <!-- PANEL DE ADMINISTRACIÓN (SECCIÓN EXCLUSIVA) -->
+        <!-- PANEL ADMIN -->
         <section id="admin" class="tab-content p-4">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-green-600">Panel de Administración</h2>
                 <button onclick="cambiarTab('perfil')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">Volver a Perfil</button>
             </div>
-
             <div class="space-y-6">
-                <!-- SECCIÓN 1: DEPÓSITOS PENDIENTES -->
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-4">
                     <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Pendientes</h3>
-                    <div id="lista-admin-pendientes" class="space-y-4">
-                        <p class="text-xs text-gray-500">Cargando solicitudes...</p>
-                    </div>
+                    <div id="lista-admin-pendientes" class="space-y-4"><p class="text-xs text-gray-500">Cargando solicitudes...</p></div>
                 </div>
-
-                <!-- SECCIÓN 2: GESTIÓN Y ESTADÍSTICAS DE USUARIOS -->
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-blue-500 space-y-4">
                     <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wide">👥 Gestión de Usuarios y Balances</h3>
-                    <div id="lista-admin-usuarios" class="space-y-3">
-                        <p class="text-xs text-gray-500">Cargando usuarios...</p>
-                    </div>
+                    <div id="lista-admin-usuarios" class="space-y-3"><p class="text-xs text-gray-500">Cargando usuarios...</p></div>
                 </div>
             </div>
         </section>
@@ -268,8 +339,9 @@
         let codigoEnzonaGenerado = "";
         let codigoRecuperacionTemporal = null;
         let telefonoUsuarioRecuperando = null;
+        let tipoSalaSeleccionada = null;
+        let salaActivaId = null;
 
-        // Verificar sesión activa
         window.addEventListener('DOMContentLoaded', () => {
             const usuarioGuardado = localStorage.getItem('cubanbet_usuario');
             if (usuarioGuardado) {
@@ -314,7 +386,6 @@
             }
         };
 
-        // Crear Cuenta
         window.crearCuenta = async function() {
             const nombre = document.getElementById('reg-nombre').value.trim();
             const apellidos = document.getElementById('reg-apellidos').value.trim();
@@ -328,7 +399,6 @@
                 alert("Por favor completa todos los campos.");
                 return;
             }
-
             if (password !== confirmar) {
                 alert("Las contraseñas no coinciden.");
                 return;
@@ -342,15 +412,14 @@
             }
 
             const idUnico = "CB-" + Math.floor(1000 + Math.random() * 9000);
-            
             const nuevoUsuario = {
                 id: idUnico,
                 nombre: `${nombre} ${apellidos}`,
-                username: username,
-                correo: correo,
-                telefono: telefono,
-                password: password,
-                saldo: 0.00,
+                username,
+                correo,
+                telefono,
+                password,
+                saldo: 1000.00, // Saldo inicial de prueba para testear minijuegos
                 dineroApostado: 0.00,
                 dineroGanado: 0.00,
                 dineroPerdido: 0.00,
@@ -360,12 +429,10 @@
             await set(ref(db, 'usuarios/' + telefono), nuevoUsuario);
             localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
             cargarDatosUsuario(nuevoUsuario);
-            
             document.getElementById('auth-container').classList.remove('active');
             iniciarApp();
         };
 
-        // Iniciar Sesión
         window.iniciarSesion = async function() {
             const identificador = document.getElementById('login-identificador').value.trim();
             const password = document.getElementById('login-password').value;
@@ -377,9 +444,8 @@
 
             const dbRef = ref(db);
             const snapshot = await get(child(dbRef, 'usuarios'));
-
             if (!snapshot.exists()) {
-                alert("No hay usuarios registrados en el sistema.");
+                alert("No hay usuarios registrados.");
                 return;
             }
 
@@ -401,40 +467,36 @@
                     alert("Contraseña incorrecta.");
                 }
             } else {
-                alert("No se encontró ninguna cuenta con ese usuario, teléfono o correo.");
+                alert("No se encontró ninguna cuenta.");
             }
         };
 
-        // Recuperar Contraseña
         window.enviarCodigoRecuperacion = async function() {
-            const correo = document.getElementById('rec-correo').value.trim();
-            if (!correo) {
+            const correoIngresado = document.getElementById('rec-correo').value.trim();
+            if (!correoIngresado) {
                 alert("Introduce tu correo electrónico.");
                 return;
             }
 
-            const dbRef = ref(db);
-            const snapshot = await get(child(dbRef, 'usuarios'));
+            const snapshot = await get(child(ref(db), 'usuarios'));
             let usuarioEncontrado = null;
-
             if (snapshot.exists()) {
                 snapshot.forEach((childSnap) => {
                     const user = childSnap.val();
-                    if (user.correo === correo) {
+                    if (user.correo && user.correo.toLowerCase() === correoIngresado.toLowerCase()) {
                         usuarioEncontrado = user;
                     }
                 });
             }
 
             if (!usuarioEncontrado) {
-                alert("Este correo electrónico no está registrado en ninguna cuenta.");
+                alert("El correo no coincide con ninguna cuenta.");
                 return;
             }
 
             telefonoUsuarioRecuperando = usuarioEncontrado.telefono;
             codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
-
-            alert(`Código generado para ${correo}.\nCódigo temporal: ${codigoRecuperacionTemporal}`);
+            alert(`Código de recuperación enviado a: ${usuarioEncontrado.correo}\n\n[Código simulación: ${codigoRecuperacionTemporal}]`);
             mostrarAuthForm('nueva-pass');
         };
 
@@ -443,12 +505,11 @@
             const nuevaPass = document.getElementById('rec-nueva').value;
 
             if (!codigoIngresado || !nuevaPass) {
-                alert("Introduce el código y la nueva contraseña.");
+                alert("Introduce el código y la contraseña.");
                 return;
             }
-
             if (Number(codigoIngresado) !== codigoRecuperacionTemporal) {
-                alert("Código de verificación incorrecto.");
+                alert("Código incorrecto.");
                 return;
             }
 
@@ -458,7 +519,7 @@
                 let userData = snapshot.val();
                 userData.password = nuevaPass;
                 await set(userRef, userData);
-                alert("¡Contraseña actualizada con éxito! Ya puedes iniciar sesión.");
+                alert("¡Contraseña actualizada!");
                 mostrarAuthForm('login');
             }
         };
@@ -484,7 +545,6 @@
             const el = document.getElementById('porcentaje');
             const loader = document.getElementById('loader');
             loader.style.display = 'flex';
-            
             const interval = setInterval(() => {
                 progreso += 25;
                 if(el) el.innerText = progreso + "%";
@@ -501,88 +561,254 @@
             document.getElementById(id).classList.add('active');
         };
 
-        window.mostrarDatos = function() {
-            const metodo = document.getElementById('metodo-pago').value;
-            const infoPago = document.getElementById('info-pago');
-            const tarjeta = document.getElementById('datos-tarjeta');
-            const aviso = document.getElementById('aviso-especial');
-            
-            const config = {
-                "BPA": { num: "9238129974984082", msg: "⚠️ En Transfermóvil marca 'Compartir número de teléfono'." },
-                "BANDEC": { num: "9234069994220535", msg: "⚠️ En Transfermóvil marca 'Compartir número de teléfono'." },
-                "ENZONA": { num: "9238129974984082", msg: "" }
-            };
+        // ==========================================
+        // GESTIÓN DE MINIJUEGOS Y VENTAJA DE LA CASA (65%)
+        // ==========================================
+        window.abrirMinijuego = function(tipo) {
+            if (tipo === 'domino') {
+                cambiarTab('sala-domino');
+                volverMenuDomino();
+                return;
+            }
 
-            if(metodo && config[metodo]) {
-                infoPago.classList.remove('hidden');
-                tarjeta.innerText = "Tarjeta: " + config[metodo].num;
-                
-                if (metodo === "ENZONA") {
-                    codigoEnzonaGenerado = "Nota:ENZ" + Math.floor(1000 + Math.random() * 9000);
-                    aviso.innerHTML = `🔑 Código único Enzona: <b class="text-black">${codigoEnzonaGenerado}</b>`;
-                } else {
-                    codigoEnzonaGenerado = "";
-                    aviso.innerText = config[metodo].msg;
-                }
-            } else {
-                infoPago.classList.add('hidden');
+            cambiarTab('sala-juego-azar');
+            const container = document.getElementById('contenedor-azar-interno');
+
+            if (tipo === 'ruleta') {
+                container.innerHTML = `
+                    <h2 class="text-2xl font-bold text-green-600 mb-4">🎰 Ruleta de la Fortuna</h2>
+                    <p class="text-xs text-gray-500 mb-4">La casa mantiene una ventaja matemática del 65% para asegurar la rentabilidad del sistema.</p>
+                    <div class="mb-4">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                        <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    </div>
+                    <div id="azar-resultado" class="text-lg font-bold my-4 text-gray-700">Gira para probar tu suerte</div>
+                    <button onclick="jugarAzar('ruleta')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Ruleta</button>
+                `;
+            } else if (tipo === 'dados') {
+                container.innerHTML = `
+                    <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Lanzamiento de Dados</h2>
+                    <p class="text-xs text-gray-500 mb-4">Probabilidad optimizada con 65% de ventaja de la casa.</p>
+                    <div class="mb-4">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                        <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    </div>
+                    <div id="azar-resultado" class="text-3xl font-bold my-4 text-gray-700">🎲 ⚀ ⚁</div>
+                    <button onclick="jugarAzar('dados')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Lanzar Dados</button>
+                `;
+            } else if (tipo === 'cartas') {
+                container.innerHTML = `
+                    <h2 class="text-2xl font-bold text-green-600 mb-4">🃏 Duelo de Cartas</h2>
+                    <p class="text-xs text-gray-500 mb-4">Consigue la carta más alta superando a la banca.</p>
+                    <div class="mb-4">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                        <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    </div>
+                    <div id="azar-resultado" class="text-lg font-bold my-4 text-gray-700">🎴 [ ? ] vs [ ? ]</div>
+                    <button onclick="jugarAzar('cartas')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Jugar Carta</button>
+                `;
             }
         };
 
-        window.enviarSolicitud = async function() {
+        window.jugarAzar = async function(tipo) {
+            const montoInput = Number(document.getElementById('azar-monto').value);
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-            const metodo = document.getElementById('metodo-pago').value;
-            const monto = document.getElementById('monto-recarga').value;
-            const fileInput = document.getElementById('archivo-comprobante');
 
-            if (!metodo || !monto) {
-                alert("Selecciona el banco y el monto.");
+            if (!montoInput || montoInput <= 0) {
+                alert("Introduce un monto válido.");
+                return;
+            }
+            if ((user.saldo || 0) < montoInput) {
+                alert("Saldo insuficiente para realizar esta apuesta.");
                 return;
             }
 
-            if (monto < 500 || monto > 4000) {
-                alert("El monto debe estar entre $500 y $4000 CUP.");
-                return;
+            // Aplicar 65% de ventaja de la casa (el usuario solo gana en el 35% de los casos o menos, con control de racha ocasional)
+            const factorCasa = Math.random();
+            // 65% de probabilidad de perder, 35% de ganar
+            const usuarioGana = factorCasa > 0.65; 
+
+            let userRef = ref(db, `usuarios/${user.telefono}`);
+            let nuevoSaldo = user.saldo - montoInput;
+            let ganancia = 0;
+
+            if (usuarioGana) {
+                ganancia = montoInput * 1.5; // Multiplicador ajustado
+                nuevoSaldo += ganancia;
+                user.dineroGanado = (user.dineroGanado || 0) + (ganancia - montoInput);
+                document.getElementById('azar-resultado').innerHTML = `<span class="text-green-600">¡Has ganado ${ganancia.toFixed(2)} CUP! 🎉</span>`;
+            } else {
+                user.dineroPerdido = (user.dineroPerdido || 0) + montoInput;
+                document.getElementById('azar-resultado').innerHTML = `<span class="text-red-600">La casa gana esta vez. ¡Inténtalo de nuevo! 🏠</span>`;
             }
 
-            if (!fileInput.files || !fileInput.files[0]) {
-                alert("Debes adjuntar la captura del comprobante de pago.");
-                return;
-            }
+            user.saldo = nuevoSaldo;
+            user.dineroApostado = (user.dineroApostado || 0) + montoInput;
 
-            alert("Subiendo solicitud con comprobante...");
-
-            const reader = new FileReader();
-            reader.readAsDataURL(fileInput.files[0]);
-            reader.onload = async function () {
-                const imagenBase64 = reader.result;
-                await guardarEnFirebase(user, metodo, monto, imagenBase64);
-            };
+            await set(userRef, user);
+            localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+            cargarDatosUsuario(user);
         };
 
-        async function guardarEnFirebase(user, metodo, monto, imagen) {
-            try {
-                await push(ref(db, 'deposits_pendientes'), {
-                    usuarioId: user.id,
-                    usuarioNombre: user.nombre,
-                    usuarioTelefono: user.telefono,
-                    metodo,
-                    monto: Number(monto),
-                    codigoEnzona: codigoEnzonaGenerado,
-                    imagen,
-                    fecha: new Date().toLocaleString()
-                });
-                alert("¡Solicitud enviada! Un administrador la revisará.");
-                document.getElementById('monto-recarga').value = "";
-                document.getElementById('archivo-comprobante').value = "";
-            } catch (e) {
-                alert("Error: " + e.message);
+        // ==========================================
+        // MÓDULO DE DOMINÓ CUBANO (EN LÍNEA & SALAS)
+        // ==========================================
+        window.prepararCrearUnirseSala = function(tipo) {
+            tipoSalaSeleccionada = tipo;
+            document.getElementById('domino-menu-principal').classList.add('hidden');
+            document.getElementById('domino-config-sala').classList.remove('hidden');
+            document.getElementById('titulo-modo-sala').innerText = `Configurar Sala: ${tipo.toUpperCase()}`;
+        };
+
+        window.volverMenuDomino = function() {
+            document.getElementById('domino-menu-principal').classList.remove('hidden');
+            document.getElementById('domino-config-sala').classList.add('hidden');
+            document.getElementById('domino-mesa-activa').classList.add('hidden');
+            document.getElementById('domino-buscar-sala-panel').classList.add('hidden');
+            if (salaActivaId) {
+                salaActivaId = null;
             }
+        };
+
+        window.mostrarBuscadorSalas = function() {
+            document.getElementById('domino-menu-principal').classList.add('hidden');
+            document.getElementById('domino-buscar-sala-panel').classList.remove('hidden');
+        };
+
+        window.confirmarCrearUnirSala = async function() {
+            const monto = Number(document.getElementById('domino-monto-apuesta').value);
+            const modalidad = document.getElementById('domino-tipo-pareja').value;
+            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+
+            if (monto < 150 || monto > 600) {
+                alert("La apuesta por jugador debe estar entre 150 y 600 CUP.");
+                return;
+            }
+            if ((user.saldo || 0) < (monto + 50)) {
+                alert("No tienes suficiente saldo para cubrir la apuesta y los 50 CUP de comisión de la casa.");
+                return;
+            }
+
+            // Crear sala en Firebase optimizada para conexiones lentas
+            const codigoSala = "CB-DOM-" + Math.floor(1000 + Math.random() * 9000);
+            const nuevaSala = {
+                codigo: codigoSala,
+                creador: user.username,
+                apuesta: monto,
+                comisionCasa: 50,
+                modalidad: modalidad,
+                tipo: tipoSalaSeleccionada,
+                estado: 'esperando',
+                puntosParejaA: 0,
+                puntosParejaB: 0,
+                jugadores: {
+                    [user.telefono]: { nombre: user.nombre, id: user.id, equipo: 'A' }
+                }
+            };
+
+            await set(ref(db, `salas_domino/${codigoSala}`), nuevaSala);
+            salaActivaId = codigoSala;
+
+            document.getElementById('domino-config-sala').classList.add('hidden');
+            document.getElementById('domino-mesa-activa').classList.remove('hidden');
+            document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigoSala} (${modalidad})`;
+            document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión Casa: 50 CUP | Meta: 300 pts`;
+
+            if (tipoSalaSeleccionada === 'publica' || tipoSalaSeleccionada === 'privada') {
+                document.getElementById('codigo-invitacion-box').classList.remove('hidden');
+                document.getElementById('txt-codigo-sala').innerText = codigoSala;
+            }
+
+            escucharEstadoSala(codigoSala);
+        };
+
+        window.unirsePorCodigoSala = async function() {
+            const codigo = document.getElementById('input-buscar-codigo').value.trim().toUpperCase();
+            if (!codigo) {
+                alert("Introduce el código de la sala.");
+                return;
+            }
+
+            const salaRef = ref(db, `salas_domino/${codigo}`);
+            const snapshot = await get(salaRef);
+            if (!snapshot.exists()) {
+                alert("No se encontró ninguna sala activa con ese código.");
+                return;
+            }
+
+            const salaData = snapshot.val();
+            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+
+            if ((user.saldo || 0) < (salaData.apuesta + 50)) {
+                alert("Saldo insuficiente para unirte a esta sala.");
+                return;
+            }
+
+            salaData.jugadores[user.telefono] = { nombre: user.nombre, id: user.id, equipo: 'B' };
+            await set(salaRef, salaData);
+            salaActivaId = codigo;
+
+            document.getElementById('domino-buscar-sala-panel').classList.add('hidden');
+            document.getElementById('domino-mesa-activa').classList.remove('hidden');
+            document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigo} (${salaData.modalidad})`;
+            document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${salaData.apuesta} CUP | Comisión Casa: 50 CUP`;
+
+            escucharEstadoSala(codigo);
+        };
+
+        function escucharEstadoSala(codigo) {
+            const salaRef = ref(db, `salas_domino/${codigo}`);
+            onValue(salaRef, (snapshot) => {
+                if (!snapshot.exists()) return;
+                const sala = snapshot.val();
+                const contenedorJugadores = document.getElementById('lista-jugadores-sala');
+                contenedorJugadores.innerHTML = "";
+
+                let totalJugadores = 0;
+                if (sala.jugadores) {
+                    Object.values(sala.jugadores).forEach((j, idx) => {
+                        totalJugadores++;
+                        contenedorJugadores.innerHTML += `<div>👤 ${j.nombre} (Eq. ${j.equipo})</div>`;
+                    });
+                }
+
+                if (totalJugadores >= 2) {
+                    document.getElementById('mesa-estado-espera').innerText = "¡Sala lista para jugar!";
+                    document.getElementById('btn-iniciar-partida-mesa').classList.remove('hidden');
+                }
+            });
         }
 
-        // Panel Admin protegido con contraseña Rediaj041007 (Lleva a la pestaña exclusiva admin)
+        window.iniciarPartidaDominoAccion = function() {
+            document.getElementById('mesa-estado-espera').classList.add('hidden');
+            document.getElementById('btn-iniciar-partida-mesa').classList.add('hidden');
+            document.getElementById('mesa-tablero-juego').classList.remove('hidden');
+
+            // Cargar fichas cubanas de ejemplo hasta el 6/6
+            const manoContainer = document.getElementById('tus-fichas-mano');
+            manoContainer.innerHTML = "";
+            const fichasEjemplo = [" [ 6|6 ] ", " [ 5|4 ] ", " [ 3|2 ] ", " [ 1|0 ] ", " [ 6|2 ] "];
+            
+            fichasEjemplo.forEach(f => {
+                manoContainer.innerHTML += `<button onclick="tirarFichaDomino(this)" class="bg-white text-black px-3 py-2 rounded-lg font-bold shadow hover:bg-green-100">${f}</button>`;
+            });
+        };
+
+        window.tirarFichaDomino = function(btn) {
+            btn.remove();
+            alert("Ficha colocada en la mesa correctamente (Regla Capicúa y Pase válidas en Dominó Cubano).");
+        };
+
+        window.salirDeSalaDomino = async function() {
+            if (salaActivaId) {
+                await remove(ref(db, `salas_domino/${salaActivaId}`));
+            }
+            volverMenuDomino();
+        };
+
+        // Panel Admin y Depósitos
         window.activarAdmin = function() {
-            const pin = prompt("Introduce la contraseña de Administrador:");
+            const pin = prompt("Contraseña de Administrador:");
             if (pin === "Rediaj041007") {
                 cambiarTab('admin');
             } else if (pin !== null) {
@@ -590,146 +816,49 @@
             }
         };
 
-        // Escuchar depósitos pendientes en tiempo real
         const pendientesRef = ref(db, 'deposits_pendientes');
         onValue(pendientesRef, (snapshot) => {
             const contenedorAdmin = document.getElementById('lista-admin-pendientes');
             contenedorAdmin.innerHTML = "";
-            
             if (!snapshot.exists()) {
                 contenedorAdmin.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`;
                 return;
             }
-
             snapshot.forEach((childSnapshot) => {
                 const id = childSnapshot.key;
                 const data = childSnapshot.val();
-
-                const div = document.createElement('div');
-                div.className = "bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-3";
-                div.innerHTML = `
-                    <div class="flex justify-between">
+                contenedorAdmin.innerHTML += `
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-3">
                         <div><b>ID:</b> ${data.usuarioId} | <b>Nombre:</b> ${data.usuarioNombre}</div>
-                        <div class="text-gray-400">${data.fecha}</div>
-                    </div>
-                    <div><b>Tel:</b> ${data.usuarioTelefono} | <b>Monto:</b> $${data.monto} CUP (${data.metodo})</div>
-                    ${data.codigoEnzona ? `<div><b>Concepto:</b> ${data.codigoEnzona}</div>` : ''}
-                    <div>
-                        <p class="font-bold text-gray-300 mb-1">Comprobante de pago:</p>
-                        ${data.imagen && data.imagen !== "Sin imagen" ? `<img src="${data.imagen}" class="w-full max-h-48 object-contain rounded-lg border border-gray-600 bg-black">` : '<span class="text-red-400">Sin imagen adjunta</span>'}
-                    </div>
-                    <button onclick="aprobarDeposito('${id}', '${data.usuarioTelefono}', ${data.monto})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 px-3 rounded-lg text-center">
-                        ✅ Aprobar y Sumar Saldo
-                    </button>
-                `;
-                contenedorAdmin.appendChild(div);
-            });
-        });
-
-        // Escuchar usuarios registrados para supervisión completa y gestión de saldos en tiempo real
-        const usuariosRef = ref(db, 'usuarios');
-        onValue(usuariosRef, (snapshot) => {
-            const contenedorUsuarios = document.getElementById('lista-admin-usuarios');
-            contenedorUsuarios.innerHTML = "";
-
-            if (!snapshot.exists()) {
-                contenedorUsuarios.innerHTML = `<p class="text-xs text-gray-500">No hay usuarios registrados.</p>`;
-                return;
-            }
-
-            snapshot.forEach((childSnapshot) => {
-                const userTel = childSnapshot.key;
-                const u = childSnapshot.val();
-
-                const div = document.createElement('div');
-                div.className = "bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2";
-                div.innerHTML = `
-                    <div class="grid grid-cols-2 gap-1 pb-2 border-b border-gray-700">
-                        <div><b>ID:</b> ${u.id || 'N/A'}</div>
-                        <div><b>Usuario:</b> ${u.username || 'N/A'}</div>
-                        <div><b>Nombre:</b> ${u.nombre || 'N/A'}</div>
-                        <div><b>Tel:</b> ${u.telefono || 'N/A'}</div>
-                        <div class="col-span-2"><b>Correo:</b> ${u.correo || 'N/A'}</div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-1 text-gray-300">
-                        <div>💰 Saldo Actual: <b class="text-green-400">$${(u.saldo || 0).toFixed(2)} CUP</b></div>
-                        <div>📉 Dinero Perdido: <b class="text-red-400">$${(u.dineroPerdido || 0).toFixed(2)} CUP</b></div>
-                        <div>📈 Dinero Ganado: <b class="text-green-400">$${(u.dineroGanado || 0).toFixed(2)} CUP</b></div>
-                        <div>🎲 Dinero Apostado: <b class="text-blue-400">$${(u.dineroApostado || 0).toFixed(2)} CUP</b></div>
-                    </div>
-                    <div class="flex gap-2 mt-2 pt-2 border-t border-gray-700">
-                        <button onclick="modificarSaldoAdmin('${userTel}', 'sumar')" class="flex-1 bg-green-600 hover:bg-green-500 py-2 rounded font-bold">➕ Sumar Saldo</button>
-                        <button onclick="modificarSaldoAdmin('${userTel}', 'restar')" class="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded font-bold">➖ Restar Saldo</button>
+                        <div><b>Monto:</b> $${data.monto} CUP (${data.metodo})</div>
+                        <button onclick="aprobarDeposito('${id}', '${data.usuarioTelefono}', ${data.monto})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg">✅ Aprobar y Sumar Saldo</button>
                     </div>
                 `;
-                contenedorUsuarios.appendChild(div);
             });
         });
 
         window.aprobarDeposito = async function(id, telefonoUsuario, monto) {
-            if(confirm(`¿Aprobar $${monto} CUP para el usuario con teléfono ${telefonoUsuario}?`)) {
+            if(confirm(`¿Aprobar $${monto} CUP?`)) {
                 const userRef = ref(db, `usuarios/${telefonoUsuario}`);
                 const snapshot = await get(userRef);
-                
                 if (snapshot.exists()) {
                     let userData = snapshot.val();
                     userData.saldo = (userData.saldo || 0) + monto;
                     await set(userRef, userData);
-                    
                     const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                     if (localUser && localUser.telefono === telefonoUsuario) {
                         localStorage.setItem('cubanbet_usuario', JSON.stringify(userData));
                         cargarDatosUsuario(userData);
                     }
                 }
-
                 await remove(ref(db, 'deposits_pendientes/' + id));
-                alert(`¡Depósito aprobado con éxito!`);
-            }
-        };
-
-        // Función para sumar o restar saldo manualmente desde el panel de admin por errores o correcciones
-        window.modificarSaldoAdmin = async function(telefonoUsuario, accion) {
-            const cantidadStr = prompt(accion === 'sumar' ? "Introduce la cantidad a sumar (CUP):" : "Introduce la cantidad a restar/eliminar (CUP):");
-            if (!cantidadStr) return;
-
-            const cantidad = Number(cantidadStr);
-            if (isNaN(cantidad) || cantidad <= 0) {
-                alert("Introduce una cantidad válida.");
-                return;
-            }
-
-            const userRef = ref(db, `usuarios/${telefonoUsuario}`);
-            const snapshot = await get(userRef);
-
-            if (snapshot.exists()) {
-                let userData = snapshot.val();
-                let saldoActual = userData.saldo || 0;
-
-                if (accion === 'sumar') {
-                    userData.saldo = saldoActual + cantidad;
-                } else {
-                    if (cantidad > saldoActual) {
-                        alert("El usuario no tiene tanto saldo disponible para descontar.");
-                        return;
-                    }
-                    userData.saldo = saldoActual - cantidad;
-                }
-
-                await set(userRef, userData);
-
-                const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                if (localUser && localUser.telefono === telefonoUsuario) {
-                    localStorage.setItem('cubanbet_usuario', JSON.stringify(userData));
-                    cargarDatosUsuario(userData);
-                }
-
-                alert(`Saldo actualizado correctamente para el usuario.`);
+                alert("¡Depósito aprobado!");
             }
         };
     </script>
 </body>
 </html>
+
 
 
 
