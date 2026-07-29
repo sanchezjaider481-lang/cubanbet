@@ -268,7 +268,7 @@
                 <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Depósito</button>
             </div>
 
-            <!-- NUEVA SECCIÓN DE RETIROS (MÍNIMO 500 - MÁXIMO 4000 EN 24HRS) -->
+            <!-- SECCIÓN DE RETIROS (MÍNIMO 500 - MÁXIMO 4000 EN 24HRS) -->
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
                 <h3 class="font-bold text-lg mb-4 text-blue-700">Solicitar Retiro de Fondos</h3>
                 <p class="text-xs text-gray-500 mb-3">Límites: Mínimo 500 CUP, Máximo 4000 CUP por solicitud (Procesado en 24 horas).</p>
@@ -553,7 +553,7 @@
         };
 
         // ==========================================
-        // GESTIÓN DE RECARGAS Y RETIROS CON FOTO
+        // GESTIÓN DE RECARGAS Y RETIROS CON FOTO (CORREGIDO)
         // ==========================================
         window.mostrarDatos = function() {
             const metodo = document.getElementById('metodo-pago').value;
@@ -580,7 +580,7 @@
             }
         };
 
-        window.enviarSolicitud = async function() {
+        window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -595,16 +595,15 @@
                 return;
             }
 
-            let comprobanteBase64 = "";
             if (archivoInput.files && archivoInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
-                    comprobanteBase64 = e.target.result;
+                    const comprobanteBase64 = e.target.result;
                     await guardarSolicitudDepositoFirebase(user, metodo, monto, comprobanteBase64);
                 };
                 reader.readAsDataURL(archivoInput.files[0]);
             } else {
-                await guardarSolicitudDepositoFirebase(user, metodo, monto, "");
+                guardarSolicitudDepositoFirebase(user, metodo, monto, "");
             }
         };
 
@@ -621,7 +620,7 @@
                 fecha: new Date().toISOString()
             });
 
-            alert("¡Solicitud de depósito e imagen enviada con éxito al administrador!");
+            alert("¡Solicitud de depósito y comprobante enviados con éxito al administrador!");
             document.getElementById('monto-recarga').value = "";
             document.getElementById('metodo-pago').value = "";
             document.getElementById('archivo-comprobante').value = "";
@@ -646,7 +645,6 @@
                 return;
             }
 
-            // Descontar saldo temporalmente al solicitar
             user.saldo -= monto;
             await set(ref(db, `usuarios/${user.telefono}`), user);
             localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
@@ -669,7 +667,7 @@
         };
 
         // ==========================================
-        // MINIJUEGOS (CON SELECCIÓN DE APUESTA FUNCIONAL)
+        // MINIJUEGOS (CON SELECCIÓN DE APUESTA Y RESULTADO REALISTA)
         // ==========================================
         window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') {
@@ -684,10 +682,20 @@
             if (tipo === 'ruleta') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎰 Ruleta de la Fortuna</h2>
-                    <p class="text-xs text-gray-500 mb-4">Escribe cuánto deseas apostar, gira y multiplica tu saldo.</p>
-                    <div class="mb-4 text-left">
-                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="azar-monto" placeholder="Ej: 150" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    <p class="text-xs text-gray-500 mb-4">Selecciona tu sección, escribe tu apuesta y gira.</p>
+                    <div class="mb-4 text-left space-y-3">
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold uppercase">Selecciona tu Opción en la Ruleta</label>
+                            <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                                <option value="rojo">🔴 Rojo (x2)</option>
+                                <option value="negro">⚫ Negro (x2)</option>
+                                <option value="verde">🟢 Verde / Cero (x10)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                            <input type="number" id="azar-monto" placeholder="Ej: 150" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        </div>
                     </div>
                     <div id="azar-animacion" class="my-6 text-6xl transition-all duration-300">🎰</div>
                     <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para girar</div>
@@ -696,10 +704,24 @@
             } else if (tipo === 'dados') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Lanzamiento de Dados</h2>
-                    <p class="text-xs text-gray-500 mb-4">Escribe tu apuesta, lanza los dados y acierta.</p>
-                    <div class="mb-4 text-left">
-                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="azar-monto" placeholder="Ej: 200" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    <p class="text-xs text-gray-500 mb-4">Elige qué número exacto crees que caerá en los dados.</p>
+                    <div class="mb-4 text-left space-y-3">
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold uppercase">Elige el Resultado del Dado (Suma 2 a 12)</label>
+                            <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                                <option value="2">Dado: Suma 2 (Premio x6)</option>
+                                <option value="4">Dado: Suma 4 (Premio x5)</option>
+                                <option value="6">Dado: Suma 6 (Premio x4)</option>
+                                <option value="7">Dado: Suma 7 (Premio x3)</option>
+                                <option value="8">Dado: Suma 8 (Premio x4)</option>
+                                <option value="10">Dado: Suma 10 (Premio x5)</option>
+                                <option value="12">Dado: Suma 12 (Premio x6)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                            <input type="number" id="azar-monto" placeholder="Ej: 200" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        </div>
                     </div>
                     <div id="azar-animacion" class="my-6 text-5xl font-mono tracking-widest text-gray-800">🎲 [ ⚀ ] [ ⚁ ]</div>
                     <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para lanzar</div>
@@ -708,10 +730,22 @@
             } else if (tipo === 'cartas') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🃏 Duelo de Cartas</h2>
-                    <p class="text-xs text-gray-500 mb-4">Escribe tu apuesta y supera la carta de la banca.</p>
-                    <div class="mb-4 text-left">
-                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="azar-monto" placeholder="Ej: 250" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    <p class="text-xs text-gray-500 mb-4">Selecciona el palo o tipo de carta que ganará al de la banca.</p>
+                    <div class="mb-4 text-left space-y-3">
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold uppercase">Elige tu Carta / Palo</label>
+                            <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                                <option value="corazones">Corazones ♥ (x2)</option>
+                                <option value="picas">Picas ♠ (x2)</option>
+                                <option value="diamantes">Diamantes ♦ (x2)</option>
+                                <option value="treboles">Tréboles ♣ (x2)</option>
+                                <option value="as">As Maestro (x4)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                            <input type="number" id="azar-monto" placeholder="Ej: 250" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        </div>
                     </div>
                     <div id="azar-animacion" class="my-6 text-2xl font-bold text-gray-800">🎴 [ ? ] vs [ ? ]</div>
                     <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para jugar</div>
@@ -722,6 +756,7 @@
 
         window.jugarAzar = async function(tipo) {
             const montoInput = Number(document.getElementById('azar-monto').value);
+            const opcionElegida = document.getElementById('azar-opcion-seleccionada').value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
             if (!montoInput || montoInput <= 0) {
@@ -741,33 +776,39 @@
             resultadoEl.innerText = "Jugando...";
 
             if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl animate-spin-fast";
-            else if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ ⚂ ] [ ⚄ ]";
+            else if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ 🔄 ] [ 🔄 ]";
             else if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 🔄 ] vs [ 🔄 ]";
 
             setTimeout(async () => {
-                const usuarioGana = Math.random() > 0.45;
+                // Probabilidad de victoria ajustada al 22% para que la casa tenga ventaja y se pierda con frecuencia
+                const usuarioGana = Math.random() < 0.22;
 
                 let userRef = ref(db, `usuarios/${user.telefono}`);
                 let nuevoSaldo = user.saldo - montoInput;
                 let ganancia = 0;
 
                 if (usuarioGana) {
-                    ganancia = montoInput * 1.8;
+                    let multiplicador = 2;
+                    if (tipo === 'dados') multiplicador = 4;
+                    if (tipo === 'cartas' && opcionElegida === 'as') multiplicador = 4;
+                    if (tipo === 'ruleta' && opcionElegida === 'verde') multiplicador = 10;
+
+                    ganancia = montoInput * multiplicador;
                     nuevoSaldo += ganancia;
                     user.dineroGanado = (user.dineroGanado || 0) + (ganancia - montoInput);
                     
                     if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl";
-                    if (tipo === 'ruleta') animacionEl.innerHTML = "🏆";
-                    if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ ⚅ ] [ ⚅ ]";
-                    if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ A♥ ] vs [ 10♠ ]";
-                    resultadoEl.innerHTML = `<span class="text-green-600 text-lg">¡Has ganado ${ganancia.toFixed(2)} CUP 🎉</span>`;
+                    if (tipo === 'ruleta') animacionEl.innerHTML = `🏆 (${opcionElegida.toUpperCase()})`;
+                    if (tipo === 'dados') animacionEl.innerHTML = `🎲 [ ⚀ ] [ ${opcionElegida / 2 || 3} ]`;
+                    if (tipo === 'cartas') animacionEl.innerHTML = `🎴 [ ${opcionElegida.toUpperCase()} ] vs [ 5♠ ]`;
+                    resultadoEl.innerHTML = `<span class="text-green-600 text-lg">¡Acertaste tu selección y ganaste ${ganancia.toFixed(2)} CUP 🎉</span>`;
                 } else {
                     user.dineroPerdido = (user.dineroPerdido || 0) + montoInput;
                     if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl";
                     if (tipo === 'ruleta') animacionEl.innerHTML = "❌";
                     if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ ⚀ ] [ ⚁ ]";
                     if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 4♣ ] vs [ K♠ ]";
-                    resultadoEl.innerHTML = `<span class="text-red-600 text-lg">No has tenido suerte esta vez. ¡Inténtalo de nuevo!</span>`;
+                    resultadoEl.innerHTML = `<span class="text-red-600 text-lg">No cayó tu selección (${opcionElegida}). ¡La casa gana esta vez!</span>`;
                 }
 
                 user.saldo = nuevoSaldo;
@@ -1026,6 +1067,7 @@
     </script>
 </body>
 </html>
+
 
 
 
