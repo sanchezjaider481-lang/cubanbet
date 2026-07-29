@@ -79,18 +79,18 @@
 
             <!-- FORMULARIO DE RECUPERACIÓN DE CONTRASEÑA -->
             <div id="form-recuperar" class="space-y-4 hidden">
-                <p class="text-xs text-gray-600">Introduce tu correo electrónico registrado para enviarte un código de verificación de Gmail.</p>
+                <p class="text-xs text-gray-600">Introduce tu correo electrónico registrado para generar tu código de verificación temporal en pantalla.</p>
                 <div>
                     <label class="text-xs text-gray-500 font-bold uppercase">Correo Electrónico</label>
                     <input type="email" id="rec-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
                 </div>
-                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Enviar Código a Gmail</button>
+                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Generar Código de Verificación</button>
                 <button onclick="mostrarAuthForm('login')" class="w-full bg-gray-200 text-gray-700 py-2 rounded-xl font-bold text-sm">Volver al Login</button>
             </div>
 
             <!-- FORMULARIO DE NUEVA CONTRASEÑA -->
             <div id="form-nueva-pass" class="space-y-4 hidden">
-                <p class="text-xs text-gray-600">Introduce el código de 4 dígitos enviado a tu Gmail y tu nueva contraseña.</p>
+                <p class="text-xs text-gray-600">Introduce el código de 4 dígitos generado y tu nueva contraseña.</p>
                 <div>
                     <label class="text-xs text-gray-500 font-bold uppercase">Código de Verificación</label>
                     <input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
@@ -209,27 +209,27 @@
                     <button onclick="activarAdmin()" class="text-xs text-gray-300 hover:text-gray-500">⚙️ Configuración del sistema</button>
                 </div>
             </div>
+        </section>
 
-            <!-- PANEL ADMIN OCULTO -->
-            <div id="panel-admin" class="hidden mt-8 bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-6">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-green-400">Panel de Administración</h3>
-                    <button onclick="cerrarAdmin()" class="text-red-400 text-xs font-bold">Ocultar [X]</button>
-                </div>
+        <!-- PANEL DE ADMINISTRACIÓN (SECCIÓN EXCLUSIVA) -->
+        <section id="admin" class="tab-content p-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-green-600">Panel de Administración</h2>
+                <button onclick="cambiarTab('perfil')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">Volver a Perfil</button>
+            </div>
 
+            <div class="space-y-6">
                 <!-- SECCIÓN 1: DEPÓSITOS PENDIENTES -->
-                <div>
-                    <h4 class="text-sm font-bold text-yellow-400 mb-2 uppercase tracking-wide">📥 Depósitos Pendientes</h4>
+                <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-4">
+                    <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Pendientes</h3>
                     <div id="lista-admin-pendientes" class="space-y-4">
                         <p class="text-xs text-gray-500">Cargando solicitudes...</p>
                     </div>
                 </div>
 
-                <hr class="border-gray-700">
-
                 <!-- SECCIÓN 2: GESTIÓN Y ESTADÍSTICAS DE USUARIOS -->
-                <div>
-                    <h4 class="text-sm font-bold text-blue-400 mb-2 uppercase tracking-wide">👥 Gestión de Usuarios y Balances</h4>
+                <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-blue-500 space-y-4">
+                    <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wide">👥 Gestión de Usuarios y Balances</h3>
                     <div id="lista-admin-usuarios" class="space-y-3">
                         <p class="text-xs text-gray-500">Cargando usuarios...</p>
                     </div>
@@ -434,7 +434,7 @@
             telefonoUsuarioRecuperando = usuarioEncontrado.telefono;
             codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
 
-            alert(`[SIMULACIÓN GMAIL] Código enviado a ${correo}.\nCódigo temporal: ${codigoRecuperacionTemporal}`);
+            alert(`Código generado para ${correo}.\nCódigo temporal: ${codigoRecuperacionTemporal}`);
             mostrarAuthForm('nueva-pass');
         };
 
@@ -580,19 +580,14 @@
             }
         }
 
-        // Panel Admin protegido con contraseña Rediaj041007
+        // Panel Admin protegido con contraseña Rediaj041007 (Lleva a la pestaña exclusiva admin)
         window.activarAdmin = function() {
             const pin = prompt("Introduce la contraseña de Administrador:");
             if (pin === "Rediaj041007") {
-                document.getElementById('panel-admin').classList.remove('hidden');
-                alert("Panel de Admin desbloqueado.");
+                cambiarTab('admin');
             } else if (pin !== null) {
                 alert("Contraseña incorrecta.");
             }
-        };
-
-        window.cerrarAdmin = function() {
-            document.getElementById('panel-admin').classList.add('hidden');
         };
 
         // Escuchar depósitos pendientes en tiempo real
@@ -664,7 +659,7 @@
                     </div>
                     <div class="flex gap-2 mt-2 pt-2 border-t border-gray-700">
                         <button onclick="modificarSaldoAdmin('${userTel}', 'sumar')" class="flex-1 bg-green-600 hover:bg-green-500 py-2 rounded font-bold">➕ Sumar Saldo</button>
-                        <button onclick="modificarSaldoAdmin('${userTel}', 'restar')" class="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded font-bold">➖ Restirar Saldo</button>
+                        <button onclick="modificarSaldoAdmin('${userTel}', 'restar')" class="flex-1 bg-red-600 hover:bg-red-500 py-2 rounded font-bold">➖ Restar Saldo</button>
                     </div>
                 `;
                 contenedorUsuarios.appendChild(div);
@@ -735,6 +730,7 @@
     </script>
 </body>
 </html>
+
 
 
 
