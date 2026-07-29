@@ -107,7 +107,7 @@
             </div>
         </section>
 
-        <!-- CONTENEDOR DE JUEGO ACTIVO CON ANIMACIONES -->
+        <!-- CONTENEDOR DE JUEGO ACTIVO CON ANIMACIONES Y APUESTAS -->
         <section id="sala-juego-azar" class="tab-content p-4">
             <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
             <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center">
@@ -235,7 +235,7 @@
             </div>
         </section>
 
-        <!-- PERFIL Y RECARGAS -->
+        <!-- PERFIL, RECARGAS Y RETIROS -->
         <section id="perfil" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
@@ -246,7 +246,9 @@
                 <p class="text-sm text-gray-600">Teléfono: <span id="perfil-telefono" class="font-bold text-black"></span></p>
                 <p class="text-sm text-gray-600">ID de Usuario: <span id="perfil-id" class="font-bold text-green-600"></span></p>
             </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+
+            <!-- SECCIÓN DE RECARGAS -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
                 <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga Manual</h3>
                 <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
                     <option value="">Selecciona el banco de tu transferencia</option>
@@ -261,10 +263,28 @@
                     <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
                 </div>
                 <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200 font-bold">
-                <label class="block text-xs text-gray-500 font-bold uppercase mb-1">Comprobante de pago (Captura)</label>
+                <label class="block text-xs text-gray-500 font-bold uppercase mb-1">Comprobante de pago (Captura/Foto)</label>
                 <input type="file" id="archivo-comprobante" accept="image/*" class="w-full p-3 mb-4 rounded-xl border border-gray-200 text-xs">
                 <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Depósito</button>
-                <div class="mt-6 border-t pt-4">
+            </div>
+
+            <!-- NUEVA SECCIÓN DE RETIROS (MÍNIMO 500 - MÁXIMO 4000 EN 24HRS) -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
+                <h3 class="font-bold text-lg mb-4 text-blue-700">Solicitar Retiro de Fondos</h3>
+                <p class="text-xs text-gray-500 mb-3">Límites: Mínimo 500 CUP, Máximo 4000 CUP por solicitud (Procesado en 24 horas).</p>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Tarjeta de Destino</label>
+                    <input type="text" id="retiro-tarjeta" placeholder="Ej: 9238 1299 7498 4082" class="w-full mt-1 mb-4 p-3 rounded-xl border border-gray-200 font-bold">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Monto a Retirar (CUP)</label>
+                    <input type="number" id="retiro-monto" placeholder="Ej: 1000" class="w-full mt-1 mb-4 p-3 rounded-xl border border-gray-200 font-bold">
+                </div>
+                <button onclick="solicitarRetiro()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Retiro</button>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                <div class="border-t pt-4">
                     <a href="https://t.me/CubanBetClubBot" target="_blank" class="block w-full text-center bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">💬 Atención al Cliente Telegram</a>
                 </div>
                 <button onclick="cerrarSesion()" class="w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
@@ -282,11 +302,15 @@
             </div>
             <div class="space-y-6">
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-4">
-                    <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Pendientes</h3>
+                    <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Pendientes (Con Comprobante)</h3>
                     <div id="lista-admin-pendientes" class="space-y-4"><p class="text-xs text-gray-500">Cargando solicitudes...</p></div>
                 </div>
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-blue-500 space-y-4">
-                    <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wide">👥 Gestión de Usuarios y Saldos</h3>
+                    <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wide">📤 Solicitudes de Retiro (24 Horas)</h3>
+                    <div id="lista-admin-retiros" class="space-y-4"><p class="text-xs text-gray-500">Cargando retiros...</p></div>
+                </div>
+                <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-purple-500 space-y-4">
+                    <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wide">👥 Gestión de Usuarios y Saldos</h3>
                     <div id="lista-admin-usuarios" class="space-y-3"><p class="text-xs text-gray-500">Cargando usuarios...</p></div>
                 </div>
             </div>
@@ -529,7 +553,7 @@
         };
 
         // ==========================================
-        // GESTIÓN DE RECARGAS Y BANCOS CON TARJETAS REALES
+        // GESTIÓN DE RECARGAS Y RETIROS CON FOTO
         // ==========================================
         window.mostrarDatos = function() {
             const metodo = document.getElementById('metodo-pago').value;
@@ -559,6 +583,7 @@
         window.enviarSolicitud = async function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
+            const archivoInput = document.getElementById('archivo-comprobante');
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
             if (!metodo) {
@@ -570,6 +595,20 @@
                 return;
             }
 
+            let comprobanteBase64 = "";
+            if (archivoInput.files && archivoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    comprobanteBase64 = e.target.result;
+                    await guardarSolicitudDepositoFirebase(user, metodo, monto, comprobanteBase64);
+                };
+                reader.readAsDataURL(archivoInput.files[0]);
+            } else {
+                await guardarSolicitudDepositoFirebase(user, metodo, monto, "");
+            }
+        };
+
+        async function guardarSolicitudDepositoFirebase(user, metodo, monto, comprobante) {
             const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
             await set(nuevoDepositoRef, {
                 id: nuevoDepositoRef.key,
@@ -578,17 +617,59 @@
                 usuarioTelefono: user.telefono,
                 monto: monto,
                 metodo: metodo,
+                comprobanteUrl: comprobante,
                 fecha: new Date().toISOString()
             });
 
-            alert("¡Solicitud de depósito enviada con éxito al administrador!");
+            alert("¡Solicitud de depósito e imagen enviada con éxito al administrador!");
             document.getElementById('monto-recarga').value = "";
             document.getElementById('metodo-pago').value = "";
+            document.getElementById('archivo-comprobante').value = "";
             document.getElementById('info-pago').classList.add('hidden');
+        }
+
+        window.solicitarRetiro = async function() {
+            const tarjeta = document.getElementById('retiro-tarjeta').value.trim();
+            const monto = Number(document.getElementById('retiro-monto').value);
+            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+
+            if (!tarjeta) {
+                alert("Introduce el número de tarjeta de destino.");
+                return;
+            }
+            if (!monto || monto < 500 || monto > 4000) {
+                alert("El retiro debe ser un monto entre 500 CUP y 4000 CUP.");
+                return;
+            }
+            if ((user.saldo || 0) < monto) {
+                alert("No tienes saldo suficiente para este retiro.");
+                return;
+            }
+
+            // Descontar saldo temporalmente al solicitar
+            user.saldo -= monto;
+            await set(ref(db, `usuarios/${user.telefono}`), user);
+            localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+            cargarDatosUsuario(user);
+
+            const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
+            await set(nuevoRetiroRef, {
+                id: nuevoRetiroRef.key,
+                usuarioId: user.id,
+                usuarioNombre: user.nombre,
+                usuarioTelefono: user.telefono,
+                tarjetaDestino: tarjeta,
+                monto: monto,
+                fecha: new Date().toISOString()
+            });
+
+            alert("¡Solicitud de retiro enviada con éxito! Será procesada en un plazo máximo de 24 horas.");
+            document.getElementById('retiro-tarjeta').value = "";
+            document.getElementById('retiro-monto').value = "";
         };
 
         // ==========================================
-        // MINIJUEGOS (SIN MENCIONAR MARGEN DE CASA)
+        // MINIJUEGOS (CON SELECCIÓN DE APUESTA FUNCIONAL)
         // ==========================================
         window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') {
@@ -603,37 +684,37 @@
             if (tipo === 'ruleta') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎰 Ruleta de la Fortuna</h2>
-                    <p class="text-xs text-gray-500 mb-4">Prueba tu suerte y multiplica tu saldo.</p>
-                    <div class="mb-4">
+                    <p class="text-xs text-gray-500 mb-4">Escribe cuánto deseas apostar, gira y multiplica tu saldo.</p>
+                    <div class="mb-4 text-left">
                         <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        <input type="number" id="azar-monto" placeholder="Ej: 150" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
                     <div id="azar-animacion" class="my-6 text-6xl transition-all duration-300">🎰</div>
-                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Gira la ruleta</div>
+                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para girar</div>
                     <button id="btn-jugar" onclick="jugarAzar('ruleta')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Ruleta</button>
                 `;
             } else if (tipo === 'dados') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Lanzamiento de Dados</h2>
-                    <p class="text-xs text-gray-500 mb-4">Lanza los dados y acierta.</p>
-                    <div class="mb-4">
+                    <p class="text-xs text-gray-500 mb-4">Escribe tu apuesta, lanza los dados y acierta.</p>
+                    <div class="mb-4 text-left">
                         <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        <input type="number" id="azar-monto" placeholder="Ej: 200" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
                     <div id="azar-animacion" class="my-6 text-5xl font-mono tracking-widest text-gray-800">🎲 [ ⚀ ] [ ⚁ ]</div>
-                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Lanza los dados</div>
+                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para lanzar</div>
                     <button id="btn-jugar" onclick="jugarAzar('dados')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Lanzar Dados</button>
                 `;
             } else if (tipo === 'cartas') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🃏 Duelo de Cartas</h2>
-                    <p class="text-xs text-gray-500 mb-4">Supera la carta de la banca.</p>
-                    <div class="mb-4">
+                    <p class="text-xs text-gray-500 mb-4">Escribe tu apuesta y supera la carta de la banca.</p>
+                    <div class="mb-4 text-left">
                         <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="azar-monto" value="100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        <input type="number" id="azar-monto" placeholder="Ej: 250" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
                     <div id="azar-animacion" class="my-6 text-2xl font-bold text-gray-800">🎴 [ ? ] vs [ ? ]</div>
-                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Selecciona tu carta</div>
+                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para jugar</div>
                     <button id="btn-jugar" onclick="jugarAzar('cartas')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Jugar Carta</button>
                 `;
             }
@@ -644,11 +725,11 @@
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
             if (!montoInput || montoInput <= 0) {
-                alert("Introduce un monto válido.");
+                alert("Introduce un monto de apuesta válido.");
                 return;
             }
             if ((user.saldo || 0) < montoInput) {
-                alert("Saldo insuficiente.");
+                alert("Saldo insuficiente para realizar esta apuesta.");
                 return;
             }
 
@@ -664,7 +745,7 @@
             else if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 🔄 ] vs [ 🔄 ]";
 
             setTimeout(async () => {
-                const usuarioGana = Math.random() > 0.45; // Balance dinámico de juego limpio
+                const usuarioGana = Math.random() > 0.45;
 
                 let userRef = ref(db, `usuarios/${user.telefono}`);
                 let nuevoSaldo = user.saldo - montoInput;
@@ -847,11 +928,33 @@
                 snapshot.forEach((childSnap) => {
                     const id = childSnap.key;
                     const d = childSnap.val();
+                    let imgHtml = d.comprobanteUrl ? `<a href="${d.comprobanteUrl}" target="_blank" class="text-blue-400 underline text-xs block mt-1">Ver Comprobante (Foto)</a>` : `<span class="text-xs text-gray-500">Sin foto adjunta</span>`;
                     cont.innerHTML += `
                         <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
                             <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
                             <div><b>Monto:</b> $${d.monto} CUP (${d.metodo})</div>
-                            <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="bg-green-600 text-white font-bold py-2 rounded-lg">✅ Aprobar Depósito</button>
+                            ${imgHtml}
+                            <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="bg-green-600 text-white font-bold py-2 rounded-lg mt-2">✅ Aprobar Depósito</button>
+                        </div>`;
+                });
+            });
+
+            onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
+                const contRetiros = document.getElementById('lista-admin-retiros');
+                contRetiros.innerHTML = "";
+                if (!snapshot.exists()) {
+                    contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay solicitudes de retiro.</p>`;
+                    return;
+                }
+                snapshot.forEach((childSnap) => {
+                    const id = childSnap.key;
+                    const r = childSnap.val();
+                    contRetiros.innerHTML += `
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
+                            <div><b>Usuario:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
+                            <div><b>Monto a Retirar:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
+                            <div><b>Tarjeta Destino:</b> ${r.tarjetaDestino}</div>
+                            <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg mt-1">✔️ Marcar Retiro Procesado</button>
                         </div>`;
                 });
             });
@@ -898,6 +1001,13 @@
             }
         };
 
+        window.completarRetiro = async function(id) {
+            if (confirm("¿Marcar este retiro como completado y transferido?")) {
+                await remove(ref(db, 'retiros_pendientes/' + id));
+                alert("¡Retiro procesado exitosamente!");
+            }
+        };
+
         window.modificarSaldoAdmin = async function(tel, cantidad) {
             const userRef = ref(db, `usuarios/${tel}`);
             const snap = await get(userRef);
@@ -916,6 +1026,7 @@
     </script>
 </body>
 </html>
+
 
 
 
