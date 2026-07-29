@@ -529,7 +529,7 @@
         };
 
         // ==========================================
-        // GESTIÓN DE RECARGAS Y BANCOS RESTAURADA
+        // GESTIÓN DE RECARGAS Y BANCOS (BPA, BANDEC, ENZONA)
         // ==========================================
         window.mostrarDatos = function() {
             const metodo = document.getElementById('metodo-pago').value;
@@ -545,14 +545,14 @@
             infoPago.classList.remove('hidden');
             if (metodo === 'BPA') {
                 datosTarjeta.innerText = "Tarjeta BPA: 9234 5678 9012 3456";
-                avisoEspecial.innerText = "Se validará automáticamente con el número de teléfono y monto del SMS.";
+                avisoEspecial.innerText = "Se validará automáticamente verificando el número de teléfono, monto, número de tarjeta y demás datos que llegan en el SMS de confirmación.";
             } else if (metodo === 'BANDEC') {
                 datosTarjeta.innerText = "Tarjeta BANDEC: 4532 8812 3341 9091";
-                avisoEspecial.innerText = "Se validará automáticamente mediante el SMS de confirmación.";
+                avisoEspecial.innerText = "Se validará automáticamente mediante el SMS de confirmación de la transferencia.";
             } else if (metodo === 'ENZONA') {
                 codigoEnzonaGenerado = "ENZ-" + Math.floor(1000 + Math.random() * 9000);
                 datosTarjeta.innerText = `Código ENZONA: ${codigoEnzonaGenerado}`;
-                avisoEspecial.innerText = "Utiliza este código dinámico para completar la pasarela.";
+                avisoEspecial.innerText = "En Enzona se validará mediante el código generado para la operación.";
             }
         };
 
@@ -659,7 +659,6 @@
             btn.disabled = true;
             resultadoEl.innerText = "Girando / Lanzando...";
 
-            // Animación visual de carga
             if (tipo === 'ruleta') {
                 animacionEl.className = "my-6 text-6xl animate-spin-fast";
             } else if (tipo === 'dados') {
@@ -843,7 +842,6 @@
         };
 
         function cargarPanelAdmin() {
-            // Escuchar depósitos pendientes
             onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
                 const cont = document.getElementById('lista-admin-pendientes');
                 cont.innerHTML = "";
@@ -863,7 +861,6 @@
                 });
             });
 
-            // Escuchar lista completa de usuarios
             onValue(ref(db, 'usuarios'), (snapshot) => {
                 const contUsuarios = document.getElementById('lista-admin-usuarios');
                 contUsuarios.innerHTML = "";
@@ -924,6 +921,7 @@
     </script>
 </body>
 </html>
+
 
 
 
