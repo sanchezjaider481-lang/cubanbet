@@ -294,16 +294,15 @@
             </div>
         </section>
 
-        <!-- PANEL ADMIN RESTAURADO Y FUNCIONAL -->
+        <!-- PANEL ADMIN -->
         <section id="admin" class="tab-content p-4">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-green-600">Panel de Administración</h2>
                 <button onclick="cambiarTab('perfil')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">Volver a Perfil</button>
-                <button onclick="activarNotificacionesPushAdmin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl shadow mb-4">
-    🔔 Activar Notificaciones Push en este Dispositivo
-</button>
-
             </div>
+            <button onclick="activarNotificacionesPushAdmin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl shadow mb-4">
+                🔔 Activar Notificaciones Push en este Dispositivo
+            </button>
             <div class="space-y-6">
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-4">
                     <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Pendientes (Con Comprobante)</h3>
@@ -334,7 +333,7 @@
     <script type="module">
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-messaging.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
@@ -597,7 +596,8 @@
                 avisoEspecial.innerText = "Validación mediante código generado y verificación en Enzona.";
             }
         };
-                window.enviarSolicitud = function() {
+
+        window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -624,8 +624,6 @@
                         try {
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-                            
-                            // Reducimos tamaño prudente para que la imagen se vea clara y liviana en la web
                             const MAX_WIDTH = 600;
                             let width = img.width;
                             let height = img.height;
@@ -639,12 +637,10 @@
                             canvas.height = height;
                             ctx.drawImage(img, 0, 0, width, height);
                             
-                            // Generamos el Base64 limpio que se guardará en Firebase y se verá perfecto en la web
                             const comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.7);
                             await procesarEnvioFinal(comprobanteBase64);
                         } catch (err) {
                             console.error("Error procesando imagen con canvas:", err);
-                            // Respaldo de emergencia si falla el canvas
                             procesoEmergencia(archivo);
                         }
                     };
@@ -675,7 +671,6 @@
                         second: '2-digit'
                     });
 
-                    // 1. Guardar en Firebase (Depósitos pendientes)
                     const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
                     await set(nuevoDepositoRef, {
                         id: nuevoDepositoRef.key,
@@ -684,12 +679,11 @@
                         usuarioTelefono: user.telefono,
                         monto: monto,
                         metodo: metodo,
-                        comprobanteUrl: imagenUrlFinal, // <--- Este Base64 se pintará perfecto en tu panel web
+                        comprobanteUrl: imagenUrlFinal,
                         fecha: fechaObj.toISOString(),
                         fechaLegible: fechaFormateada
                     });
 
-                    // 2. Enviar notificación a Telegram de manera infalible
                     const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                     const CHAT_ID = "-1004432353397"; 
                     const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
@@ -702,7 +696,6 @@
                         `🕒 *Fecha:* ${fechaFormateada}\n\n` +
                         `👉 [Haz clic aquí para ir al panel y aprobarlo](${ENLACE_WEB})`;
 
-                    // Enviamos primero la foto usando FormData directo
                     const resB = await fetch(imagenUrlFinal);
                     const blobB = await resB.blob();
                     const formData = new FormData();
@@ -727,22 +720,17 @@
                 }
             }
 
-            function procesoArchivoEmergencia(fileObj) {
+            function procesoEmergencia(fileObj) {
                 const readerEmergency = new FileReader();
                 readerEmergency.onload = async function(ev) {
                     await procesarEnvioFinal(ev.target.result);
                 };
                 readerEmergency.readAsDataURL(fileObj);
             }
-            
-            function procesoEmergencia(fileObj) {
-                procesoArchivoEmergencia(fileObj);
-            }
         };
 
-                  window.solicitarRetiro = function() {
+        window.solicitarRetiro = function() {
             const inputs = document.querySelectorAll('input');
-            
             let monto = 0;
             let cuentaDestino = "";
 
@@ -770,7 +758,6 @@
                 return;
             }
 
-            // 1. Validar límites de retiro (Mínimo 500, Máximo 4000 CUP)
             if (!monto || monto < 500 || monto > 4000) {
                 alert("El monto de retiro debe estar entre $500 y $4000 CUP.");
                 return;
@@ -781,7 +768,6 @@
                 return;
             }
 
-            // Obtenemos el saldo actual fresco del almacenamiento local o usuario
             const saldoActual = Number(user.saldo || user.balance || 0);
             if (monto > saldoActual) {
                 alert(`No puedes retirar $${monto} CUP porque tu saldo actual es de $${saldoActual} CUP.`);
@@ -800,7 +786,6 @@
                         second: '2-digit'
                     });
 
-                    // 2. Guardar primero en Firebase la solicitud de retiro (para asegurar que se cree el ID y no falle)
                     const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
                     const retiroId = nuevoRetiroRef.key;
 
@@ -820,17 +805,15 @@
                         fechaLegible: fechaFormateada
                     });
 
-                    // 3. Descontar del saldo de forma segura actualizando la ruta exacta en Firebase (usuarios/{id})
                     const nuevoSaldo = saldoActual - monto;
                     user.saldo = nuevoSaldo;
                     localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
 
-                    await update(ref(db, `usuarios/${user.id}`), { 
+                    await update(ref(db, `usuarios/${user.telefono}`), { 
                         saldo: nuevoSaldo,
                         balance: nuevoSaldo 
                     });
 
-                    // 4. Enviar notificación a Telegram
                     const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                     const CHAT_ID = "-1004432353397"; 
                     const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
@@ -859,13 +842,7 @@
                         if (input.type === 'number' || input.type === 'text') input.value = "";
                     });
 
-                    // Recargar datos en pantalla si existe la función de actualización
-                    if (typeof actualizarInterfazUsuario === 'function') {
-                        actualizarInterfazUsuario();
-                    }
-                    if (typeof cargarDatosPanel === 'function') {
-                        cargarDatosPanel();
-                    }
+                    cargarDatosUsuario(user);
                     
                 } catch (error) {
                     console.error("Error crítico al procesar retiro:", error);
@@ -873,7 +850,6 @@
                 }
             })();
         };
-                                                                                       
 
         window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') {
@@ -1229,14 +1205,11 @@
                             <div><b>Nombre:</b> ${u.nombre} (@${u.username})</div>
                             <div><b>Tel:</b> ${u.telefono} | <b>ID:</b> ${u.id}</div>
                             <div><b>Saldo Actual:</b> <span class="text-green-400 font-bold">$${(u.saldo || 0).toFixed(2)} CUP</span></div>
-                            <!-- Input para escribir la cantidad personalizada -->
-<input type="number" id="input-monto-${u.telefono}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center border border-gray-600">
-
-<div class="flex gap-2">
-    <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
-    <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
-</div>
-
+                            <input type="number" id="input-monto-${u.telefono}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center border border-gray-600">
+                            <div class="flex gap-2">
+                                <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
+                                <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
+                            </div>
                         </div>`;
                 });
             });
@@ -1249,11 +1222,7 @@
                 if (snap.exists()) {
                     let u = snap.val();
                     u.saldo = (u.saldo || 0) + monto;
-                    u.ultimaNotificacion = {
-                        mensaje: `¡Tu depósito de $${monto} CUP ha sido aprobado con éxito! 🎉`,
-                        tipo: 'exito',
-                        leido: false
-                    };
+                    u.balance = u.saldo;
                     await set(userRef, u);
                     
                     const local = JSON.parse(localStorage.getItem('cubanbet_usuario'));
@@ -1269,17 +1238,6 @@
 
         window.denegarDeposito = async function(id, tel, monto) {
             if (confirm(`¿Estás seguro de DENEGAR este depósito de $${monto} CUP?`)) {
-                const userRef = ref(db, `usuarios/${tel}`);
-                const snap = await get(userRef);
-                if (snap.exists()) {
-                    let u = snap.val();
-                    u.ultimaNotificacion = {
-                        mensaje: `❌ Tu solicitud de depósito por $${monto} CUP fue denegada. Si crees que es un error o el pago fue correcto, contacta a Atención al Cliente en Telegram.`,
-                        tipo: 'error',
-                        leido: false
-                    };
-                    await set(userRef, u);
-                }
                 await remove(ref(db, 'deposits_pendientes/' + id));
                 alert("Depósito denegado correctamente.");
             }
@@ -1292,112 +1250,86 @@
             }
         };
 
-                // Función definitiva para modificar el saldo de un usuario de forma personalizada
-        window.modificarSaldoAdmin = async function(usuarioId, operacion) {
-            const inputCantidad = document.getElementById(`input-monto-${usuarioId}`);
-            const cantidad = inputCantidad ? Number(inputCantidad.value) : 0;
+        window.modificarSaldoAdminCustom = async function(telefonoUsuario, operacion) {
+            const inputMonto = document.getElementById(`input-monto-${telefonoUsuario}`);
+            const cantidad = inputMonto ? Number(inputMonto.value) : 0;
 
             if (!cantidad || cantidad <= 0) {
-                alert("Por favor, introduce una cantidad válida en CUP para sumar o restar.");
+                alert("Por favor, introduce una cantidad válida en CUP.");
                 return;
             }
 
             try {
-                // 1. Consultamos el saldo actual real directamente desde Firebase
-                const userRef = ref(db, `usuarios/${usuarioId}`);
+                const userRef = ref(db, `usuarios/${telefonoUsuario}`);
                 const snapshot = await get(userRef);
                 
                 if (!snapshot.exists()) {
-                    alert("No se encontró el usuario en la base de datos.");
+                    alert("Usuario no encontrado en la base de datos.");
                     return;
                 }
 
-                const userData = snapshot.val();
-                let saldoActualFirebase = Number(userData.saldo || userData.balance || 0);
-
-                // 2. Calculamos el nuevo saldo exacto (sumar o restar lo que tú escribiste)
-                let nuevoSaldo = operacion === 'sumar' ? (saldoActualFirebase + cantidad) : (saldoActualFirebase - cantidad);
+                const datosUsuario = snapshot.val();
+                let saldoActual = Number(datosUsuario.saldo || datosUsuario.balance || 0);
+                let nuevoSaldo = operacion === 'sumar' ? (saldoActual + cantidad) : (saldoActual - cantidad);
 
                 if (nuevoSaldo < 0) {
-                    alert("El saldo del usuario no puede quedar en negativo.");
+                    alert("El saldo no puede quedar en negativo.");
                     return;
                 }
 
-                // 3. Actualizamos en Firebase de forma sincronizada
                 await update(userRef, {
                     saldo: nuevoSaldo,
                     balance: nuevoSaldo
                 });
 
-                // 4. Si el admin es el usuario activo en este navegador, actualizamos el localStorage de inmediato
                 const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                if (localUser && (localUser.id === usuarioId || localUser.telefono === userData.telefono)) {
+                if (localUser && localUser.telefono === telefonoUsuario) {
                     localUser.saldo = nuevoSaldo;
                     localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
+                    cargarDatosUsuario(localUser);
                 }
 
                 alert(`¡Saldo actualizado con éxito! Nuevo saldo: $${nuevoSaldo} CUP.`);
+                if (inputMonto) inputMonto.value = "";
 
-                // Limpiamos el input y refrescamos las funciones del panel si existen
-                if (inputCantidad) inputCantidad.value = "";
-                if (typeof cargarPanelAdministracion === 'function') {
-                    cargarPanelAdministracion();
-                }
-                if (typeof actualizarInterfazUsuario === 'function') {
-                    actualizarInterfazUsuario();
-                }
+                if (typeof cargarPanelAdmin === 'function') cargarPanelAdmin();
 
             } catch (error) {
                 console.error("Error al modificar saldo:", error);
-                alert("Hubo un error al actualizar el saldo. Revisa tu conexión.");
+                alert("Hubo un error al actualizar el saldo.");
             }
         };
 
         window.activarNotificacionesPushAdmin = async function() {
-    try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            const messaging = getMessaging(app);
+            try {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    const messaging = getMessaging(app);
+                    const token = await getToken(messaging, { 
+                        vapidKey: "BD6n4MzT6hhTn-lZgMYaQBmR1rsbepFdaFAK9HT59h30YhY0AMRbHxTa6m8U97_N9U5--HQ9LnjWsBntzT8upSU" 
+                    });
 
-            const token = await getToken(messaging, { 
-                vapidKey: "BD6n4MzT6hhTn-lZgMYaQBmR1rsbepFdaFAK9HT59h30YhY0AMRbHxTa6m8U97_N9U5--HQ9LnjWsBntzT8upSU" 
-            });
-
-            if (token) {
-                const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                if (usuarioActual && usuarioActual.telefono) {
-                    await set(ref(db, `admins_tokens/${usuarioActual.telefono}`), { token });
-                    alert("¡Dispositivo registrado con éxito para recibir notificaciones push!");
+                    if (token) {
+                        const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                        if (usuarioActual && usuarioActual.telefono) {
+                            await set(ref(db, `admins_tokens/${usuarioActual.telefono}`), { token });
+                            alert("¡Dispositivo registrado con éxito para recibir notificaciones push!");
+                        } else {
+                            alert("Inicia sesión como administrador primero.");
+                        }
+                    }
                 } else {
-                    alert("Inicia sesión como administrador primero.");
+                    alert("Has denegado el permiso de notificaciones en el navegador.");
                 }
+            } catch (error) {
+                console.error("Error al registrar las notificaciones:", error);
+                alert("Hubo un error al registrar las notificaciones. Revisa la consola.");
             }
-        } else {
-            alert("Has denegado el permiso de notificaciones en el navegador.");
-        }
-    } catch (error) {
-        console.error("Error al registrar las notificaciones:", error);
-        alert("Hubo un error al registrar las notificaciones. Revisa la consola.");
-    }
-};
-        async function dispararAlertaAdmin(titulo, mensaje) {
-    try {
-        const notiRef = push(ref(db, 'cola_notificaciones'));
-        await set(notiRef, {
-            title: titulo,
-            body: mensaje,
-            timestamp: Date.now()
-        });
-    } catch (err) {
-        console.error("Error detallado en la alerta:", err);
-    }
-}
-
-
+        };
     </script>
-
 </body>
-                    </html>
+</html>
+
 
 
 
