@@ -1134,6 +1134,33 @@
                 }
             });
         }
+        window.activarNotificacionesPushAdmin = async function() {
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            const messaging = getMessaging(app);
+
+            const token = await getToken(messaging, { 
+                vapidKey: "BD6n4MzT6hhTn-lZgMYaQBmR1rsbepFdaFAK9HT59h30YhY0AMRbHxTa6m8U97_N9U5--HQ9LnjWsBntzT8upSU" 
+            });
+
+            if (token) {
+                const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                if (usuarioActual && usuarioActual.telefono) {
+                    await set(ref(db, `admins_tokens/${usuarioActual.telefono}`), { token });
+                    alert("¡Dispositivo registrado con éxito para recibir notificaciones push!");
+                } else {
+                    alert("Inicia sesión como administrador primero.");
+                }
+            }
+        } else {
+            alert("Has denegado el permiso de notificaciones en el navegador.");
+        }
+    } catch (error) {
+        console.error("Error al registrar las notificaciones:", error);
+        alert("Hubo un error al registrar las notificaciones. Revisa la consola.");
+    }
+};
     </script>
 
 </body>
