@@ -598,7 +598,7 @@
             }
         };
 
-        window.enviarSolicitud = function() {
+                window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -626,23 +626,21 @@
                     const comprobanteBase64 = e.target.result;
                     try {
                         const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
-                            await set(nuevoDepositoRef,
-    {
-        id: nuevoDepositoRef.key,
-        usuarioId: user.id,
-        usuarioNombre: user.nombre,
-        usuarioTelefono: user.telefono,
-        monto: monto,
-        metodo: metodo,
-        comprobanteUrl: comprobante,
-        fecha: new Date().toISOString()
-    });
+                        
+                        // CORREGIDO: Se usa 'comprobanteBase64' en lugar de 'comprobante'
+                        await set(nuevoDepositoRef, {
+                            id: nuevoDepositoRef.key,
+                            usuarioId: user.id,
+                            usuarioNombre: user.nombre,
+                            usuarioTelefono: user.telefono,
+                            monto: monto,
+                            metodo: metodo,
+                            comprobanteUrl: comprobanteBase64,
+                            fecha: new Date().toISOString()
+                        });
 
-    // ¡PEGA ESTA LÍNEA AQUÍ MISMO!
-    await dispararAlertaAdmin("🚨 ¡Nuevo Depósito!", "Un usuario ha enviado un comprobante pendiente.");
-
-    alert("¡Solicitud de depósito y comprobante...");
-
+                        // Llamada limpia para registrar la alerta en la cola
+                        await dispararAlertaAdmin("🚨 ¡Nuevo Depósito!", "Un usuario ha enviado un comprobante pendiente.");
 
                         alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
                         document.getElementById('monto-recarga').value = "";
@@ -659,6 +657,7 @@
                 alert("Por favor adjunta el comprobante de pago.");
             }
         };
+
 
         window.solicitarRetiro = async function() {
             const tarjeta = document.getElementById('retiro-tarjeta').value.trim();
