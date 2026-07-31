@@ -597,7 +597,7 @@
                 avisoEspecial.innerText = "Validación mediante código generado y verificación en Enzona.";
             }
         };
-                          window.enviarSolicitud = function() {
+        window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -617,15 +617,14 @@
                 const reader = new FileReader();
 
                 reader.onerror = function() {
-                    alert("Error al leer el archivo. Por favor intenta seleccionar otra captura.");
+                    const urlDirecta = URL.createObjectURL(archivo);
+                    enviarDatosAlServidor(urlDirecta, true);
                 };
 
                 reader.onload = function(e) {
                     const img = new Image();
                     
                     img.onerror = function() {
-                        // Plan de rescate: si el navegador no puede procesar el formato de la imagen,
-                        // enviamos el archivo original directamente como respaldo para que el botón NUNCA falle.
                         enviarDatosAlServidor(e.target.result, true);
                     };
 
@@ -636,7 +635,7 @@
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
                             
-                            const MAX_WIDTH = 700; // Ancho optimizado para garantizar velocidad y claridad en las letras
+                            const MAX_WIDTH = 700;
                             let width = img.width;
                             let height = img.height;
                             
@@ -649,11 +648,9 @@
                             canvas.height = height;
                             ctx.drawImage(img, 0, 0, width, height);
                             
-                            // Comprimimos asegurando legibilidad en las letras
                             const comprobanteOptimizado = canvas.toDataURL('image/jpeg', 0.6);
                             enviarDatosAlServidor(comprobanteOptimizado, false);
                         } catch (err) {
-                            console.warn("Fallo el canvas, usando respaldo directo:", err);
                             enviarDatosAlServidor(e.target.result, true);
                         }
                     };
@@ -663,12 +660,20 @@
                 alert("Por favor adjunta el comprobante de pago.");
             }
 
-            // Función interna para despachar los datos de manera infalible
             async function enviarDatosAlServidor(imagenFinalUrl, esRespaldo) {
                 try {
+                    const fechaObj = new Date();
+                    const fechaFormateada = fechaObj.toLocaleString('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+
                     const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
                     
-                    // 1. Guardamos en Firebase
                     await set(nuevoDepositoRef, {
                         id: nuevoDepositoRef.key,
                         usuarioId: user.id,
@@ -677,10 +682,10 @@
                         monto: monto,
                         metodo: metodo,
                         comprobanteUrl: imagenFinalUrl,
-                        fecha: new Date().toISOString()
+                        fecha: fechaObj.toISOString(),
+                        fechaLegible: fechaFormateada
                     });
 
-                    // 2. CONFIGURACIÓN DE TELEGRAM
                     const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                     const CHAT_ID = "-1004432353397"; 
                     const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
@@ -689,11 +694,18 @@
                         `👤 *Usuario:* ${user.nombre}\n` +
                         `📱 *Teléfono:* ${user.telefono}\n` +
                         `💰 *Monto:* $${monto} CUP\n` +
-                        `💳 *Método:* ${metodo}\n\n` +
+                        `💳 *Método:* ${metodo}\n` +
+                        `🕒 *Fecha:* ${fechaFormateada}\n\n` +
                         `👉 [Haz clic aquí para ir al panel y aprobarlo](${ENLACE_WEB})`;
 
-                    const resBlob = await fetch(imagenFinalUrl);
-                    const blob = await resBlob.blob();
+                    let blob;
+                    if (esRespaldo && imagenFinalUrl.startsWith("blob:")) {
+                        const resBlob = await fetch(archivoInput.files[0]);
+                        blob = await resBlob.blob();
+                    } else {
+                        const resBlob = await fetch(imagenFinalUrl);
+                        blob = await resBlob.blob();
+                    }
                     
                     const formData = new FormData();
                     formData.append('chat_id', CHAT_ID);
@@ -718,45 +730,79 @@
             }
         };
 
-
-                                        window.solicitarRetiro = async function() {
-            const tarjeta = document.getElementById('retiro-tarjeta').value.trim();
-            const monto = Number(document.getElementById('retiro-monto').value);
+        window.enviarSolicitudRetiro = async function() {
+            const metodo = document.getElementById('metodo-retiro-metodo')?.value || "General";
+            const monto = Number(document.getElementById('monto-retiro')?.value);
+            const cuentaDestino = document.getElementById('cuenta-retiro')?.value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (!tarjeta) {
-                alert("Introduce el número de tarjeta de destino.");
+            if (!monto || monto <= 0) {
+                alert("Introduce un monto válido para retirar.");
                 return;
             }
-            if (!monto || monto < 500 || monto > 4000) {
-                alert("El retiro debe ser un monto entre 500 CUP y 4000 CUP.");
-                return;
-            }
-            if ((user.saldo || 0) < monto) {
-                alert("No tienes saldo suficiente para este retiro.");
+            if (!cuentaDestino) {
+                alert("Introduce los datos de tu cuenta o tarjeta de destino.");
                 return;
             }
 
-            user.saldo -= monto;
-            await set(ref(db, `usuarios/${user.telefono}`), user);
-            localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-            cargarDatosUsuario(user);
+            try {
+                const fechaObj = new Date();
+                const fechaFormateada = fechaObj.toLocaleString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
 
-            const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
-            await set(nuevoRetiroRef, {
-                id: nuevoRetiroRef.key,
-                usuarioId: user.id,
-                usuarioNombre: user.nombre,
-                usuarioTelefono: user.telefono,
-                tarjetaDestino: tarjeta,
-                monto: monto,
-                fecha: new Date().toISOString()
-            });
+                const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
+                
+                // Guardamos en Firebase con fecha legible
+                await set(nuevoRetiroRef, {
+                    id: nuevoRetiroRef.key,
+                    usuarioId: user.id,
+                    usuarioNombre: user.nombre,
+                    usuarioTelefono: user.telefono,
+                    monto: monto,
+                    metodo: metodo,
+                    cuentaDestino: cuentaDestino,
+                    fecha: fechaObj.toISOString(),
+                    fechaLegible: fechaFormateada
+                });
 
-            alert("¡Solicitud de retiro enviada con éxito! Será procesada en un plazo máximo de 24 horas.");
-            document.getElementById('retiro-tarjeta').value = "";
-            document.getElementById('retiro-monto').value = "";
+                // NOTIFICACIÓN DIRECTA A TELEGRAM PARA RETIROS
+                const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
+                const CHAT_ID = "-1004432353397"; 
+                const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
+
+                const mensajeRetiro = `💸 *¡Nueva Solicitud de Retiro!*\n\n` +
+                    `👤 *Usuario:* ${user.nombre}\n` +
+                    `📱 *Teléfono:* ${user.telefono}\n` +
+                    `💰 *Monto:* $${monto} CUP\n` +
+                    `💳 *Método/Destino:* ${metodo} (${cuentaDestino})\n` +
+                    `🕒 *Fecha:* ${fechaFormateada}\n\n` +
+                    `👉 [Haz clic aquí para ir al panel y procesarlo](${ENLACE_WEB})`;
+
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: mensajeRetiro,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                alert("¡Solicitud de retiro enviada con éxito! Se procesará a la brevedad.");
+                document.getElementById('monto-retiro').value = "";
+                if(document.getElementById('cuenta-retiro')) document.getElementById('cuenta-retiro').value = "";
+            } catch (error) {
+                console.error("Error al enviar retiro:", error);
+                alert("Hubo un error al enviar la solicitud de retiro. Revisa tu conexión.");
+            }
         };
+
 
         window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') {
