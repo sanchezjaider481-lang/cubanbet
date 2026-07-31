@@ -597,8 +597,7 @@
                 avisoEspecial.innerText = "Validación mediante código generado y verificación en Enzona.";
             }
         };
-
-                                window.enviarSolicitud = function() {
+                          window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -617,79 +616,45 @@
                 const archivo = archivoInput.files[0];
                 const reader = new FileReader();
 
+                reader.onerror = function() {
+                    alert("Error al leer el archivo. Por favor intenta seleccionar otra captura.");
+                };
+
                 reader.onload = function(e) {
                     const img = new Image();
+                    
+                    img.onerror = function() {
+                        // Plan de rescate: si el navegador no puede procesar el formato de la imagen,
+                        // enviamos el archivo original directamente como respaldo para que el botón NUNCA falle.
+                        enviarDatosAlServidor(e.target.result, true);
+                    };
+
                     img.src = e.target.result;
                     
                     img.onload = async function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        const MAX_WIDTH = 800;
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        if (width > MAX_WIDTH) {
-                            height = Math.round((height * MAX_WIDTH) / width);
-                            width = MAX_WIDTH;
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        const comprobanteOptimizado = canvas.toDataURL('image/jpeg', 0.7);
-
                         try {
-                            const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
                             
-                            // 1. Guardamos en Firebase
-                            await set(nuevoDepositoRef, {
-                                id: nuevoDepositoRef.key,
-                                usuarioId: user.id,
-                                usuarioNombre: user.nombre,
-                                usuarioTelefono: user.telefono,
-                                monto: monto,
-                                metodo: metodo,
-                                comprobanteUrl: comprobanteOptimizado,
-                                fecha: new Date().toISOString()
-                            });
-
-                            // 2. CONFIGURACIÓN DE TELEGRAM CONFIGURADA
-                            const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
-                            const CHAT_ID = "-1004432353397"; 
-                            const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
-
-                            const captionTexto = `🚨 *¡Nuevo Depósito Pendiente!*\n\n` +
-                                `👤 *Usuario:* ${user.nombre}\n` +
-                                `📱 *Teléfono:* ${user.telefono}\n` +
-                                `💰 *Monto:* $${monto} CUP\n` +
-                                `💳 *Método:* ${metodo}\n\n` +
-                                `👉 [Haz clic aquí para ir al panel y aprobarlo](${ENLACE_WEB})`;
-
-                            // Convertimos el DataURL optimizado a Blob para enviarlo como foto a Telegram
-                            const resBlob = await fetch(comprobanteOptimizado);
-                            const blob = await resBlob.blob();
+                            const MAX_WIDTH = 700; // Ancho optimizado para garantizar velocidad y claridad en las letras
+                            let width = img.width;
+                            let height = img.height;
                             
-                            const formData = new FormData();
-                            formData.append('chat_id', CHAT_ID);
-                            formData.append('photo', blob, 'comprobante.jpg');
-                            formData.append('caption', captionTexto);
-                            formData.append('parse_mode', 'Markdown');
-
-                            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                                method: 'POST',
-                                body: formData
-                            });
-
-                            alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
-                            document.getElementById('monto-recarga').value = "";
-                            document.getElementById('metodo-pago').value = "";
-                            document.getElementById('archivo-comprobante').value = "";
-                            document.getElementById('info-pago').classList.add('hidden');
-                        } catch (error) {
-                            console.error("Error al enviar depósito:", error);
-                            alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
+                            if (width > MAX_WIDTH) {
+                                height = Math.round((height * MAX_WIDTH) / width);
+                                width = MAX_WIDTH;
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // Comprimimos asegurando legibilidad en las letras
+                            const comprobanteOptimizado = canvas.toDataURL('image/jpeg', 0.6);
+                            enviarDatosAlServidor(comprobanteOptimizado, false);
+                        } catch (err) {
+                            console.warn("Fallo el canvas, usando respaldo directo:", err);
+                            enviarDatosAlServidor(e.target.result, true);
                         }
                     };
                 };
@@ -697,9 +662,64 @@
             } else {
                 alert("Por favor adjunta el comprobante de pago.");
             }
+
+            // Función interna para despachar los datos de manera infalible
+            async function enviarDatosAlServidor(imagenFinalUrl, esRespaldo) {
+                try {
+                    const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+                    
+                    // 1. Guardamos en Firebase
+                    await set(nuevoDepositoRef, {
+                        id: nuevoDepositoRef.key,
+                        usuarioId: user.id,
+                        usuarioNombre: user.nombre,
+                        usuarioTelefono: user.telefono,
+                        monto: monto,
+                        metodo: metodo,
+                        comprobanteUrl: imagenFinalUrl,
+                        fecha: new Date().toISOString()
+                    });
+
+                    // 2. CONFIGURACIÓN DE TELEGRAM
+                    const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
+                    const CHAT_ID = "-1004432353397"; 
+                    const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
+
+                    const captionTexto = `🚨 *¡Nuevo Depósito Pendiente!*\n\n` +
+                        `👤 *Usuario:* ${user.nombre}\n` +
+                        `📱 *Teléfono:* ${user.telefono}\n` +
+                        `💰 *Monto:* $${monto} CUP\n` +
+                        `💳 *Método:* ${metodo}\n\n` +
+                        `👉 [Haz clic aquí para ir al panel y aprobarlo](${ENLACE_WEB})`;
+
+                    const resBlob = await fetch(imagenFinalUrl);
+                    const blob = await resBlob.blob();
+                    
+                    const formData = new FormData();
+                    formData.append('chat_id', CHAT_ID);
+                    formData.append('photo', blob, 'comprobante.jpg');
+                    formData.append('caption', captionTexto);
+                    formData.append('parse_mode', 'Markdown');
+
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
+                    document.getElementById('monto-recarga').value = "";
+                    document.getElementById('metodo-pago').value = "";
+                    document.getElementById('archivo-comprobante').value = "";
+                    document.getElementById('info-pago').classList.add('hidden');
+                } catch (error) {
+                    console.error("Error al enviar depósito:", error);
+                    alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
+                }
+            }
         };
 
-        window.solicitarRetiro = async function() {
+
+                                        window.solicitarRetiro = async function() {
             const tarjeta = document.getElementById('retiro-tarjeta').value.trim();
             const monto = Number(document.getElementById('retiro-monto').value);
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
