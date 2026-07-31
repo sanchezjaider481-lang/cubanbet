@@ -357,7 +357,7 @@
                 cargarDatosUsuario(user);
                 document.getElementById('auth-container').classList.remove('active');
                 iniciarApp();
-                             escucharNotificacionesUsuario(user.telefono); 
+                escucharNotificacionesUsuario(user.telefono); 
             } else {
                 document.getElementById('auth-container').classList.add('active');
                 document.getElementById('loader').style.display = 'none';
@@ -436,7 +436,7 @@
             cargarDatosUsuario(nuevoUsuario);
             document.getElementById('auth-container').classList.remove('active');
             iniciarApp();
-                         escucharNotificacionesUsuario(user.telefono);
+            escucharNotificacionesUsuario(telefono);
         };
 
         window.iniciarSesion = async function() {
@@ -533,7 +533,7 @@
             document.getElementById('stat-ganancia-pot').innerText = `CUP ${(user.dineroGanado || 0).toFixed(2)}`;
         }
 
-                function iniciarApp() {
+        function iniciarApp() {
             let progreso = 0;
             const el = document.getElementById('porcentaje');
             const loader = document.getElementById('loader');
@@ -553,26 +553,21 @@
                 }
             }, 100);
 
-            // Intentar activar el escuchador de notificaciones de forma segura
             try {
                 const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                 if (usuarioActual && usuarioActual.telefono) {
                     escucharNotificacionesUsuario(usuarioActual.telefono);
                 }
-            }imported_from_search (e) {
+            } catch (e) {
                 console.error("Error al iniciar notificaciones:", e);
             }
         }
-
 
         window.cambiarTab = function(id) {
             document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         };
 
-        // ==========================================
-        // GESTIÓN DE RECARGAS Y RETIROS CON FOTO (CORREGIDO)
-        // ==========================================
         window.mostrarDatos = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const infoPago = document.getElementById('info-pago');
@@ -598,7 +593,7 @@
             }
         };
 
-                window.enviarSolicitud = function() {
+        window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -616,7 +611,6 @@
             if (archivoInput.files && archivoInput.files[0]) {
                 const archivo = archivoInput.files[0];
                 
-                // Validación para evitar que la imagen sature Firebase Realtime Database
                 if (archivo.size > 2 * 1024 * 1024) {
                     alert("La imagen es demasiado pesada. Por favor selecciona una captura de menor tamaño (máximo 2MB).");
                     return;
@@ -625,32 +619,34 @@
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     const comprobanteBase64 = e.target.result;
-                    await         async function guardarSolicitudDepositoFirebase(user, metodo, monto, comprobante) {
-            try {
-                const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
-                await set(nuevoDepositoRef, {
-                    id: nuevoDepositoRef.key,
-                    usuarioId: user.id,
-                    usuarioNombre: user.nombre,
-                    usuarioTelefono: user.telefono,
-                    monto: monto,
-                    metodo: metodo,
-                    comprobanteUrl: comprobante,
-                    fecha: new Date().toISOString()
-                });
+                    try {
+                        const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+                        await set(nuevoDepositoRef, {
+                            id: nuevoDepositoRef.key,
+                            usuarioId: user.id,
+                            usuarioNombre: user.nombre,
+                            usuarioTelefono: user.telefono,
+                            monto: monto,
+                            metodo: metodo,
+                            comprobanteUrl: comprobanteBase64,
+                            fecha: new Date().toISOString()
+                        });
 
-                alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
-                document.getElementById('monto-recarga').value = "";
-                document.getElementById('metodo-pago').value = "";
-                document.getElementById('archivo-comprobante').value = "";
-                document.getElementById('info-pago').classList.add('hidden');
-            } catch (error) {
-                console.error("Error al enviar depósito:", error);
-                alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
+                        alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
+                        document.getElementById('monto-recarga').value = "";
+                        document.getElementById('metodo-pago').value = "";
+                        document.getElementById('archivo-comprobante').value = "";
+                        document.getElementById('info-pago').classList.add('hidden');
+                    } catch (error) {
+                        console.error("Error al enviar depósito:", error);
+                        alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
+                    }
+                };
+                reader.readAsDataURL(archivo);
+            } else {
+                alert("Por favor adjunta el comprobante de pago.");
             }
-        }
-
-
+        };
 
         window.solicitarRetiro = async function() {
             const tarjeta = document.getElementById('retiro-tarjeta').value.trim();
@@ -691,9 +687,6 @@
             document.getElementById('retiro-monto').value = "";
         };
 
-        // ==========================================
-        // MINIJUEGOS (CON SELECCIÓN DE APUESTA Y RESULTADO REALISTA)
-        // ==========================================
         window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') {
                 cambiarTab('sala-domino');
@@ -805,7 +798,6 @@
             else if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 🔄 ] vs [ 🔄 ]";
 
             setTimeout(async () => {
-                // Probabilidad de victoria ajustada al 22% para que la casa tenga ventaja y se pierda con frecuencia
                 const usuarioGana = Math.random() < 0.22;
 
                 let userRef = ref(db, `usuarios/${user.telefono}`);
@@ -846,9 +838,6 @@
             }, 1200);
         };
 
-        // ==========================================
-        // SALAS DE DOMINÓ
-        // ==========================================
         window.prepararCrearUnirseSala = function(tipo) {
             tipoSalaSeleccionada = tipo;
             document.getElementById('domino-menu-principal').classList.add('hidden');
@@ -970,9 +959,6 @@
             volverMenuDomino();
         };
 
-        // ==========================================
-        // PANEL ADMIN
-        // ==========================================
         window.activarAdmin = function() {
             const pin = prompt("Contraseña de Administrador:");
             if (pin === "Rediaj041007") {
@@ -984,7 +970,7 @@
         };
 
         function cargarPanelAdmin() {
-                                                onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
+            onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
                 const cont = document.getElementById('lista-admin-pendientes');
                 cont.innerHTML = "";
                 if (!snapshot.exists()) {
@@ -1020,9 +1006,6 @@
                         </div>`;
                 });
             });
-
-
-
 
             onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
                 const contRetiros = document.getElementById('lista-admin-retiros');
@@ -1067,7 +1050,7 @@
             });
         }
 
-                window.aprobarDeposito = async function(id, tel, monto) {
+        window.aprobarDeposito = async function(id, tel, monto) {
             if (confirm(`¿Aprobar recarga de $${monto} CUP?`)) {
                 const userRef = ref(db, `usuarios/${tel}`);
                 const snap = await get(userRef);
@@ -1110,7 +1093,6 @@
             }
         };
 
-
         window.completarRetiro = async function(id) {
             if (confirm("¿Marcar este retiro como completado y transferido?")) {
                 await remove(ref(db, 'retiros_pendientes/' + id));
@@ -1133,13 +1115,13 @@
                 alert(`Saldo actualizado correctamente para ${u.nombre}.`);
             }
         };
-                function escucharNotificacionesUsuario(telefono) {
+
+        function escucharNotificacionesUsuario(telefono) {
             onValue(ref(db, `usuarios/${telefono}`), (snapshot) => {
                 if (!snapshot.exists()) return;
                 const u = snapshot.val();
                 if (u.ultimaNotificacion && !u.ultimaNotificacion.leido) {
                     alert(u.ultimaNotificacion.mensaje);
-                    // Marcamos como leído para que no vuelva a saltar la alerta
                     u.ultimaNotificacion.leido = true;
                     set(ref(db, `usuarios/${telefono}`), u);
                     localStorage.setItem('cubanbet_usuario', JSON.stringify(u));
@@ -1147,8 +1129,8 @@
                 }
             });
         }
-
     </script>
+
 </body>
                     </html>
 
