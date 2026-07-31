@@ -533,21 +533,37 @@
             document.getElementById('stat-ganancia-pot').innerText = `CUP ${(user.dineroGanado || 0).toFixed(2)}`;
         }
 
-        function iniciarApp() {
+                function iniciarApp() {
             let progreso = 0;
             const el = document.getElementById('porcentaje');
             const loader = document.getElementById('loader');
-            loader.style.display = 'flex';
+            
+            if (loader) loader.style.display = 'flex';
+            
             const interval = setInterval(() => {
                 progreso += 25;
                 if(el) el.innerText = progreso + "%";
+                
                 if(progreso >= 100) {
                     clearInterval(interval);
-                    loader.style.opacity = '0';
-                    setTimeout(() => { loader.style.display = 'none'; }, 500);
+                    if(loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(() => { loader.style.display = 'none'; }, 500);
+                    }
                 }
             }, 100);
+
+            // Intentar activar el escuchador de notificaciones de forma segura
+            try {
+                const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                if (usuarioActual && usuarioActual.telefono) {
+                    escucharNotificacionesUsuario(usuarioActual.telefono);
+                }
+            }imported_from_search (e) {
+                console.error("Error al iniciar notificaciones:", e);
+            }
         }
+
 
         window.cambiarTab = function(id) {
             document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
