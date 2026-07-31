@@ -626,16 +626,23 @@
                     const comprobanteBase64 = e.target.result;
                     try {
                         const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
-                        await set(nuevoDepositoRef, {
-                            id: nuevoDepositoRef.key,
-                            usuarioId: user.id,
-                            usuarioNombre: user.nombre,
-                            usuarioTelefono: user.telefono,
-                            monto: monto,
-                            metodo: metodo,
-                            comprobanteUrl: comprobanteBase64,
-                            fecha: new Date().toISOString()
-                        });
+                            await set(nuevoDepositoRef,
+    {
+        id: nuevoDepositoRef.key,
+        usuarioId: user.id,
+        usuarioNombre: user.nombre,
+        usuarioTelefono: user.telefono,
+        monto: monto,
+        metodo: metodo,
+        comprobanteUrl: comprobante,
+        fecha: new Date().toISOString()
+    });
+
+    // ¡PEGA ESTA LÍNEA AQUÍ MISMO!
+    await dispararAlertaAdmin("🚨 ¡Nuevo Depósito!", "Un usuario ha enviado un comprobante pendiente.");
+
+    alert("¡Solicitud de depósito y comprobante...");
+
 
                         alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
                         document.getElementById('monto-recarga').value = "";
