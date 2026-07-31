@@ -1288,35 +1288,67 @@
             }
         };
 
-        window.modificarSaldoAdmin = async function(tel, cantidad) {
-            const userRef = ref(db, `usuarios/${tel}`);
-            const snap = await get(userRef);
-            if (snap.exists()) {
-                let u = snap.val();
-                u.saldo = Math.max(0, (u.saldo || 0) + cantidad);
-                await set(userRef, u);
-                const local = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                if (local && local.telefono === tel) {
-                    localStorage.setItem('cubanbet_usuario', JSON.stringify(u));
-                    cargarDatosUsuario(u);
+                // Función definitiva para modificar el saldo de un usuario de forma personalizada
+        window.modificarSaldoAdmin = async function(usuarioId, operacion) {
+            const inputCantidad = document.getElementById(`input-monto-${usuarioId}`);
+            const cantidad = inputCantidad ? Number(inputCantidad.value) : 0;
+
+            if (!cantidad || cantidad <= 0) {
+                alert("Por favor, introduce una cantidad válida en CUP para sumar o restar.");
+                return;
+            }
+
+            try {
+                // 1. Consultamos el saldo actual real directamente desde Firebase
+                const userRef = ref(db, `usuarios/${usuarioId}`);
+                const snapshot = await get(userRef);
+                
+                if (!snapshot.exists()) {
+                    alert("No se encontró el usuario en la base de datos.");
+                    return;
                 }
-                alert(`Saldo actualizado correctamente para ${u.nombre}.`);
+
+                const userData = snapshot.val();
+                let saldoActualFirebase = Number(userData.saldo || userData.balance || 0);
+
+                // 2. Calculamos el nuevo saldo exacto (sumar o restar lo que tú escribiste)
+                let nuevoSaldo = operacion === 'sumar' ? (saldoActualFirebase + cantidad) : (saldoActualFirebase - cantidad);
+
+                if (nuevoSaldo < 0) {
+                    alert("El saldo del usuario no puede quedar en negativo.");
+                    return;
+                }
+
+                // 3. Actualizamos en Firebase de forma sincronizada
+                await update(userRef, {
+                    saldo: nuevoSaldo,
+                    balance: nuevoSaldo
+                });
+
+                // 4. Si el admin es el usuario activo en este navegador, actualizamos el localStorage de inmediato
+                const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                if (localUser && (localUser.id === usuarioId || localUser.telefono === userData.telefono)) {
+                    localUser.saldo = nuevoSaldo;
+                    localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
+                }
+
+                alert(`¡Saldo actualizado con éxito! Nuevo saldo: $${nuevoSaldo} CUP.`);
+
+                // Limpiamos el input y refrescamos las funciones del panel si existen
+                if (inputCantidad) inputCantidad.value = "";
+                if (typeof cargarPanelAdministracion === 'function') {
+                    cargarPanelAdministracion();
+                }
+                if (typeof actualizarInterfazUsuario === 'function') {
+                    actualizarInterfazUsuario();
+                }
+
+            } catch (error) {
+                console.error("Error al modificar saldo:", error);
+                alert("Hubo un error al actualizar el saldo. Revisa tu conexión.");
             }
         };
 
-        function escucharNotificacionesUsuario(telefono) {
-            onValue(ref(db, `usuarios/${telefono}`), (snapshot) => {
-                if (!snapshot.exists()) return;
-                const u = snapshot.val();
-                if (u.ultimaNotificacion && !u.ultimaNotificacion.leido) {
-                    alert(u.ultimaNotificacion.mensaje);
-                    u.ultimaNotificacion.leido = true;
-                    set(ref(db, `usuarios/${telefono}`), u);
-                    localStorage.setItem('cubanbet_usuario', JSON.stringify(u));
-                    cargarDatosUsuario(u);
-                }
-            });
-        }
         window.activarNotificacionesPushAdmin = async function() {
     try {
         const permission = await Notification.requestPermission();
