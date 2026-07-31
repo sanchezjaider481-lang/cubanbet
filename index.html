@@ -740,15 +740,33 @@
             }
         };
 
-                window.solicitarRetiro = function() {
-            // Buscamos el input de monto de forma segura (por ID común o dentro del formulario de retiro)
-            const montoElem = document.getElementById('monto-retiro') || document.querySelector('input[type="number"]');
-            const cuentaElem = document.getElementById('cuenta-retiro') || document.querySelector('input[type="text"]');
-            const metodoElem = document.getElementById('metodo-retiro') || document.querySelector('select');
+                        window.solicitarRetiro = function() {
+            // Buscamos todos los inputs de texto y número dentro de la página
+            const inputs = document.querySelectorAll('input');
+            
+            let monto = 0;
+            let cuentaDestino = "";
 
-            const monto = montoElem ? Number(montoElem.value) : 0;
-            const cuentaDestino = cuentaElem ? cuentaElem.value : "Tarjeta principal";
-            const metodo = metodoElem ? metodoElem.value : "General";
+            // Recorremos los inputs para capturar el monto y la tarjeta según lo que el usuario escribió
+            inputs.forEach(input => {
+                if (input.type === 'number' && input.value) {
+                    monto = Number(input.value);
+                } else if (input.type === 'text' && input.value.length >= 10) {
+                    // Detecta el campo de la tarjeta por la longitud del texto introducido
+                    cuentaDestino = input.value;
+                }
+            });
+
+            // Respaldo por si acaso busca por selectores comunes
+            if (!monto) {
+                const inputMontoAlt = document.getElementById('monto-retiro');
+                if (inputMontoAlt) monto = Number(inputMontoAlt.value);
+            }
+            if (!cuentaDestino) {
+                const inputCuentaAlt = document.getElementById('cuenta-retiro');
+                if (inputCuentaAlt) cuentaDestino = inputCuentaAlt.value;
+            }
+
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
             if (!user) {
@@ -784,7 +802,7 @@
                         usuarioNombre: user.nombre,
                         usuarioTelefono: user.telefono,
                         monto: monto,
-                        metodo: metodo,
+                        metodo: "Tarjeta",
                         cuentaDestino: cuentaDestino,
                         fecha: fechaObj.toISOString(),
                         fechaLegible: fechaFormateada
@@ -799,7 +817,7 @@
                         `👤 *Usuario:* ${user.nombre}\n` +
                         `📱 *Teléfono:* ${user.telefono}\n` +
                         `💰 *Monto:* $${monto} CUP\n` +
-                        `💳 *Método/Destino:* ${metodo} (${cuentaDestino})\n` +
+                        `💳 *Tarjeta Destino:* ${cuentaDestino}\n` +
                         `🕒 *Fecha:* ${fechaFormateada}\n\n` +
                         `👉 [Haz clic aquí para ir al panel y procesarlo](${ENLACE_WEB})`;
 
@@ -815,8 +833,9 @@
 
                     alert("¡Solicitud de retiro enviada con éxito! El administrador la revisará pronto.");
                     
-                    if(montoElem) montoElem.value = "";
-                    if(cuentaElem) cuentaElem.value = "";
+                    inputs.forEach(input => {
+                        if (input.type === 'number' || input.type === 'text') input.value = "";
+                    });
                     
                 } catch (error) {
                     console.error("Error al enviar retiro:", error);
@@ -824,6 +843,7 @@
                 }
             })();
         };
+
 
 
         window.abrirMinijuego = function(tipo) {
