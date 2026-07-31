@@ -1170,7 +1170,6 @@
 };
         async function dispararAlertaAdmin(titulo, mensaje) {
     try {
-        // En lugar de una petición bloqueada, guardamos la alerta en la base de datos
         const notiRef = push(ref(db, 'cola_notificaciones'));
         await set(notiRef, {
             title: titulo,
@@ -1178,9 +1177,10 @@
             timestamp: Date.now()
         });
     } catch (err) {
-        console.error("Error al encolar la notificación:", err);
+        console.error("Error detallado en la alerta:", err);
     }
 }
+
 
     </script>
 
