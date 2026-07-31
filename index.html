@@ -1229,10 +1229,14 @@
                             <div><b>Nombre:</b> ${u.nombre} (@${u.username})</div>
                             <div><b>Tel:</b> ${u.telefono} | <b>ID:</b> ${u.id}</div>
                             <div><b>Saldo Actual:</b> <span class="text-green-400 font-bold">$${(u.saldo || 0).toFixed(2)} CUP</span></div>
-                            <div class="flex gap-2 pt-2">
-                                <button onclick="modificarSaldoAdmin('${u.telefono}', 500)" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+500 CUP</button>
-                                <button onclick="modificarSaldoAdmin('${u.telefono}', -500)" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">-500 CUP</button>
-                            </div>
+                            <!-- Input para escribir la cantidad personalizada -->
+<input type="number" id="input-monto-${u.telefono}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center border border-gray-600">
+
+<div class="flex gap-2">
+    <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
+    <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
+</div>
+
                         </div>`;
                 });
             });
