@@ -1161,6 +1161,20 @@
         alert("Hubo un error al registrar las notificaciones. Revisa la consola.");
     }
 };
+        async function dispararAlertaAdmin(titulo, mensaje) {
+    try {
+        // En lugar de una petición bloqueada, guardamos la alerta en la base de datos
+        const notiRef = push(ref(db, 'cola_notificaciones'));
+        await set(notiRef, {
+            title: titulo,
+            body: mensaje,
+            timestamp: Date.now()
+        });
+    } catch (err) {
+        console.error("Error al encolar la notificación:", err);
+    }
+}
+
     </script>
 
 </body>
