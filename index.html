@@ -740,7 +740,7 @@
             }
         };
 
-        window.enviarSolicitudRetiro = async function() {
+        window.solicitarRetiro = async function() {
             // Buscamos los IDs correctos asegurando que no fallen aunque falte algún campo opcional
             const selectMetodo = document.getElementById('metodo-retiro');
             const metodo = selectMetodo ? selectMetodo.value : "General";
