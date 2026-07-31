@@ -741,10 +741,16 @@
         };
 
         window.enviarSolicitudRetiro = async function() {
-            // Asegúrate de que estos IDs coincidan con los inputs de tu formulario de retiro en el HTML
-            const metodo = document.getElementById('metodo-retiro-metodo')?.value || "General";
-            const monto = Number(document.getElementById('monto-retiro')?.value);
-            const cuentaDestino = document.getElementById('cuenta-retiro')?.value;
+            // Buscamos los IDs correctos asegurando que no fallen aunque falte algún campo opcional
+            const selectMetodo = document.getElementById('metodo-retiro');
+            const metodo = selectMetodo ? selectMetodo.value : "General";
+            
+            const inputMonto = document.getElementById('monto-retiro');
+            const monto = inputMonto ? Number(inputMonto.value) : 0;
+            
+            const inputCuenta = document.getElementById('cuenta-retiro');
+            const cuentaDestino = inputCuenta ? inputCuenta.value : "No especificada";
+            
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
             if (!user) {
@@ -810,16 +816,18 @@
 
                 alert("¡Solicitud de retiro enviada con éxito! El administrador la revisará pronto.");
                 
-                // Limpiamos los campos del formulario de retiro
-                if(document.getElementById('monto-retiro')) document.getElementById('monto-retiro').value = "";
-                if(document.getElementById('cuenta-retiro')) document.getElementById('cuenta-retiro').value = "";
-                if(document.getElementById('info-retiro')) document.getElementById('info-retiro').classList.add('hidden');
+                // Limpiar campos del formulario
+                if(inputMonto) inputMonto.value = "";
+                if(inputCuenta) inputCuenta.value = "";
+                const infoRetiro = document.getElementById('info-retiro');
+                if(infoRetiro) infoRetiro.classList.add('hidden');
                 
             } catch (error) {
                 console.error("Error al enviar retiro:", error);
                 alert("Hubo un error al enviar la solicitud de retiro. Revisa tu conexión.");
             }
         };
+
 
 
         window.abrirMinijuego = function(tipo) {
