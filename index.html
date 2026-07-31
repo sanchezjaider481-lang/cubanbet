@@ -597,7 +597,7 @@
                 avisoEspecial.innerText = "Validación mediante código generado y verificación en Enzona.";
             }
         };
-        window.enviarSolicitud = function() {
+                window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -616,18 +616,8 @@
                 const archivo = archivoInput.files[0];
                 const reader = new FileReader();
 
-                reader.onerror = function() {
-                    const urlDirecta = URL.createObjectURL(archivo);
-                    enviarDatosAlServidor(urlDirecta, true);
-                };
-
                 reader.onload = function(e) {
                     const img = new Image();
-                    
-                    img.onerror = function() {
-                        enviarDatosAlServidor(e.target.result, true);
-                    };
-
                     img.src = e.target.result;
                     
                     img.onload = async function() {
@@ -635,7 +625,8 @@
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
                             
-                            const MAX_WIDTH = 700;
+                            // Reducimos tamaño prudente para que la imagen se vea clara y liviana en la web
+                            const MAX_WIDTH = 600;
                             let width = img.width;
                             let height = img.height;
                             
@@ -648,19 +639,31 @@
                             canvas.height = height;
                             ctx.drawImage(img, 0, 0, width, height);
                             
-                            const comprobanteOptimizado = canvas.toDataURL('image/jpeg', 0.6);
-                            enviarDatosAlServidor(comprobanteOptimizado, false);
+                            // Generamos el Base64 limpio que se guardará en Firebase y se verá perfecto en la web
+                            const comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                            await procesarEnvioFinal(comprobanteBase64);
                         } catch (err) {
-                            enviarDatosAlServidor(e.target.result, true);
+                            console.error("Error procesando imagen con canvas:", err);
+                            // Respaldo de emergencia si falla el canvas
+                            procesoEmergencia(archivo);
                         }
                     };
+
+                    img.onerror = function() {
+                        procesoEmergencia(archivo);
+                    };
                 };
+
+                reader.onerror = function() {
+                    alert("Error al leer el archivo. Intenta con otra imagen.");
+                };
+
                 reader.readAsDataURL(archivo);
             } else {
                 alert("Por favor adjunta el comprobante de pago.");
             }
 
-            async function enviarDatosAlServidor(imagenFinalUrl, esRespaldo) {
+            async function procesarEnvioFinal(imagenUrlFinal) {
                 try {
                     const fechaObj = new Date();
                     const fechaFormateada = fechaObj.toLocaleString('es-ES', {
@@ -672,8 +675,8 @@
                         second: '2-digit'
                     });
 
+                    // 1. Guardar en Firebase (Depósitos pendientes)
                     const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
-                    
                     await set(nuevoDepositoRef, {
                         id: nuevoDepositoRef.key,
                         usuarioId: user.id,
@@ -681,11 +684,12 @@
                         usuarioTelefono: user.telefono,
                         monto: monto,
                         metodo: metodo,
-                        comprobanteUrl: imagenFinalUrl,
+                        comprobanteUrl: imagenUrlFinal, // <--- Este Base64 se pintará perfecto en tu panel web
                         fecha: fechaObj.toISOString(),
                         fechaLegible: fechaFormateada
                     });
 
+                    // 2. Enviar notificación a Telegram de manera infalible
                     const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                     const CHAT_ID = "-1004432353397"; 
                     const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
@@ -698,18 +702,12 @@
                         `🕒 *Fecha:* ${fechaFormateada}\n\n` +
                         `👉 [Haz clic aquí para ir al panel y aprobarlo](${ENLACE_WEB})`;
 
-                    let blob;
-                    if (esRespaldo && imagenFinalUrl.startsWith("blob:")) {
-                        const resBlob = await fetch(archivoInput.files[0]);
-                        blob = await resBlob.blob();
-                    } else {
-                        const resBlob = await fetch(imagenFinalUrl);
-                        blob = await resBlob.blob();
-                    }
-                    
+                    // Enviamos primero la foto usando FormData directo
+                    const resB = await fetch(imagenUrlFinal);
+                    const blobB = await resB.blob();
                     const formData = new FormData();
                     formData.append('chat_id', CHAT_ID);
-                    formData.append('photo', blob, 'comprobante.jpg');
+                    formData.append('photo', blobB, 'comprobante.jpg');
                     formData.append('caption', captionTexto);
                     formData.append('parse_mode', 'Markdown');
 
@@ -724,18 +722,35 @@
                     document.getElementById('archivo-comprobante').value = "";
                     document.getElementById('info-pago').classList.add('hidden');
                 } catch (error) {
-                    console.error("Error al enviar depósito:", error);
-                    alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
+                    console.error("Error en el envío final:", error);
+                    alert("Hubo un error al sincronizar con el servidor. Revisa tu conexión.");
                 }
+            }
+
+            function procesoArchivoEmergencia(fileObj) {
+                const readerEmergency = new FileReader();
+                readerEmergency.onload = async function(ev) {
+                    await procesarEnvioFinal(ev.target.result);
+                };
+                readerEmergency.readAsDataURL(fileObj);
+            }
+            
+            function procesoEmergencia(fileObj) {
+                procesoArchivoEmergencia(fileObj);
             }
         };
 
         window.enviarSolicitudRetiro = async function() {
+            // Asegúrate de que estos IDs coincidan con los inputs de tu formulario de retiro en el HTML
             const metodo = document.getElementById('metodo-retiro-metodo')?.value || "General";
             const monto = Number(document.getElementById('monto-retiro')?.value);
             const cuentaDestino = document.getElementById('cuenta-retiro')?.value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
+            if (!user) {
+                alert("Debes iniciar sesión para solicitar un retiro.");
+                return;
+            }
             if (!monto || monto <= 0) {
                 alert("Introduce un monto válido para retirar.");
                 return;
@@ -756,9 +771,8 @@
                     second: '2-digit'
                 });
 
+                // 1. Guardar en Firebase (Retiros pendientes)
                 const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
-                
-                // Guardamos en Firebase con fecha legible
                 await set(nuevoRetiroRef, {
                     id: nuevoRetiroRef.key,
                     usuarioId: user.id,
@@ -771,7 +785,7 @@
                     fechaLegible: fechaFormateada
                 });
 
-                // NOTIFICACIÓN DIRECTA A TELEGRAM PARA RETIROS
+                // 2. Enviar notificación directa a Telegram
                 const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                 const CHAT_ID = "-1004432353397"; 
                 const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
@@ -794,9 +808,13 @@
                     })
                 });
 
-                alert("¡Solicitud de retiro enviada con éxito! Se procesará a la brevedad.");
-                document.getElementById('monto-retiro').value = "";
+                alert("¡Solicitud de retiro enviada con éxito! El administrador la revisará pronto.");
+                
+                // Limpiamos los campos del formulario de retiro
+                if(document.getElementById('monto-retiro')) document.getElementById('monto-retiro').value = "";
                 if(document.getElementById('cuenta-retiro')) document.getElementById('cuenta-retiro').value = "";
+                if(document.getElementById('info-retiro')) document.getElementById('info-retiro').classList.add('hidden');
+                
             } catch (error) {
                 console.error("Error al enviar retiro:", error);
                 alert("Hubo un error al enviar la solicitud de retiro. Revisa tu conexión.");
