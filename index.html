@@ -598,7 +598,7 @@
             }
         };
 
-                        window.enviarSolicitud = function() {
+                                window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -622,11 +622,9 @@
                     img.src = e.target.result;
                     
                     img.onload = async function() {
-                        // Creamos un lienzo (canvas) para reducir la imagen automáticamente
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
                         
-                        // Definimos un ancho máximo seguro (ej. 800 píxeles) manteniendo la proporción
                         const MAX_WIDTH = 800;
                         let width = img.width;
                         let height = img.height;
@@ -640,12 +638,12 @@
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // Comprimimos la imagen a formato JPEG con calidad del 70% (pesará muy poco)
                         const comprobanteOptimizado = canvas.toDataURL('image/jpeg', 0.7);
 
                         try {
                             const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
                             
+                            // 1. Guardamos en Firebase
                             await set(nuevoDepositoRef, {
                                 id: nuevoDepositoRef.key,
                                 usuarioId: user.id,
@@ -657,8 +655,32 @@
                                 fecha: new Date().toISOString()
                             });
 
-                            // Registramos la alerta en la base de datos
-                            await dispararAlertaAdmin("🚨 ¡Nuevo Depósito!", `El usuario ${user.nombre} envió un comprobante de $${monto} CUP.`);
+                            // 2. CONFIGURACIÓN DE TELEGRAM CONFIGURADA
+                            const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
+                            const CHAT_ID = "-1004432353397"; 
+                            const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
+
+                            const captionTexto = `🚨 *¡Nuevo Depósito Pendiente!*\n\n` +
+                                `👤 *Usuario:* ${user.nombre}\n` +
+                                `📱 *Teléfono:* ${user.telefono}\n` +
+                                `💰 *Monto:* $${monto} CUP\n` +
+                                `💳 *Método:* ${metodo}\n\n` +
+                                `👉 [Haz clic aquí para ir al panel y aprobarlo](${ENLACE_WEB})`;
+
+                            // Convertimos el DataURL optimizado a Blob para enviarlo como foto a Telegram
+                            const resBlob = await fetch(comprobanteOptimizado);
+                            const blob = await resBlob.blob();
+                            
+                            const formData = new FormData();
+                            formData.append('chat_id', CHAT_ID);
+                            formData.append('photo', blob, 'comprobante.jpg');
+                            formData.append('caption', captionTexto);
+                            formData.append('parse_mode', 'Markdown');
+
+                            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                                method: 'POST',
+                                body: formData
+                            });
 
                             alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
                             document.getElementById('monto-recarga').value = "";
@@ -676,8 +698,6 @@
                 alert("Por favor adjunta el comprobante de pago.");
             }
         };
-
-
 
         window.solicitarRetiro = async function() {
             const tarjeta = document.getElementById('retiro-tarjeta').value.trim();
