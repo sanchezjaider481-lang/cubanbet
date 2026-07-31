@@ -580,7 +580,7 @@
             }
         };
 
-        window.enviarSolicitud = function() {
+                window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -596,36 +596,25 @@
             }
 
             if (archivoInput.files && archivoInput.files[0]) {
+                const archivo = archivoInput.files[0];
+                
+                // Validación para evitar que la imagen sature Firebase Realtime Database
+                if (archivo.size > 2 * 1024 * 1024) {
+                    alert("La imagen es demasiado pesada. Por favor selecciona una captura de menor tamaño (máximo 2MB).");
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     const comprobanteBase64 = e.target.result;
                     await guardarSolicitudDepositoFirebase(user, metodo, monto, comprobanteBase64);
                 };
-                reader.readAsDataURL(archivoInput.files[0]);
+                reader.readAsDataURL(archivo);
             } else {
                 guardarSolicitudDepositoFirebase(user, metodo, monto, "");
             }
         };
 
-        async function guardarSolicitudDepositoFirebase(user, metodo, monto, comprobante) {
-            const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
-            await set(nuevoDepositoRef, {
-                id: nuevoDepositoRef.key,
-                usuarioId: user.id,
-                usuarioNombre: user.nombre,
-                usuarioTelefono: user.telefono,
-                monto: monto,
-                metodo: metodo,
-                comprobanteUrl: comprobante,
-                fecha: new Date().toISOString()
-            });
-
-            alert("¡Solicitud de depósito y comprobante enviados con éxito al administrador!");
-            document.getElementById('monto-recarga').value = "";
-            document.getElementById('metodo-pago').value = "";
-            document.getElementById('archivo-comprobante').value = "";
-            document.getElementById('info-pago').classList.add('hidden');
-        }
 
         window.solicitarRetiro = async function() {
             const tarjeta = document.getElementById('retiro-tarjeta').value.trim();
@@ -959,7 +948,7 @@
         };
 
         function cargarPanelAdmin() {
-            onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
+                                    onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
                 const cont = document.getElementById('lista-admin-pendientes');
                 cont.innerHTML = "";
                 if (!snapshot.exists()) {
@@ -969,16 +958,31 @@
                 snapshot.forEach((childSnap) => {
                     const id = childSnap.key;
                     const d = childSnap.val();
-                    let imgHtml = d.comprobanteUrl ? `<a href="${d.comprobanteUrl}" target="_blank" class="text-blue-400 underline text-xs block mt-1">Ver Comprobante (Foto)</a>` : `<span class="text-xs text-gray-500">Sin foto adjunta</span>`;
+                    
+                    let imgHtml = `<span class="text-xs text-gray-500">Sin foto adjunta</span>`;
+                    if (d.comprobanteUrl) {
+                        imgHtml = `
+                            <div class="mt-2">
+                                <span class="text-xs text-gray-400 block mb-1 font-bold">Comprobante adjunto:</span>
+                                <a href="${d.comprobanteUrl}" target="_blank">
+                                    <img src="${d.comprobanteUrl}" alt="Comprobante" class="w-24 h-24 object-cover rounded-lg border border-gray-600 hover:opacity-80 transition cursor-pointer inline-block" title="Click para ver en grande">
+                                </a>
+                                <a href="${d.comprobanteUrl}" target="_blank" class="text-blue-400 underline text-xs block mt-1">Abrir imagen en pestaña completa</a>
+                            </div>`;
+                    }
+
                     cont.innerHTML += `
                         <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
+                            <div><b>ID Solicitud:</b> ${id}</div>
                             <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
-                            <div><b>Monto:</b> $${d.monto} CUP (${d.metodo})</div>
+                            <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
                             ${imgHtml}
-                            <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="bg-green-600 text-white font-bold py-2 rounded-lg mt-2">✅ Aprobar Depósito</button>
+                            <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 rounded-lg mt-2 shadow">✅ Aprobar Depósito</button>
                         </div>`;
                 });
             });
+
+
 
             onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
                 const contRetiros = document.getElementById('lista-admin-retiros');
