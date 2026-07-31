@@ -740,24 +740,21 @@
             }
         };
 
-                        window.solicitarRetiro = function() {
-            // Buscamos todos los inputs de texto y número dentro de la página
+                        
+                     window.solicitarRetiro = function() {
             const inputs = document.querySelectorAll('input');
             
             let monto = 0;
             let cuentaDestino = "";
 
-            // Recorremos los inputs para capturar el monto y la tarjeta según lo que el usuario escribió
             inputs.forEach(input => {
                 if (input.type === 'number' && input.value) {
                     monto = Number(input.value);
                 } else if (input.type === 'text' && input.value.length >= 10) {
-                    // Detecta el campo de la tarjeta por la longitud del texto introducido
                     cuentaDestino = input.value;
                 }
             });
 
-            // Respaldo por si acaso busca por selectores comunes
             if (!monto) {
                 const inputMontoAlt = document.getElementById('monto-retiro');
                 if (inputMontoAlt) monto = Number(inputMontoAlt.value);
@@ -794,7 +791,7 @@
                         second: '2-digit'
                     });
 
-                    // 1. Guardar en Firebase (Retiros pendientes)
+                    // 1. Guardar en Firebase duplicando las propiedades para que la web la lea sin error
                     const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
                     await set(nuevoRetiroRef, {
                         id: nuevoRetiroRef.key,
@@ -804,6 +801,9 @@
                         monto: monto,
                         metodo: "Tarjeta",
                         cuentaDestino: cuentaDestino,
+                        tarjeta: cuentaDestino,       // <--- Cubre por si tu web lee .tarjeta
+                        cuenta: cuentaDestino,        // <--- Cubre por si tu web lee .cuenta
+                        numeroTarjeta: cuentaDestino, // <--- Cubre por si tu web lee .numeroTarjeta
                         fecha: fechaObj.toISOString(),
                         fechaLegible: fechaFormateada
                     });
@@ -843,6 +843,7 @@
                 }
             })();
         };
+
 
 
 
