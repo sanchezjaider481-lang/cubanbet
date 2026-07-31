@@ -740,8 +740,7 @@
             }
         };
 
-                        
-                     window.solicitarRetiro = function() {
+                        window.solicitarRetiro = function() {
             const inputs = document.querySelectorAll('input');
             
             let monto = 0;
@@ -770,12 +769,22 @@
                 alert("Debes iniciar sesión para solicitar un retiro.");
                 return;
             }
-            if (!monto || monto <= 0) {
-                alert("Introduce un monto válido para retirar.");
+
+            // 1. Validar límites de retiro (Mínimo 500, Máximo 4000 CUP)
+            if (!monto || monto < 500 || monto > 4000) {
+                alert("El monto de retiro debe estar entre $500 y $4000 CUP.");
                 return;
             }
+
             if (!cuentaDestino) {
-                alert("Introduce los datos de tu cuenta o tarjeta de destino.");
+                alert("Introduce los datos de tu tarjeta de destino.");
+                return;
+            }
+
+            // 2. Validar que el usuario no retire más de lo que tiene en su saldo actual
+            const saldoActual = Number(user.saldo || user.balance || 0);
+            if (monto > saldoActual) {
+                alert(`No puedes retirar $${monto} CUP porque tu saldo actual es de $${saldoActual} CUP.`);
                 return;
             }
 
@@ -791,7 +800,17 @@
                         second: '2-digit'
                     });
 
-                    // 1. Guardar en Firebase duplicando las propiedades para que la web la lea sin error
+                    // 3. Descontar del saldo del usuario de forma inmediata en Firebase y localStorage
+                    const nuevoSaldo = saldoActual - monto;
+                    user.saldo = nuevoSaldo;
+                    localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+
+                    // Actualizamos el saldo en la base de datos de usuarios
+                    if (user.id) {
+                        await update(ref(db, `usuarios/${user.id}`), { saldo: nuevoSaldo });
+                    }
+
+                    // 4. Guardar en retiros_pendientes inyectando todas las variantes posibles para que la tarjeta se pinte bien en la web
                     const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
                     await set(nuevoRetiroRef, {
                         id: nuevoRetiroRef.key,
@@ -801,14 +820,15 @@
                         monto: monto,
                         metodo: "Tarjeta",
                         cuentaDestino: cuentaDestino,
-                        tarjeta: cuentaDestino,       // <--- Cubre por si tu web lee .tarjeta
-                        cuenta: cuentaDestino,        // <--- Cubre por si tu web lee .cuenta
-                        numeroTarjeta: cuentaDestino, // <--- Cubre por si tu web lee .numeroTarjeta
+                        tarjetaDestino: cuentaDestino,
+                        tarjeta: cuentaDestino,
+                        cuenta: cuentaDestino,
+                        numeroTarjeta: cuentaDestino,
                         fecha: fechaObj.toISOString(),
                         fechaLegible: fechaFormateada
                     });
 
-                    // 2. Enviar notificación directa a Telegram
+                    // 5. Enviar notificación a Telegram
                     const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                     const CHAT_ID = "-1004432353397"; 
                     const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
@@ -831,21 +851,25 @@
                         })
                     });
 
-                    alert("¡Solicitud de retiro enviada con éxito! El administrador la revisará pronto.");
+                    alert("¡Solicitud de retiro enviada con éxito! Se ha descontado de tu saldo y el administrador la revisará pronto.");
                     
                     inputs.forEach(input => {
                         if (input.type === 'number' || input.type === 'text') input.value = "";
                     });
+
+                    // Recargar la interfaz si tienes alguna función para refrescar datos del usuario
+                    if (typeof actualizarInterfazUsuario === 'function') {
+                        actualizarInterfazUsuario();
+                    }
                     
                 } catch (error) {
                     console.error("Error al enviar retiro:", error);
-                    alert("Hubo un error al enviar la solicitud de retiro. Revisa tu conexión.");
+                    alert("Hubo un error al procesar el retiro. Revisa tu conexión.");
                 }
             })();
         };
-
-
-
+        
+                                                 
 
         window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') {
