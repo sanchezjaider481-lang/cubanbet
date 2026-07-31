@@ -598,7 +598,7 @@
             }
         };
 
-                window.enviarSolicitud = function() {
+                        window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -615,48 +615,68 @@
 
             if (archivoInput.files && archivoInput.files[0]) {
                 const archivo = archivoInput.files[0];
-                
-                if (archivo.size > 2 * 1024 * 1024) {
-                    alert("La imagen es demasiado pesada. Por favor selecciona una captura de menor tamaño (máximo 2MB).");
-                    return;
-                }
-
                 const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const comprobanteBase64 = e.target.result;
-                    try {
-                        const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    
+                    img.onload = async function() {
+                        // Creamos un lienzo (canvas) para reducir la imagen automáticamente
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
                         
-                        // CORREGIDO: Se usa 'comprobanteBase64' en lugar de 'comprobante'
-                        await set(nuevoDepositoRef, {
-                            id: nuevoDepositoRef.key,
-                            usuarioId: user.id,
-                            usuarioNombre: user.nombre,
-                            usuarioTelefono: user.telefono,
-                            monto: monto,
-                            metodo: metodo,
-                            comprobanteUrl: comprobanteBase64,
-                            fecha: new Date().toISOString()
-                        });
+                        // Definimos un ancho máximo seguro (ej. 800 píxeles) manteniendo la proporción
+                        const MAX_WIDTH = 800;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Comprimimos la imagen a formato JPEG con calidad del 70% (pesará muy poco)
+                        const comprobanteOptimizado = canvas.toDataURL('image/jpeg', 0.7);
 
-                        // Llamada limpia para registrar la alerta en la cola
-                        await dispararAlertaAdmin("🚨 ¡Nuevo Depósito!", "Un usuario ha enviado un comprobante pendiente.");
+                        try {
+                            const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+                            
+                            await set(nuevoDepositoRef, {
+                                id: nuevoDepositoRef.key,
+                                usuarioId: user.id,
+                                usuarioNombre: user.nombre,
+                                usuarioTelefono: user.telefono,
+                                monto: monto,
+                                metodo: metodo,
+                                comprobanteUrl: comprobanteOptimizado,
+                                fecha: new Date().toISOString()
+                            });
 
-                        alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
-                        document.getElementById('monto-recarga').value = "";
-                        document.getElementById('metodo-pago').value = "";
-                        document.getElementById('archivo-comprobante').value = "";
-                        document.getElementById('info-pago').classList.add('hidden');
-                    } catch (error) {
-                        console.error("Error al enviar depósito:", error);
-                        alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
-                    }
+                            // Registramos la alerta en la base de datos
+                            await dispararAlertaAdmin("🚨 ¡Nuevo Depósito!", `El usuario ${user.nombre} envió un comprobante de $${monto} CUP.`);
+
+                            alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
+                            document.getElementById('monto-recarga').value = "";
+                            document.getElementById('metodo-pago').value = "";
+                            document.getElementById('archivo-comprobante').value = "";
+                            document.getElementById('info-pago').classList.add('hidden');
+                        } catch (error) {
+                            console.error("Error al enviar depósito:", error);
+                            alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
+                        }
+                    };
                 };
                 reader.readAsDataURL(archivo);
             } else {
                 alert("Por favor adjunta el comprobante de pago.");
             }
         };
+
 
 
         window.solicitarRetiro = async function() {
