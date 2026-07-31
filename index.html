@@ -357,6 +357,7 @@
                 cargarDatosUsuario(user);
                 document.getElementById('auth-container').classList.remove('active');
                 iniciarApp();
+                             escucharNotificacionesUsuario(user.telefono); 
             } else {
                 document.getElementById('auth-container').classList.add('active');
                 document.getElementById('loader').style.display = 'none';
@@ -435,6 +436,7 @@
             cargarDatosUsuario(nuevoUsuario);
             document.getElementById('auth-container').classList.remove('active');
             iniciarApp();
+                         escucharNotificacionesUsuario(user.telefono);
         };
 
         window.iniciarSesion = async function() {
@@ -607,13 +609,31 @@
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     const comprobanteBase64 = e.target.result;
-                    await guardarSolicitudDepositoFirebase(user, metodo, monto, comprobanteBase64);
-                };
-                reader.readAsDataURL(archivo);
-            } else {
-                guardarSolicitudDepositoFirebase(user, metodo, monto, "");
+                    await         async function guardarSolicitudDepositoFirebase(user, metodo, monto, comprobante) {
+            try {
+                const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+                await set(nuevoDepositoRef, {
+                    id: nuevoDepositoRef.key,
+                    usuarioId: user.id,
+                    usuarioNombre: user.nombre,
+                    usuarioTelefono: user.telefono,
+                    monto: monto,
+                    metodo: metodo,
+                    comprobanteUrl: comprobante,
+                    fecha: new Date().toISOString()
+                });
+
+                alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
+                document.getElementById('monto-recarga').value = "";
+                document.getElementById('metodo-pago').value = "";
+                document.getElementById('archivo-comprobante').value = "";
+                document.getElementById('info-pago').classList.add('hidden');
+            } catch (error) {
+                console.error("Error al enviar depósito:", error);
+                alert("Hubo un error al enviar la solicitud. Revisa tu conexión.");
             }
-        };
+        }
+
 
 
         window.solicitarRetiro = async function() {
@@ -948,7 +968,7 @@
         };
 
         function cargarPanelAdmin() {
-                                    onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
+                                                onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
                 const cont = document.getElementById('lista-admin-pendientes');
                 cont.innerHTML = "";
                 if (!snapshot.exists()) {
@@ -977,10 +997,14 @@
                             <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
                             <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
                             ${imgHtml}
-                            <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 rounded-lg mt-2 shadow">✅ Aprobar Depósito</button>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 rounded-lg shadow">✅ Aprobar</button>
+                                <button onclick="denegarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-lg shadow">❌ Denegar</button>
+                            </div>
                         </div>`;
                 });
             });
+
 
 
 
@@ -1027,14 +1051,20 @@
             });
         }
 
-        window.aprobarDeposito = async function(id, tel, monto) {
+                window.aprobarDeposito = async function(id, tel, monto) {
             if (confirm(`¿Aprobar recarga de $${monto} CUP?`)) {
                 const userRef = ref(db, `usuarios/${tel}`);
                 const snap = await get(userRef);
                 if (snap.exists()) {
                     let u = snap.val();
                     u.saldo = (u.saldo || 0) + monto;
+                    u.ultimaNotificacion = {
+                        mensaje: `¡Tu depósito de $${monto} CUP ha sido aprobado con éxito! 🎉`,
+                        tipo: 'exito',
+                        leido: false
+                    };
                     await set(userRef, u);
+                    
                     const local = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                     if (local && local.telefono === tel) {
                         localStorage.setItem('cubanbet_usuario', JSON.stringify(u));
@@ -1045,6 +1075,25 @@
                 alert("¡Depósito aprobado con éxito!");
             }
         };
+
+        window.denegarDeposito = async function(id, tel, monto) {
+            if (confirm(`¿Estás seguro de DENEGAR este depósito de $${monto} CUP?`)) {
+                const userRef = ref(db, `usuarios/${tel}`);
+                const snap = await get(userRef);
+                if (snap.exists()) {
+                    let u = snap.val();
+                    u.ultimaNotificacion = {
+                        mensaje: `❌ Tu solicitud de depósito por $${monto} CUP fue denegada. Si crees que es un error o el pago fue correcto, contacta a Atención al Cliente en Telegram.`,
+                        tipo: 'error',
+                        leido: false
+                    };
+                    await set(userRef, u);
+                }
+                await remove(ref(db, 'deposits_pendientes/' + id));
+                alert("Depósito denegado correctamente.");
+            }
+        };
+
 
         window.completarRetiro = async function(id) {
             if (confirm("¿Marcar este retiro como completado y transferido?")) {
@@ -1068,9 +1117,24 @@
                 alert(`Saldo actualizado correctamente para ${u.nombre}.`);
             }
         };
+                function escucharNotificacionesUsuario(telefono) {
+            onValue(ref(db, `usuarios/${telefono}`), (snapshot) => {
+                if (!snapshot.exists()) return;
+                const u = snapshot.val();
+                if (u.ultimaNotificacion && !u.ultimaNotificacion.leido) {
+                    alert(u.ultimaNotificacion.mensaje);
+                    // Marcamos como leído para que no vuelva a saltar la alerta
+                    u.ultimaNotificacion.leido = true;
+                    set(ref(db, `usuarios/${telefono}`), u);
+                    localStorage.setItem('cubanbet_usuario', JSON.stringify(u));
+                    cargarDatosUsuario(u);
+                }
+            });
+        }
+
     </script>
 </body>
-</html>
+                    </html>
 
 
 
