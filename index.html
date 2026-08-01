@@ -811,7 +811,7 @@
             return true;
         }
 
-        window.jugarRuleta = function() {
+                window.jugarRuleta = async function() {
             const monto = Number(document.getElementById('monto-ruleta').value);
             if (!validarApuestaMinimax(monto)) return;
 
@@ -820,7 +820,7 @@
             resultadoDiv.innerHTML = "Gira la ruleta...";
             ruletaUI.classList.add('animate-spin-fast');
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 ruletaUI.classList.remove('animate-spin-fast');
                 
                 let gana = false;
@@ -838,14 +838,15 @@
                     resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">La casa gana. Perdiste $${monto} CUP</span>`;
                 }
 
-                                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                try {
+                    await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
+                } catch (e) { console.error(e); }
                 if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
-
             }, 1500);
         };
 
-        window.jugarDados = function() {
+        window.jugarDados = async function() {
             const monto = Number(document.getElementById('monto-dados').value);
             if (!validarApuestaMinimax(monto)) return;
 
@@ -857,7 +858,7 @@
             dado2.classList.add('animate-spin-fast');
             resultadoDiv.innerHTML = "Tirando dados...";
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 dado1.classList.remove('animate-spin-fast');
                 dado2.classList.remove('animate-spin-fast');
 
@@ -888,14 +889,15 @@
                     resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">Mala suerte, la casa se queda con $${monto} CUP</span>`;
                 }
 
-                                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                try {
+                    await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
+                } catch (e) { console.error(e); }
                 if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
-
             }, 1200);
         };
 
-        window.jugarSlots = function() {
+        window.jugarSlots = async function() {
             const monto = Number(document.getElementById('monto-slots').value);
             if (!validarApuestaMinimax(monto)) return;
 
@@ -911,7 +913,7 @@
 
             const iconos = ["🍒", "🍋", "🔔", "💎", "7️⃣"];
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 r1.classList.remove('animate-spin-fast');
                 r2.classList.remove('animate-spin-fast');
                 r3.classList.remove('animate-spin-fast');
@@ -948,10 +950,11 @@
                     resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">No hubo combinación. Perdiste $${monto} CUP</span>`;
                 }
 
-                                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                try {
+                    await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
+                } catch (e) { console.error(e); }
                 if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
-
             }, 1500);
         };
 
