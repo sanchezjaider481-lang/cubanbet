@@ -838,8 +838,10 @@
                     resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">La casa gana. Perdiste $${monto} CUP</span>`;
                 }
 
-                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+
             }, 1500);
         };
 
@@ -886,8 +888,10 @@
                     resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">Mala suerte, la casa se queda con $${monto} CUP</span>`;
                 }
 
-                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+
             }, 1200);
         };
 
@@ -944,8 +948,10 @@
                     resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">No hubo combinación. Perdiste $${monto} CUP</span>`;
                 }
 
-                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+
             }, 1500);
         };
 
