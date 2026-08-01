@@ -935,63 +935,84 @@
         };
 
         function cargarPanelAdmin() {
-            onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
-                const cont = document.getElementById('lista-admin-pendientes');
-                cont.innerHTML = "";
-                if (!snapshot.exists()) { cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`; return; }
-                snapshot.forEach((childSnap) => {
-                    const id = childSnap.key;
-                    const d = childSnap.val();
-                    let imgHtml = d.comprobanteUrl ? `<div class="mt-2"><a href="${d.comprobanteUrl}" target="_blank"><img src="${d.comprobanteUrl}" class="w-24 h-24 object-cover rounded-lg border border-gray-600"></a></div>` : "";
-                    cont.innerHTML += `
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
-                            <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
-                            <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
-                            ${imgHtml}
-                            <div class="flex gap-2 mt-2">
-                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg">✅ Aprobar</button>
-                                <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg">❌ Denegar</button>
-                            </div>
-                        </div>`;
-                });
-            });
-
-            onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
-                const contRetiros = document.getElementById('lista-admin-retiros');
-                contRetiros.innerHTML = "";
-                if (!snapshot.exists()) { contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay retiros pendientes.</p>`; return; }
-                snapshot.forEach((childSnap) => {
-                    const id = childSnap.key;
-                    const r = childSnap.val();
-                    contRetiros.innerHTML += `
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
-                            <div><b>Usuario:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
-                            <div><b>Monto:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
-                            <div><b>Tarjeta:</b> ${r.tarjetaDestino}</div>
-                            <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg">✔️ Procesar Retiro</button>
-                        </div>`;
-                });
-            });
-
-            onValue(ref(db, 'usuarios'), (snapshot) => {
-                const contUsuarios = document.getElementById('lista-admin-usuarios');
-                contUsuarios.innerHTML = "";
-                if (!snapshot.exists()) return;
-                snapshot.forEach((childSnap) => {
-                    const u = childSnap.val();
-                    contUsuarios.innerHTML += `
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
-                            <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${u.telefono}</div>
-                            <div><b>Saldo:</b> <span class="text-green-400 font-bold">$${(u.saldo || 0).toFixed(2)} CUP</span></div>
-                            <input type="number" id="input-monto-${u.telefono}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
-                            <div class="flex gap-2">
-                                <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
-                                <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
-                            </div>
-                        </div>`;
-                });
-            });
+    onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
+        const cont = document.getElementById('lista-admin-pendientes');
+        cont.innerHTML = "";
+        if (!snapshot.exists()) { 
+            cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`; 
+            return; 
         }
+        snapshot.forEach((childSnap) => {
+            const id = childSnap.key;
+            const d = childSnap.val();
+            let imgHtml = d.comprobanteUrl ? `<div class="mt-2"><a href="${d.comprobanteUrl}" target="_blank"><img src="${d.comprobanteUrl}" class="w-24 h-24 object-cover rounded-lg border border-gray-600"></a></div>` : "";
+            cont.innerHTML += `
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
+                    <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
+                    <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
+                    ${imgHtml}
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg">✅ Aprobar</button>
+                        <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg">❌ Denegar</button>
+                    </div>
+                </div>`;
+        });
+    });
+
+    onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
+        const contRetiros = document.getElementById('lista-admin-retiros');
+        contRetiros.innerHTML = "";
+        if (!snapshot.exists()) { 
+            contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay retiros pendientes.</p>`; 
+            return; 
+        }
+        snapshot.forEach((childSnap) => {
+            const id = childSnap.key;
+            const r = childSnap.val();
+            contRetiros.innerHTML += `
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
+                    <div><b>Usuario:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
+                    <div><b>Monto:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
+                    <div><b>Tarjeta:</b> ${r.tarjetaDestino}</div>
+                    <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg">✔️ Procesar Retiro</button>
+                </div>`;
+        });
+    });
+
+    onValue(ref(db, 'usuarios'), (snapshot) => {
+        const contUsuarios = document.getElementById('lista-admin-usuarios');
+        contUsuarios.innerHTML = "";
+        if (!snapshot.exists()) return;
+        
+        snapshot.forEach((childSnap) => {
+            const u = childSnap.val();
+            const telUser = u.telefono;
+            const saldoActualizado = Number(u.saldo || 0);
+
+            // Sincroniza de forma automática la sesión del usuario si está conectado en este navegador
+            const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+            if (localUser && localUser.telefono === telUser && localUser.saldo !== saldoActualizado) {
+                localUser.saldo = saldoActualizado;
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
+                if (typeof cargarDatosUsuario === 'function') {
+                    cargarDatosUsuario(localUser);
+                }
+            }
+
+            contUsuarios.innerHTML += `
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
+                    <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${telUser}</div>
+                    <div><b>Saldo en Vivo:</b> <span class="text-green-400 font-bold">$${saldoActualizado.toFixed(2)} CUP</span></div>
+                    <input type="number" id="input-monto-${telUser}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
+                    <div class="flex gap-2">
+                        <button onclick="modificarSaldoAdminCustom('${telUser}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
+                        <button onclick="modificarSaldoAdminCustom('${telUser}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
+                    </div>
+                </div>`;
+        });
+    });
+}
+
 
         window.aprobarDeposito = async function(id, tel, monto) {
             if (confirm(`¿Aprobar depósito de $${monto} CUP?`)) {
