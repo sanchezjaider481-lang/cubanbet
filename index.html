@@ -379,85 +379,102 @@
         };
 
         window.crearCuenta = async function() {
-            const nombre = document.getElementById('reg-nombre').value.trim();
-            const apellidos = document.getElementById('reg-apellidos').value.trim();
-            const username = document.getElementById('reg-username').value.trim();
-            const correo = document.getElementById('reg-correo').value.trim();
-            const telefono = document.getElementById('reg-telefono').value.trim();
-            const password = document.getElementById('reg-password').value;
-            const confirmar = document.getElementById('reg-confirmar').value;
+    const nombre = document.getElementById('reg-nombre').value.trim();
+    const apellidos = document.getElementById('reg-apellidos').value.trim();
+    const username = document.getElementById('reg-username').value.trim().toLowerCase(); // Normalizar a minúsculas
+    const correo = document.getElementById('reg-correo').value.trim();
+    const telefono = document.getElementById('reg-telefono').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirmar = document.getElementById('reg-confirmar').value;
 
-            if (!nombre || !apellidos || !username || !correo || !telefono || !password || !confirmar) {
-                alert("Por favor completa todos los campos.");
-                return;
+    if (!nombre || !apellidos || !username || !correo || !telefono || !password || !confirmar) {
+        alert("Por favor completa todos los campos.");
+        return;
+    }
+    if (password !== confirmar) {
+        alert("Las contraseñas no coinciden.");
+        return;
+    }
+
+    try {
+        const dbRef = ref(db);
+        // Verificar si el username ya existe
+        const snapshotUser = await get(child(dbRef, `usuarios/${username}`));
+        if (snapshotUser.exists()) {
+            alert("Este nombre de usuario ya está en uso.");
+            return;
+        }
+
+        const idUnico = "CB-" + Math.floor(1000 + Math.random() * 9000);
+        const nuevoUsuario = {
+            id: idUnico,
+            nombre: `${nombre} ${apellidos}`,
+            username,
+            correo,
+            telefono,
+            password,
+            saldo: 1000.00,
+            dineroApostado: 0.00,
+            dineroGanado: 0.00,
+            dineroPerdido: 0.00,
+            apuestasActivas: 0
+        };
+
+        // Guardar usando el username como llave principal para facilitar el acceso multidispositivo
+        await set(ref(db, 'usuarios/' + username), nuevoUsuario);
+        localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
+        cargarDatosUsuario(nuevoUsuario);
+        document.getElementById('auth-container').classList.remove('active');
+        iniciarApp();
+    } catch (error) {
+        console.error("Error al registrar cuenta:", error);
+        alert("Hubo un error al crear la cuenta. Revisa tu conexión.");
+    }
+};
+        window.iniciarSesion = async function() {
+    const identificador = document.getElementById('login-identificador').value.trim().toLowerCase();
+    const password = document.getElementById('login-password').value;
+
+    if (!identificador || !password) {
+        alert("Introduce tus credenciales.");
+        return;
+    }
+
+    try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, 'usuarios'));
+        if (!snapshot.exists()) {
+            alert("No hay usuarios registrados en el sistema.");
+            return;
+        }
+
+        let usuarioEncontrado = null;
+        snapshot.forEach((childSnap) => {
+            const user = childSnap.val();
+            // Comprobación flexible (insensible a mayúsculas en username/correo)
+            if (
+                (user.username && user.username.toLowerCase() === identificador) || 
+                (user.telefono && user.telefono === identificador) || 
+                (user.correo && user.correo.toLowerCase() === identificador)
+            ) {
+                usuarioEncontrado = user;
             }
-            if (password !== confirmar) {
-                alert("Las contraseñas no coinciden.");
-                return;
-            }
+        });
 
-            const dbRef = ref(db);
-            const snapshotTel = await get(child(dbRef, `usuarios/${telefono}`));
-            if (snapshotTel.exists()) {
-                alert("Este número de teléfono ya está registrado.");
-                return;
-            }
-
-            const idUnico = "CB-" + Math.floor(1000 + Math.random() * 9000);
-            const nuevoUsuario = {
-                id: idUnico,
-                nombre: `${nombre} ${apellidos}`,
-                username,
-                correo,
-                telefono,
-                password,
-                saldo: 1000.00,
-                dineroApostado: 0.00,
-                dineroGanado: 0.00,
-                dineroPerdido: 0.00,
-                apuestasActivas: 0
-            };
-
-            await set(ref(db, 'usuarios/' + telefono), nuevoUsuario);
-            localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
-            cargarDatosUsuario(nuevoUsuario);
+        if (usuarioEncontrado && usuarioEncontrado.password === password) {
+            localStorage.setItem('cubanbet_usuario', JSON.stringify(usuarioEncontrado));
+            cargarDatosUsuario(usuarioEncontrado);
             document.getElementById('auth-container').classList.remove('active');
             iniciarApp();
-        };
+        } else {
+            alert("Usuario, correo o contraseña incorrectos.");
+        }
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        alert("Error de conexión con la base de datos.");
+    }
+};
 
-        window.iniciarSesion = async function() {
-            const identificador = document.getElementById('login-identificador').value.trim();
-            const password = document.getElementById('login-password').value;
-
-            if (!identificador || !password) {
-                alert("Introduce tus credenciales.");
-                return;
-            }
-
-            const dbRef = ref(db);
-            const snapshot = await get(child(dbRef, 'usuarios'));
-            if (!snapshot.exists()) {
-                alert("No hay usuarios registrados.");
-                return;
-            }
-
-            let usuarioEncontrado = null;
-            snapshot.forEach((childSnap) => {
-                const user = childSnap.val();
-                if (user.username === identificador || user.telefono === identificador || user.correo === identificador) {
-                    usuarioEncontrado = user;
-                }
-            });
-
-            if (usuarioEncontrado && usuarioEncontrado.password === password) {
-                localStorage.setItem('cubanbet_usuario', JSON.stringify(usuarioEncontrado));
-                cargarDatosUsuario(usuarioEncontrado);
-                document.getElementById('auth-container').classList.remove('active');
-                iniciarApp();
-            } else {
-                alert("Usuario o contraseña incorrectos.");
-            }
-        };
 
         window.enviarCodigoRecuperacion = async function() {
             const correoIngresado = document.getElementById('rec-correo').value.trim();
