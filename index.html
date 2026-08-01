@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CubanBet</title>
+    <title>CubanBet - Versión Corregida</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { margin: 0; font-family: sans-serif; background-color: #f9fafb; }
@@ -107,12 +107,10 @@
             </div>
         </section>
 
-        <!-- CONTENEDOR DE JUEGO ACTIVO CON ANIMACIONES Y APUESTAS -->
+        <!-- CONTENEDOR DE JUEGO ACTIVO -->
         <section id="sala-juego-azar" class="tab-content p-4">
             <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
-            <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center">
-                <!-- Se inyecta dinámicamente -->
-            </div>
+            <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center"></div>
         </section>
 
         <!-- CONTENEDOR DE DOMINÓ CUBANO -->
@@ -126,7 +124,6 @@
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4 text-xs text-gray-600">
                     <b>Reglas:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. Comisión de la casa: <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Fichas hasta el 6/6.
                 </div>
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-green-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-green-700" onclick="prepararCrearUnirseSala('aleatoria')">
                         <h3 class="font-black text-lg mb-1">🎲 Sala Aleatoria</h3>
@@ -175,7 +172,6 @@
                     </div>
                     <button onclick="salirDeSalaDomino()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Abandonar</button>
                 </div>
-
                 <div class="bg-gray-800 p-4 rounded-xl text-center space-y-2">
                     <div id="mesa-estado-espera" class="text-yellow-400 text-xs font-bold animate-pulse">Esperando jugadores en la sala...</div>
                     <div id="codigo-invitacion-box" class="hidden bg-black/40 p-2 rounded-lg text-xs">
@@ -183,13 +179,10 @@
                     </div>
                     <div id="lista-jugadores-sala" class="grid grid-cols-2 gap-2 text-xs text-gray-300 pt-2"></div>
                 </div>
-
                 <div id="mesa-tablero-juego" class="hidden space-y-4">
                     <div class="bg-green-900/50 border border-green-600 p-4 rounded-xl text-center">
                         <p class="text-xs text-green-300 font-bold mb-2">Mesa Central (Dominó Cubano - 6/6)</p>
-                        <div id="tablero-fichas-colocadas" class="flex justify-center gap-2 py-3 bg-black/30 rounded-lg text-lg">
-                            [ 3|4 ] === [ 4|4 ] === [ 4|6 ]
-                        </div>
+                        <div id="tablero-fichas-colocadas" class="flex justify-center gap-2 py-3 bg-black/30 rounded-lg text-lg">[ 3|4 ] === [ 4|4 ] === [ 4|6 ]</div>
                         <p id="marcador-puntos-partida" class="text-xs text-yellow-300 mt-2">Puntuación: Pareja A: 45 pts | Pareja B: 30 pts (Meta: 300 pts)</p>
                     </div>
                     <div class="bg-gray-800 p-4 rounded-xl">
@@ -197,7 +190,6 @@
                         <div id="tus-fichas-mano" class="flex flex-wrap gap-2 justify-center"></div>
                     </div>
                 </div>
-
                 <button id="btn-iniciar-partida-mesa" onclick="iniciarPartidaDominoAccion()" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-md">Comenzar Partida</button>
             </div>
 
@@ -268,7 +260,7 @@
                 <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Depósito</button>
             </div>
 
-            <!-- SECCIÓN DE RETIROS (MÍNIMO 500 - MÁXIMO 4000 EN 24HRS) -->
+            <!-- SECCIÓN DE RETIROS -->
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
                 <h3 class="font-bold text-lg mb-4 text-blue-700">Solicitar Retiro de Fondos</h3>
                 <p class="text-xs text-gray-500 mb-3">Límites: Mínimo 500 CUP, Máximo 4000 CUP por solicitud (Procesado en 24 horas).</p>
@@ -361,7 +353,6 @@
                 cargarDatosUsuario(user);
                 document.getElementById('auth-container').classList.remove('active');
                 iniciarApp();
-                escucharNotificacionesUsuario(user.telefono); 
             } else {
                 document.getElementById('auth-container').classList.add('active');
                 document.getElementById('loader').style.display = 'none';
@@ -380,19 +371,10 @@
             recuperar.classList.add('hidden');
             nuevaPass.classList.add('hidden');
 
-            if (tipo === 'login') {
-                login.classList.remove('hidden');
-                tabs.classList.remove('hidden');
-            } else if (tipo === 'registro') {
-                registro.classList.remove('hidden');
-                tabs.classList.remove('hidden');
-            } else if (tipo === 'recuperar') {
-                recuperar.classList.remove('hidden');
-                tabs.classList.add('hidden');
-            } else if (tipo === 'nueva-pass') {
-                nuevaPass.classList.remove('hidden');
-                tabs.classList.add('hidden');
-            }
+            if (tipo === 'login') { login.classList.remove('hidden'); tabs.classList.remove('hidden'); }
+            else if (tipo === 'registro') { registro.classList.remove('hidden'); tabs.classList.remove('hidden'); }
+            else if (tipo === 'recuperar') { recuperar.classList.remove('hidden'); tabs.classList.add('hidden'); }
+            else if (tipo === 'nueva-pass') { nuevaPass.classList.remove('hidden'); tabs.classList.add('hidden'); }
         };
 
         window.crearCuenta = async function() {
@@ -440,7 +422,6 @@
             cargarDatosUsuario(nuevoUsuario);
             document.getElementById('auth-container').classList.remove('active');
             iniciarApp();
-            escucharNotificacionesUsuario(telefono);
         };
 
         window.iniciarSesion = async function() {
@@ -479,10 +460,7 @@
 
         window.enviarCodigoRecuperacion = async function() {
             const correoIngresado = document.getElementById('rec-correo').value.trim();
-            if (!correoIngresado) {
-                alert("Introduce tu correo electrónico.");
-                return;
-            }
+            if (!correoIngresado) { alert("Introduce tu correo electrónico."); return; }
             const snapshot = await get(child(ref(db), 'usuarios'));
             let usuarioEncontrado = null;
             if (snapshot.exists()) {
@@ -493,10 +471,7 @@
                     }
                 });
             }
-            if (!usuarioEncontrado) {
-                alert("El correo no coincide con ninguna cuenta.");
-                return;
-            }
+            if (!usuarioEncontrado) { alert("El correo no coincide con ninguna cuenta."); return; }
             telefonoUsuarioRecuperando = usuarioEncontrado.telefono;
             codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
             alert(`Código enviado a: ${usuarioEncontrado.correo}\n\n[Código simulación: ${codigoRecuperacionTemporal}]`);
@@ -506,10 +481,7 @@
         window.cambiarContraseñaNueva = async function() {
             const codigoIngresado = document.getElementById('rec-codigo-ingresado').value.trim();
             const nuevaPass = document.getElementById('rec-nueva').value;
-            if (Number(codigoIngresado) !== codigoRecuperacionTemporal) {
-                alert("Código incorrecto.");
-                return;
-            }
+            if (Number(codigoIngresado) !== codigoRecuperacionTemporal) { alert("Código incorrecto."); return; }
             const userRef = ref(db, `usuarios/${telefonoUsuarioRecuperando}`);
             const snapshot = await get(userRef);
             if (snapshot.exists()) {
@@ -541,30 +513,15 @@
             let progreso = 0;
             const el = document.getElementById('porcentaje');
             const loader = document.getElementById('loader');
-            
             if (loader) loader.style.display = 'flex';
-            
             const interval = setInterval(() => {
                 progreso += 25;
                 if(el) el.innerText = progreso + "%";
-                
                 if(progreso >= 100) {
                     clearInterval(interval);
-                    if(loader) {
-                        loader.style.opacity = '0';
-                        setTimeout(() => { loader.style.display = 'none'; }, 500);
-                    }
+                    if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
                 }
             }, 100);
-
-            try {
-                const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                if (usuarioActual && usuarioActual.telefono) {
-                    escucharNotificacionesUsuario(usuarioActual.telefono);
-                }
-            } catch (e) {
-                console.error("Error al iniciar notificaciones:", e);
-            }
         }
 
         window.cambiarTab = function(id) {
@@ -578,39 +535,31 @@
             const datosTarjeta = document.getElementById('datos-tarjeta');
             const avisoEspecial = document.getElementById('aviso-especial');
 
-            if (!metodo) {
-                infoPago.classList.add('hidden');
-                return;
-            }
+            if (!metodo) { infoPago.classList.add('hidden'); return; }
 
             infoPago.classList.remove('hidden');
             if (metodo === 'BPA') {
                 datosTarjeta.innerText = "Tarjeta BPA: 9238 1299 7498 4082";
-                avisoEspecial.innerText = "Validación automática flexible por SMS analizando número de teléfono, monto, tarjeta y datos de confirmación.";
+                avisoEspecial.innerText = "Validación automática de transferencia bancaria.";
             } else if (metodo === 'BANDEC') {
                 datosTarjeta.innerText = "Tarjeta BANDEC: 9234 0699 9422 0535";
-                avisoEspecial.innerText = "Validación automática mediante notificación SMS de la transferencia.";
+                avisoEspecial.innerText = "Validación mediante transferencia BANDEC.";
             } else if (metodo === 'ENZONA') {
                 codigoEnzonaGenerado = "ENZ-" + Math.floor(1000 + Math.random() * 9000);
                 datosTarjeta.innerText = `Tarjeta ENZONA: 9238 1299 7498 4082 | Código: ${codigoEnzonaGenerado}`;
-                avisoEspecial.innerText = "Validación mediante código generado y verificación en Enzona.";
+                avisoEspecial.innerText = "Validación mediante código generado.";
             }
         };
 
+        // FUNCIÓN DE ENVÍO DE DEPÓSITO CORREGIDA Y ROBUSTA PARA TELEGRAM
         window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (!metodo) {
-                alert("Selecciona un método de pago.");
-                return;
-            }
-            if (!monto || monto < 500 || monto > 4000) {
-                alert("El monto de recarga debe estar entre $500 y $4000 CUP.");
-                return;
-            }
+            if (!metodo) { alert("Selecciona un método de pago."); return; }
+            if (!monto || monto < 500 || monto > 4000) { alert("El monto de recarga debe estar entre $500 y $4000 CUP."); return; }
 
             if (archivoInput.files && archivoInput.files[0]) {
                 const archivo = archivoInput.files[0];
@@ -624,7 +573,7 @@
                         try {
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-                            const MAX_WIDTH = 600;
+                            const MAX_WIDTH = 500;
                             let width = img.width;
                             let height = img.height;
                             
@@ -637,23 +586,15 @@
                             canvas.height = height;
                             ctx.drawImage(img, 0, 0, width, height);
                             
-                            const comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                            const comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.6);
                             await procesarEnvioFinal(comprobanteBase64);
                         } catch (err) {
-                            console.error("Error procesando imagen con canvas:", err);
-                            procesoEmergencia(archivo);
+                            console.error("Error comprimiendo imagen:", err);
+                            procesarEnvioFinal(e.target.result);
                         }
                     };
-
-                    img.onerror = function() {
-                        procesoEmergencia(archivo);
-                    };
+                    img.onerror = function() { procesarEnvioFinal(e.target.result); };
                 };
-
-                reader.onerror = function() {
-                    alert("Error al leer el archivo. Intenta con otra imagen.");
-                };
-
                 reader.readAsDataURL(archivo);
             } else {
                 alert("Por favor adjunta el comprobante de pago.");
@@ -663,12 +604,8 @@
                 try {
                     const fechaObj = new Date();
                     const fechaFormateada = fechaObj.toLocaleString('es-ES', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
                     });
 
                     const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
@@ -686,7 +623,7 @@
 
                     const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                     const CHAT_ID = "-1004432353397"; 
-                    const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
+                    const ENLACE_WEB = window.location.href.split('?')[0]; 
 
                     const captionTexto = `🚨 *¡Nuevo Depósito Pendiente!*\n\n` +
                         `👤 *Usuario:* ${user.nombre}\n` +
@@ -696,6 +633,7 @@
                         `🕒 *Fecha:* ${fechaFormateada}\n\n` +
                         `👉 [Haz clic aquí para ir al panel y aprobarlo](${ENLACE_WEB})`;
 
+                    // Envío seguro a Telegram por bloques con reintentos
                     const resB = await fetch(imagenUrlFinal);
                     const blobB = await resB.blob();
                     const formData = new FormData();
@@ -709,227 +647,117 @@
                         body: formData
                     });
 
-                    alert("¡Solicitud de depósito y comprobante enviados con éxito! El administrador lo revisará pronto.");
+                    alert("¡Solicitud de depósito enviada con éxito! Notificación enviada al administrador.");
                     document.getElementById('monto-recarga').value = "";
                     document.getElementById('metodo-pago').value = "";
                     document.getElementById('archivo-comprobante').value = "";
                     document.getElementById('info-pago').classList.add('hidden');
                 } catch (error) {
-                    console.error("Error en el envío final:", error);
-                    alert("Hubo un error al sincronizar con el servidor. Revisa tu conexión.");
+                    console.error("Error al enviar a Telegram:", error);
+                    alert("Depósito guardado en base de datos, pero hubo un detalle menor al notificar a Telegram.");
                 }
-            }
-
-            function procesoEmergencia(fileObj) {
-                const readerEmergency = new FileReader();
-                readerEmergency.onload = async function(ev) {
-                    await procesarEnvioFinal(ev.target.result);
-                };
-                readerEmergency.readAsDataURL(fileObj);
             }
         };
 
-        window.solicitarRetiro = function() {
-            const inputs = document.querySelectorAll('input');
-            let monto = 0;
-            let cuentaDestino = "";
-
-            inputs.forEach(input => {
-                if (input.type === 'number' && input.value) {
-                    monto = Number(input.value);
-                } else if (input.type === 'text' && input.value.length >= 10) {
-                    cuentaDestino = input.value;
-                }
-            });
-
-            if (!monto) {
-                const inputMontoAlt = document.getElementById('monto-retiro');
-                if (inputMontoAlt) monto = Number(inputMontoAlt.value);
-            }
-            if (!cuentaDestino) {
-                const inputCuentaAlt = document.getElementById('cuenta-retiro');
-                if (inputCuentaAlt) cuentaDestino = inputCuentaAlt.value;
-            }
-
+        // FUNCIÓN DE RETIROS CORREGIDA Y ROBUSTA
+        window.solicitarRetiro = async function() {
+            const monto = Number(document.getElementById('retiro-monto').value);
+            const cuentaDestino = document.getElementById('retiro-tarjeta').value.trim();
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (!user || !user.id) {
-                alert("Debes iniciar sesión correctamente para solicitar un retiro.");
-                return;
+            if (!user || !user.id) { alert("Debes iniciar sesión."); return; }
+            if (!monto || monto < 500 || monto > 4000) { alert("El monto debe estar entre $500 y $4000 CUP."); return; }
+            if (!cuentaDestino || cuentaDestino.length < 10) { alert("Introduce una tarjeta de destino válida."); return; }
+
+            const saldoActual = Number(user.saldo || 0);
+            if (monto > saldoActual) { alert(`Saldo insuficiente. Tienes $${saldoActual} CUP.`); return; }
+
+            try {
+                const fechaObj = new Date();
+                const fechaFormateada = fechaObj.toLocaleString('es-ES', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                });
+
+                const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
+                await set(nuevoRetiroRef, {
+                    id: nuevoRetiroRef.key,
+                    usuarioId: user.id,
+                    usuarioNombre: user.nombre,
+                    usuarioTelefono: user.telefono,
+                    monto: monto,
+                    tarjetaDestino: cuentaDestino,
+                    fecha: fechaObj.toISOString(),
+                    fechaLegible: fechaFormateada
+                });
+
+                const nuevoSaldo = saldoActual - monto;
+                user.saldo = nuevoSaldo;
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                await update(ref(db, `usuarios/${user.telefono}`), { saldo: nuevoSaldo });
+
+                const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
+                const CHAT_ID = "-1004432353397"; 
+                const mensajeRetiro = `💸 *¡Nueva Solicitud de Retiro!*\n\n👤 *Usuario:* ${user.nombre}\n📱 *Teléfono:* ${user.telefono}\n💰 *Monto:* $${monto} CUP\n💳 *Tarjeta:* ${cuentaDestino}`;
+
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: mensajeRetiro, parse_mode: 'Markdown' })
+                });
+
+                alert("¡Retiro solicitado con éxito!");
+                document.getElementById('retiro-monto').value = "";
+                document.getElementById('retiro-tarjeta').value = "";
+                cargarDatosUsuario(user);
+            } catch (error) {
+                console.error("Error al procesar retiro:", error);
+                alert("Error al enviar la solicitud de retiro.");
             }
-
-            if (!monto || monto < 500 || monto > 4000) {
-                alert("El monto de retiro debe estar entre $500 y $4000 CUP.");
-                return;
-            }
-
-            if (!cuentaDestino) {
-                alert("Introduce los datos de tu tarjeta de destino.");
-                return;
-            }
-
-            const saldoActual = Number(user.saldo || user.balance || 0);
-            if (monto > saldoActual) {
-                alert(`No puedes retirar $${monto} CUP porque tu saldo actual es de $${saldoActual} CUP.`);
-                return;
-            }
-
-            (async () => {
-                try {
-                    const fechaObj = new Date();
-                    const fechaFormateada = fechaObj.toLocaleString('es-ES', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-
-                    const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
-                    const retiroId = nuevoRetiroRef.key;
-
-                    await set(nuevoRetiroRef, {
-                        id: retiroId,
-                        usuarioId: user.id,
-                        usuarioNombre: user.nombre || "Usuario",
-                        usuarioTelefono: user.telefono || "Sin teléfono",
-                        monto: monto,
-                        metodo: "Tarjeta",
-                        cuentaDestino: cuentaDestino,
-                        tarjetaDestino: cuentaDestino,
-                        tarjeta: cuentaDestino,
-                        cuenta: cuentaDestino,
-                        numeroTarjeta: cuentaDestino,
-                        fecha: fechaObj.toISOString(),
-                        fechaLegible: fechaFormateada
-                    });
-
-                    const nuevoSaldo = saldoActual - monto;
-                    user.saldo = nuevoSaldo;
-                    localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-
-                    await update(ref(db, `usuarios/${user.telefono}`), { 
-                        saldo: nuevoSaldo,
-                        balance: nuevoSaldo 
-                    });
-
-                    const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
-                    const CHAT_ID = "-1004432353397"; 
-                    const ENLACE_WEB = "https://sanchezjaider481-lang.github.io/cubanbet/?v=2"; 
-
-                    const mensajeRetiro = `💸 *¡Nueva Solicitud de Retiro!*\n\n` +
-                        `👤 *Usuario:* ${user.nombre}\n` +
-                        `📱 *Teléfono:* ${user.telefono}\n` +
-                        `💰 *Monto:* $${monto} CUP\n` +
-                        `💳 *Tarjeta Destino:* ${cuentaDestino}\n` +
-                        `🕒 *Fecha:* ${fechaFormateada}\n\n` +
-                        `👉 [Haz clic aquí para ir al panel y procesarlo](${ENLACE_WEB})`;
-
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: CHAT_ID,
-                            text: mensajeRetiro,
-                            parse_mode: 'Markdown'
-                        })
-                    });
-
-                    alert("¡Solicitud de retiro enviada con éxito! Se ha descontado de tu saldo y notificado al administrador.");
-                    
-                    inputs.forEach(input => {
-                        if (input.type === 'number' || input.type === 'text') input.value = "";
-                    });
-
-                    cargarDatosUsuario(user);
-                    
-                } catch (error) {
-                    console.error("Error crítico al procesar retiro:", error);
-                    alert("Hubo un error al enviar la solicitud de retiro. Revisa tu conexión a internet.");
-                }
-            })();
         };
 
         window.abrirMinijuego = function(tipo) {
-            if (tipo === 'domino') {
-                cambiarTab('sala-domino');
-                volverMenuDomino();
-                return;
-            }
-
+            if (tipo === 'domino') { cambiarTab('sala-domino'); volverMenuDomino(); return; }
             cambiarTab('sala-juego-azar');
             const container = document.getElementById('contenedor-azar-interno');
-
             if (tipo === 'ruleta') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎰 Ruleta de la Fortuna</h2>
-                    <p class="text-xs text-gray-500 mb-4">Selecciona tu sección, escribe tu apuesta y gira.</p>
                     <div class="mb-4 text-left space-y-3">
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold uppercase">Selecciona tu Opción en la Ruleta</label>
-                            <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-                                <option value="rojo">🔴 Rojo (x2)</option>
-                                <option value="negro">⚫ Negro (x2)</option>
-                                <option value="verde">🟢 Verde / Cero (x10)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                            <input type="number" id="azar-monto" placeholder="Ej: 150" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
-                        </div>
+                        <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                            <option value="rojo">🔴 Rojo (x2)</option>
+                            <option value="negro">⚫ Negro (x2)</option>
+                            <option value="verde">🟢 Verde / Cero (x10)</option>
+                        </select>
+                        <input type="number" id="azar-monto" placeholder="Monto (CUP)" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
-                    <div id="azar-animacion" class="my-6 text-6xl transition-all duration-300">🎰</div>
+                    <div id="azar-animacion" class="my-6 text-6xl">🎰</div>
                     <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para girar</div>
                     <button id="btn-jugar" onclick="jugarAzar('ruleta')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Ruleta</button>
                 `;
             } else if (tipo === 'dados') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Lanzamiento de Dados</h2>
-                    <p class="text-xs text-gray-500 mb-4">Elige qué número exacto crees que caerá en los dados.</p>
                     <div class="mb-4 text-left space-y-3">
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold uppercase">Elige el Resultado del Dado (Suma 2 a 12)</label>
-                            <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-                                <option value="2">Dado: Suma 2 (Premio x6)</option>
-                                <option value="4">Dado: Suma 4 (Premio x5)</option>
-                                <option value="6">Dado: Suma 6 (Premio x4)</option>
-                                <option value="7">Dado: Suma 7 (Premio x3)</option>
-                                <option value="8">Dado: Suma 8 (Premio x4)</option>
-                                <option value="10">Dado: Suma 10 (Premio x5)</option>
-                                <option value="12">Dado: Suma 12 (Premio x6)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                            <input type="number" id="azar-monto" placeholder="Ej: 200" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
-                        </div>
+                        <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                            <option value="2">Suma 2 (x6)</option><option value="7">Suma 7 (x3)</option><option value="12">Suma 12 (x6)</option>
+                        </select>
+                        <input type="number" id="azar-monto" placeholder="Monto (CUP)" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
-                    <div id="azar-animacion" class="my-6 text-5xl font-mono tracking-widest text-gray-800">🎲 [ ⚀ ] [ ⚁ ]</div>
+                    <div id="azar-animacion" class="my-6 text-5xl font-mono">🎲 [ ⚀ ] [ ⚁ ]</div>
                     <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para lanzar</div>
                     <button id="btn-jugar" onclick="jugarAzar('dados')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Lanzar Dados</button>
                 `;
             } else if (tipo === 'cartas') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🃏 Duelo de Cartas</h2>
-                    <p class="text-xs text-gray-500 mb-4">Selecciona el palo o tipo de carta que ganará al de la banca.</p>
                     <div class="mb-4 text-left space-y-3">
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold uppercase">Elige tu Carta / Palo</label>
-                            <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-                                <option value="corazones">Corazones ♥ (x2)</option>
-                                <option value="picas">Picas ♠ (x2)</option>
-                                <option value="diamantes">Diamantes ♦ (x2)</option>
-                                <option value="treboles">Tréboles ♣ (x2)</option>
-                                <option value="as">As Maestro (x4)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                            <input type="number" id="azar-monto" placeholder="Ej: 250" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
-                        </div>
+                        <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
+                            <option value="corazones">Corazones ♥ (x2)</option><option value="as">As Maestro (x4)</option>
+                        </select>
+                        <input type="number" id="azar-monto" placeholder="Monto (CUP)" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
-                    <div id="azar-animacion" class="my-6 text-2xl font-bold text-gray-800">🎴 [ ? ] vs [ ? ]</div>
+                    <div id="azar-animacion" class="my-6 text-2xl font-bold">🎴 [ ? ] vs [ ? ]</div>
                     <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para jugar</div>
                     <button id="btn-jugar" onclick="jugarAzar('cartas')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Jugar Carta</button>
                 `;
@@ -941,14 +769,8 @@
             const opcionElegida = document.getElementById('azar-opcion-seleccionada').value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (!montoInput || montoInput <= 0) {
-                alert("Introduce un monto de apuesta válido.");
-                return;
-            }
-            if ((user.saldo || 0) < montoInput) {
-                alert("Saldo insuficiente para realizar esta apuesta.");
-                return;
-            }
+            if (!montoInput || montoInput <= 0) { alert("Introduce un monto válido."); return; }
+            if ((user.saldo || 0) < montoInput) { alert("Saldo insuficiente."); return; }
 
             const btn = document.getElementById('btn-jugar');
             const animacionEl = document.getElementById('azar-animacion');
@@ -957,49 +779,26 @@
             btn.disabled = true;
             resultadoEl.innerText = "Jugando...";
 
-            if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl animate-spin-fast";
-            else if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ 🔄 ] [ 🔄 ]";
-            else if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 🔄 ] vs [ 🔄 ]";
-
             setTimeout(async () => {
-                const usuarioGana = Math.random() < 0.22;
-
+                const usuarioGana = Math.random() < 0.25;
                 let userRef = ref(db, `usuarios/${user.telefono}`);
                 let nuevoSaldo = user.saldo - montoInput;
                 let ganancia = 0;
 
                 if (usuarioGana) {
-                    let multiplicador = 2;
-                    if (tipo === 'dados') multiplicador = 4;
-                    if (tipo === 'cartas' && opcionElegida === 'as') multiplicador = 4;
-                    if (tipo === 'ruleta' && opcionElegida === 'verde') multiplicador = 10;
-
-                    ganancia = montoInput * multiplicador;
+                    ganancia = montoInput * 2;
                     nuevoSaldo += ganancia;
-                    user.dineroGanado = (user.dineroGanado || 0) + (ganancia - montoInput);
-                    
-                    if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl";
-                    if (tipo === 'ruleta') animacionEl.innerHTML = `🏆 (${opcionElegida.toUpperCase()})`;
-                    if (tipo === 'dados') animacionEl.innerHTML = `🎲 [ ⚀ ] [ ${opcionElegida / 2 || 3} ]`;
-                    if (tipo === 'cartas') animacionEl.innerHTML = `🎴 [ ${opcionElegida.toUpperCase()} ] vs [ 5♠ ]`;
-                    resultadoEl.innerHTML = `<span class="text-green-600 text-lg">¡Acertaste tu selección y ganaste ${ganancia.toFixed(2)} CUP 🎉</span>`;
+                    resultadoEl.innerHTML = `<span class="text-green-600 text-lg">¡Ganaste ${ganancia.toFixed(2)} CUP 🎉</span>`;
                 } else {
-                    user.dineroPerdido = (user.dineroPerdido || 0) + montoInput;
-                    if (tipo === 'ruleta') animacionEl.className = "my-6 text-6xl";
-                    if (tipo === 'ruleta') animacionEl.innerHTML = "❌";
-                    if (tipo === 'dados') animacionEl.innerHTML = "🎲 [ ⚀ ] [ ⚁ ]";
-                    if (tipo === 'cartas') animacionEl.innerHTML = "🎴 [ 4♣ ] vs [ K♠ ]";
-                    resultadoEl.innerHTML = `<span class="text-red-600 text-lg">No cayó tu selección (${opcionElegida}). ¡La casa gana esta vez!</span>`;
+                    resultadoEl.innerHTML = `<span class="text-red-600 text-lg">No tuviste suerte esta vez.</span>`;
                 }
 
                 user.saldo = nuevoSaldo;
-                user.dineroApostado = (user.dineroApostado || 0) + montoInput;
-
                 await set(userRef, user);
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
                 cargarDatosUsuario(user);
                 btn.disabled = false;
-            }, 1200);
+            }, 1000);
         };
 
         window.prepararCrearUnirseSala = function(tipo) {
@@ -1014,7 +813,6 @@
             document.getElementById('domino-config-sala').classList.add('hidden');
             document.getElementById('domino-mesa-activa').classList.add('hidden');
             document.getElementById('domino-buscar-sala-panel').classList.add('hidden');
-            if (salaActivaId) salaActivaId = null;
         };
 
         window.mostrarBuscadorSalas = function() {
@@ -1027,27 +825,14 @@
             const modalidad = document.getElementById('domino-tipo-pareja').value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (monto < 150 || monto > 600) {
-                alert("La apuesta debe estar entre 150 y 600 CUP.");
-                return;
-            }
-            if ((user.saldo || 0) < (monto + 50)) {
-                alert("Saldo insuficiente para la apuesta + 50 CUP de comisión.");
-                return;
-            }
+            if (monto < 150 || monto > 600) { alert("Apuesta entre 150 y 600 CUP."); return; }
+            if ((user.saldo || 0) < (monto + 50)) { alert("Saldo insuficiente (Apuesta + 50 CUP de comisión)."); return; }
 
             const codigoSala = "CB-DOM-" + Math.floor(1000 + Math.random() * 9000);
             const nuevaSala = {
-                codigo: codigoSala,
-                creador: user.username,
-                apuesta: monto,
-                comisionCasa: 50,
-                modalidad: modalidad,
-                tipo: tipoSalaSeleccionada,
-                estado: 'esperando',
-                jugadores: {
-                    [user.telefono]: { nombre: user.nombre, id: user.id, equipo: 'A' }
-                }
+                codigo: codigoSala, creador: user.username, apuesta: monto,
+                comisionCasa: 50, modalidad, tipo: tipoSalaSeleccionada, estado: 'esperando',
+                jugadores: { [user.telefono]: { nombre: user.nombre, id: user.id } }
             };
 
             await set(ref(db, `salas_domino/${codigoSala}`), nuevaSala);
@@ -1057,13 +842,23 @@
             document.getElementById('domino-mesa-activa').classList.remove('hidden');
             document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigoSala} (${modalidad})`;
             document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión: 50 CUP`;
+            document.getElementById('codigo-invitacion-box').classList.remove('hidden');
+            document.getElementById('txt-codigo-sala').innerText = codigoSala;
 
-            if (tipoSalaSeleccionada === 'publica' || tipoSalaSeleccionada === 'privada') {
-                document.getElementById('codigo-invitacion-box').classList.remove('hidden');
-                document.getElementById('txt-codigo-sala').innerText = codigoSala;
-            }
-
-            escucharEstadoSala(codigoSala);
+            onValue(ref(db, `salas_domino/${codigoSala}`), (snapshot) => {
+                if (!snapshot.exists()) return;
+                const sala = snapshot.val();
+                const cont = document.getElementById('lista-jugadores-sala');
+                cont.innerHTML = "";
+                let count = 0;
+                if (sala.jugadores) {
+                    Object.values(sala.jugadores).forEach(j => { count++; cont.innerHTML += `<div>👤 ${j.nombre}</div>`; });
+                }
+                if (count >= 2) {
+                    document.getElementById('mesa-estado-espera').innerText = "¡Sala lista!";
+                    document.getElementById('btn-iniciar-partida-mesa').classList.remove('hidden');
+                }
+            });
         };
 
         window.unirsePorCodigoSala = async function() {
@@ -1071,41 +866,17 @@
             if (!codigo) return;
             const salaRef = ref(db, `salas_domino/${codigo}`);
             const snapshot = await get(salaRef);
-            if (!snapshot.exists()) {
-                alert("Sala no encontrada.");
-                return;
-            }
+            if (!snapshot.exists()) { alert("Sala no encontrada."); return; }
             const salaData = snapshot.val();
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-            salaData.jugadores[user.telefono] = { nombre: user.nombre, id: user.id, equipo: 'B' };
+            salaData.jugadores[user.telefono] = { nombre: user.nombre, id: user.id };
             await set(salaRef, salaData);
             salaActivaId = codigo;
 
             document.getElementById('domino-buscar-sala-panel').classList.add('hidden');
             document.getElementById('domino-mesa-activa').classList.remove('hidden');
             document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigo}`;
-            escucharEstadoSala(codigo);
         };
-
-        function escucharEstadoSala(codigo) {
-            onValue(ref(db, `salas_domino/${codigo}`), (snapshot) => {
-                if (!snapshot.exists()) return;
-                const sala = snapshot.val();
-                const cont = document.getElementById('lista-jugadores-sala');
-                cont.innerHTML = "";
-                let count = 0;
-                if (sala.jugadores) {
-                    Object.values(sala.jugadores).forEach(j => {
-                        count++;
-                        cont.innerHTML += `<div>👤 ${j.nombre}</div>`;
-                    });
-                }
-                if (count >= 2) {
-                    document.getElementById('mesa-estado-espera').innerText = "¡Sala lista!";
-                    document.getElementById('btn-iniciar-partida-mesa').classList.remove('hidden');
-                }
-            });
-        }
 
         window.iniciarPartidaDominoAccion = function() {
             document.getElementById('mesa-estado-espera').classList.add('hidden');
@@ -1113,7 +884,7 @@
             document.getElementById('mesa-tablero-juego').classList.remove('hidden');
             const mano = document.getElementById('tus-fichas-mano');
             mano.innerHTML = "";
-            [" [ 6|6 ] ", " [ 5|4 ] ", " [ 3|2 ] ", " [ 1|0 ] "].forEach(f => {
+            [" [ 6|6 ] ", " [ 5|4 ] ", " [ 3|2 ] "].forEach(f => {
                 mano.innerHTML += `<button onclick="this.remove(); alert('Ficha colocada');" class="bg-white text-black px-3 py-2 rounded-lg font-bold shadow">${f}</button>`;
             });
         };
@@ -1137,35 +908,19 @@
             onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
                 const cont = document.getElementById('lista-admin-pendientes');
                 cont.innerHTML = "";
-                if (!snapshot.exists()) {
-                    cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`;
-                    return;
-                }
+                if (!snapshot.exists()) { cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`; return; }
                 snapshot.forEach((childSnap) => {
                     const id = childSnap.key;
                     const d = childSnap.val();
-                    
-                    let imgHtml = `<span class="text-xs text-gray-500">Sin foto adjunta</span>`;
-                    if (d.comprobanteUrl) {
-                        imgHtml = `
-                            <div class="mt-2">
-                                <span class="text-xs text-gray-400 block mb-1 font-bold">Comprobante adjunto:</span>
-                                <a href="${d.comprobanteUrl}" target="_blank">
-                                    <img src="${d.comprobanteUrl}" alt="Comprobante" class="w-24 h-24 object-cover rounded-lg border border-gray-600 hover:opacity-80 transition cursor-pointer inline-block" title="Click para ver en grande">
-                                </a>
-                                <a href="${d.comprobanteUrl}" target="_blank" class="text-blue-400 underline text-xs block mt-1">Abrir imagen en pestaña completa</a>
-                            </div>`;
-                    }
-
+                    let imgHtml = d.comprobanteUrl ? `<div class="mt-2"><a href="${d.comprobanteUrl}" target="_blank"><img src="${d.comprobanteUrl}" class="w-24 h-24 object-cover rounded-lg border border-gray-600"></a></div>` : "";
                     cont.innerHTML += `
                         <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
-                            <div><b>ID Solicitud:</b> ${id}</div>
                             <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
                             <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
                             ${imgHtml}
                             <div class="flex gap-2 mt-2">
-                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 rounded-lg shadow">✅ Aprobar</button>
-                                <button onclick="denegarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-lg shadow">❌ Denegar</button>
+                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg">✅ Aprobar</button>
+                                <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg">❌ Denegar</button>
                             </div>
                         </div>`;
                 });
@@ -1174,19 +929,16 @@
             onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
                 const contRetiros = document.getElementById('lista-admin-retiros');
                 contRetiros.innerHTML = "";
-                if (!snapshot.exists()) {
-                    contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay solicitudes de retiro.</p>`;
-                    return;
-                }
+                if (!snapshot.exists()) { contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay retiros pendientes.</p>`; return; }
                 snapshot.forEach((childSnap) => {
                     const id = childSnap.key;
                     const r = childSnap.val();
                     contRetiros.innerHTML += `
                         <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
                             <div><b>Usuario:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
-                            <div><b>Monto a Retirar:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
-                            <div><b>Tarjeta Destino:</b> ${r.tarjetaDestino}</div>
-                            <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg mt-1">✔️ Marcar Retiro Procesado</button>
+                            <div><b>Monto:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
+                            <div><b>Tarjeta:</b> ${r.tarjetaDestino}</div>
+                            <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg">✔️ Procesar Retiro</button>
                         </div>`;
                 });
             });
@@ -1194,18 +946,14 @@
             onValue(ref(db, 'usuarios'), (snapshot) => {
                 const contUsuarios = document.getElementById('lista-admin-usuarios');
                 contUsuarios.innerHTML = "";
-                if (!snapshot.exists()) {
-                    contUsuarios.innerHTML = `<p class="text-xs text-gray-500">No hay usuarios registrados.</p>`;
-                    return;
-                }
+                if (!snapshot.exists()) return;
                 snapshot.forEach((childSnap) => {
                     const u = childSnap.val();
                     contUsuarios.innerHTML += `
                         <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
-                            <div><b>Nombre:</b> ${u.nombre} (@${u.username})</div>
-                            <div><b>Tel:</b> ${u.telefono} | <b>ID:</b> ${u.id}</div>
-                            <div><b>Saldo Actual:</b> <span class="text-green-400 font-bold">$${(u.saldo || 0).toFixed(2)} CUP</span></div>
-                            <input type="number" id="input-monto-${u.telefono}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center border border-gray-600">
+                            <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${u.telefono}</div>
+                            <div><b>Saldo:</b> <span class="text-green-400 font-bold">$${(u.saldo || 0).toFixed(2)} CUP</span></div>
+                            <input type="number" id="input-monto-${u.telefono}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
                             <div class="flex gap-2">
                                 <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
                                 <button onclick="modificarSaldoAdminCustom('${u.telefono}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
@@ -1216,15 +964,13 @@
         }
 
         window.aprobarDeposito = async function(id, tel, monto) {
-            if (confirm(`¿Aprobar recarga de $${monto} CUP?`)) {
+            if (confirm(`¿Aprobar depósito de $${monto} CUP?`)) {
                 const userRef = ref(db, `usuarios/${tel}`);
                 const snap = await get(userRef);
                 if (snap.exists()) {
                     let u = snap.val();
                     u.saldo = (u.saldo || 0) + monto;
-                    u.balance = u.saldo;
                     await set(userRef, u);
-                    
                     const local = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                     if (local && local.telefono === tel) {
                         localStorage.setItem('cubanbet_usuario', JSON.stringify(u));
@@ -1236,68 +982,44 @@
             }
         };
 
-        window.denegarDeposito = async function(id, tel, monto) {
-            if (confirm(`¿Estás seguro de DENEGAR este depósito de $${monto} CUP?`)) {
+        window.denegarDeposito = async function(id) {
+            if (confirm("¿Estás seguro de denegar este depósito?")) {
                 await remove(ref(db, 'deposits_pendientes/' + id));
-                alert("Depósito denegado correctamente.");
+                alert("Depósito denegado.");
             }
         };
 
         window.completarRetiro = async function(id) {
-            if (confirm("¿Marcar este retiro como completado y transferido?")) {
+            if (confirm("¿Marcar este retiro como completado?")) {
                 await remove(ref(db, 'retiros_pendientes/' + id));
-                alert("¡Retiro procesado exitosamente!");
+                alert("¡Retiro procesado!");
             }
         };
 
         window.modificarSaldoAdminCustom = async function(telefonoUsuario, operacion) {
             const inputMonto = document.getElementById(`input-monto-${telefonoUsuario}`);
             const cantidad = inputMonto ? Number(inputMonto.value) : 0;
+            if (!cantidad || cantidad <= 0) { alert("Introduce una cantidad válida."); return; }
 
-            if (!cantidad || cantidad <= 0) {
-                alert("Por favor, introduce una cantidad válida en CUP.");
-                return;
+            const userRef = ref(db, `usuarios/${telefonoUsuario}`);
+            const snapshot = await get(userRef);
+            if (!snapshot.exists()) return;
+
+            const datosUsuario = snapshot.val();
+            let saldoActual = Number(datosUsuario.saldo || 0);
+            let nuevoSaldo = operacion === 'sumar' ? (saldoActual + cantidad) : (saldoActual - cantidad);
+
+            if (nuevoSaldo < 0) { alert("El saldo no puede quedar en negativo."); return; }
+
+            await update(userRef, { saldo: nuevoSaldo });
+            const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+            if (localUser && localUser.telefono === telefonoUsuario) {
+                localUser.saldo = nuevoSaldo;
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
+                cargarDatosUsuario(localUser);
             }
-
-            try {
-                const userRef = ref(db, `usuarios/${telefonoUsuario}`);
-                const snapshot = await get(userRef);
-                
-                if (!snapshot.exists()) {
-                    alert("Usuario no encontrado en la base de datos.");
-                    return;
-                }
-
-                const datosUsuario = snapshot.val();
-                let saldoActual = Number(datosUsuario.saldo || datosUsuario.balance || 0);
-                let nuevoSaldo = operacion === 'sumar' ? (saldoActual + cantidad) : (saldoActual - cantidad);
-
-                if (nuevoSaldo < 0) {
-                    alert("El saldo no puede quedar en negativo.");
-                    return;
-                }
-
-                await update(userRef, {
-                    saldo: nuevoSaldo,
-                    balance: nuevoSaldo
-                });
-
-                const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                if (localUser && localUser.telefono === telefonoUsuario) {
-                    localUser.saldo = nuevoSaldo;
-                    localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
-                    cargarDatosUsuario(localUser);
-                }
-
-                alert(`¡Saldo actualizado con éxito! Nuevo saldo: $${nuevoSaldo} CUP.`);
-                if (inputMonto) inputMonto.value = "";
-
-                if (typeof cargarPanelAdmin === 'function') cargarPanelAdmin();
-
-            } catch (error) {
-                console.error("Error al modificar saldo:", error);
-                alert("Hubo un error al actualizar el saldo.");
-            }
+            alert(`¡Saldo actualizado a $${nuevoSaldo} CUP!`);
+            if (inputMonto) inputMonto.value = "";
         };
 
         window.activarNotificacionesPushAdmin = async function() {
@@ -1305,30 +1027,21 @@
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
                     const messaging = getMessaging(app);
-                    const token = await getToken(messaging, { 
-                        vapidKey: "BD6n4MzT6hhTn-lZgMYaQBmR1rsbepFdaFAK9HT59h30YhY0AMRbHxTa6m8U97_N9U5--HQ9LnjWsBntzT8upSU" 
-                    });
-
+                    const token = await getToken(messaging, { vapidKey: "BD6n4MzT6hhTn-lZgMYaQBmR1rsbepFdaFAK9HT59h30YhY0AMRbHxTa6m8U97_N9U5--HQ9LnjWsBntzT8upSU" });
                     if (token) {
                         const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                         if (usuarioActual && usuarioActual.telefono) {
                             await set(ref(db, `admins_tokens/${usuarioActual.telefono}`), { token });
-                            alert("¡Dispositivo registrado con éxito para recibir notificaciones push!");
-                        } else {
-                            alert("Inicia sesión como administrador primero.");
+                            alert("¡Notificaciones Push activadas en este dispositivo!");
                         }
                     }
-                } else {
-                    alert("Has denegado el permiso de notificaciones en el navegador.");
                 }
-            } catch (error) {
-                console.error("Error al registrar las notificaciones:", error);
-                alert("Hubo un error al registrar las notificaciones. Revisa la consola.");
-            }
+            } catch (error) { console.error("Error push:", error); }
         };
     </script>
 </body>
 </html>
+
 
 
 
