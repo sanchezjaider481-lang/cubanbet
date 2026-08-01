@@ -378,10 +378,10 @@
             else if (tipo === 'nueva-pass') { nuevaPass.classList.remove('hidden'); tabs.classList.add('hidden'); }
         };
 
-        window.crearCuenta = async function() {
+      window.crearCuenta = async function() {
     const nombre = document.getElementById('reg-nombre').value.trim();
     const apellidos = document.getElementById('reg-apellidos').value.trim();
-    const username = document.getElementById('reg-username').value.trim().toLowerCase(); // Normalizar a minúsculas
+    const username = document.getElementById('reg-username').value.trim();
     const correo = document.getElementById('reg-correo').value.trim();
     const telefono = document.getElementById('reg-telefono').value.trim();
     const password = document.getElementById('reg-password').value;
@@ -398,10 +398,9 @@
 
     try {
         const dbRef = ref(db);
-        // Verificar si el username ya existe
-        const snapshotUser = await get(child(dbRef, `usuarios/${username}`));
-        if (snapshotUser.exists()) {
-            alert("Este nombre de usuario ya está en uso.");
+        const snapshotTel = await get(child(dbRef, `usuarios/${telefono}`));
+        if (snapshotTel.exists()) {
+            alert("Este número de teléfono ya está registrado.");
             return;
         }
 
@@ -420,19 +419,20 @@
             apuestasActivas: 0
         };
 
-        // Guardar usando el username como llave principal para facilitar el acceso multidispositivo
-        await set(ref(db, 'usuarios/' + username), nuevoUsuario);
+        await set(ref(db, 'usuarios/' + telefono), nuevoUsuario);
         localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
         cargarDatosUsuario(nuevoUsuario);
         document.getElementById('auth-container').classList.remove('active');
         iniciarApp();
+        alert("¡Cuenta creada con éxito!");
     } catch (error) {
-        console.error("Error al registrar cuenta:", error);
-        alert("Hubo un error al crear la cuenta. Revisa tu conexión.");
+        console.error("Error detallado en registro:", error);
+        alert("Error de Firebase al registrar: " + error.message);
     }
 };
-        window.iniciarSesion = async function() {
-    const identificador = document.getElementById('login-identificador').value.trim().toLowerCase();
+
+window.iniciarSesion = async function() {
+    const identificador = document.getElementById('login-identificador').value.trim();
     const password = document.getElementById('login-password').value;
 
     if (!identificador || !password) {
@@ -444,19 +444,14 @@
         const dbRef = ref(db);
         const snapshot = await get(child(dbRef, 'usuarios'));
         if (!snapshot.exists()) {
-            alert("No hay usuarios registrados en el sistema.");
+            alert("No hay usuarios registrados en la base de datos.");
             return;
         }
 
         let usuarioEncontrado = null;
         snapshot.forEach((childSnap) => {
             const user = childSnap.val();
-            // Comprobación flexible (insensible a mayúsculas en username/correo)
-            if (
-                (user.username && user.username.toLowerCase() === identificador) || 
-                (user.telefono && user.telefono === identificador) || 
-                (user.correo && user.correo.toLowerCase() === identificador)
-            ) {
+            if (user.username === identificador || user.telefono === identificador || user.correo === identificador) {
                 usuarioEncontrado = user;
             }
         });
@@ -467,13 +462,15 @@
             document.getElementById('auth-container').classList.remove('active');
             iniciarApp();
         } else {
-            alert("Usuario, correo o contraseña incorrectos.");
+            alert("Usuario o contraseña incorrectos.");
         }
     } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        alert("Error de conexión con la base de datos.");
+        console.error("Error detallado en login:", error);
+        alert("Error de Firebase al iniciar sesión: " + error.message);
     }
 };
+
+        
 
 
         window.enviarCodigoRecuperacion = async function() {
