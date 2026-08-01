@@ -88,7 +88,7 @@
             </div>
         </section>
 
-        <!-- MINIJUEGOS -->
+                <!-- MINIJUEGOS -->
         <section id="minijuegos" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos y Casino</h2>
             <div class="grid grid-cols-2 gap-4 mb-6">
@@ -99,7 +99,7 @@
                     <span class="text-4xl">🎲</span><p class="font-bold mt-2">Dados</p><span class="text-xs text-gray-400">Suerte rápida</span>
                 </div>
                 <div onclick="abrirMinijuego('cartas')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
-                    <span class="text-4xl">🃏</span><p class="font-bold mt-2">Cartas</p><span class="text-xs text-gray-400">Duelo de cartas</span>
+                    <span class="text-4xl">🃏</span><p class="font-bold mt-2">Slots</p><span class="text-xs text-gray-400">Tragamonedas</span>
                 </div>
                 <div onclick="abrirMinijuego('domino')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-200 bg-green-50 cursor-pointer hover:border-green-600 col-span-2">
                     <span class="text-4xl">🁢🀰</span><p class="font-bold mt-2 text-green-800">Dominó Cubano (Salas en Línea)</p><span class="text-xs text-green-600">Hasta 6/6 • Parejas o Individual • 150 a 600 CUP</span>
@@ -112,6 +112,7 @@
             <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
             <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center"></div>
         </section>
+
 
         <!-- CONTENEDOR DE DOMINÓ CUBANO -->
         <section id="sala-domino" class="tab-content p-4">
@@ -746,53 +747,208 @@
             }
         };
 
-        window.abrirMinijuego = function(tipo) {
+                window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') { cambiarTab('sala-domino'); volverMenuDomino(); return; }
             cambiarTab('sala-juego-azar');
             const container = document.getElementById('contenedor-azar-interno');
+            
             if (tipo === 'ruleta') {
                 container.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-600 mb-4">🎰 Ruleta de la Fortuna</h2>
+                    <p class="text-xs text-gray-500 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP (Apuestas ≥ $500 no ganan)</p>
                     <div class="mb-4 text-left space-y-3">
-                        <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-                            <option value="rojo">🔴 Rojo (x2)</option>
-                            <option value="negro">⚫ Negro (x2)</option>
-                            <option value="verde">🟢 Verde / Cero (x10)</option>
-                        </select>
-                        <input type="number" id="azar-monto" placeholder="Monto (CUP)" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                        <input type="number" id="monto-ruleta" placeholder="Ej: 100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
-                    <div id="azar-animacion" class="my-6 text-6xl">🎰</div>
-                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para girar</div>
-                    <button id="btn-jugar" onclick="jugarAzar('ruleta')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Ruleta</button>
+                    <div id="wheel-element" class="my-6 text-6xl">🎰</div>
+                    <div id="resultado-ruleta" class="text-base font-bold my-2 text-gray-700">Listo para girar</div>
+                    <button onclick="jugarRuleta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Ruleta</button>
                 `;
             } else if (tipo === 'dados') {
                 container.innerHTML = `
-                    <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Lanzamiento de Dados</h2>
+                    <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Dados de la Suerte</h2>
+                    <p class="text-xs text-gray-500 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP (Apuestas ≥ $500 no ganan)</p>
                     <div class="mb-4 text-left space-y-3">
-                        <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-                            <option value="2">Suma 2 (x6)</option><option value="7">Suma 7 (x3)</option><option value="12">Suma 12 (x6)</option>
-                        </select>
-                        <input type="number" id="azar-monto" placeholder="Monto (CUP)" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                        <input type="number" id="monto-dados" placeholder="Ej: 100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
-                    <div id="azar-animacion" class="my-6 text-5xl font-mono">🎲 [ ⚀ ] [ ⚁ ]</div>
-                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para lanzar</div>
-                    <button id="btn-jugar" onclick="jugarAzar('dados')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Lanzar Dados</button>
+                    <div class="my-6 flex justify-center gap-4">
+                        <div id="dado-1" class="w-16 h-16 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl font-bold shadow">⚀</div>
+                        <div id="dado-2" class="w-16 h-16 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl font-bold shadow">⚁</div>
+                    </div>
+                    <div id="resultado-dados" class="text-base font-bold my-2 text-gray-700">Listo para tirar</div>
+                    <button onclick="jugarDados()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Tirar Dados</button>
                 `;
             } else if (tipo === 'cartas') {
                 container.innerHTML = `
-                    <h2 class="text-2xl font-bold text-green-600 mb-4">🃏 Duelo de Cartas</h2>
+                    <h2 class="text-2xl font-bold text-green-600 mb-4">🃏 Tragamonedas (Slots)</h2>
+                    <p class="text-xs text-gray-500 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP (Apuestas ≥ $500 no ganan)</p>
                     <div class="mb-4 text-left space-y-3">
-                        <select id="azar-opcion-seleccionada" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-                            <option value="corazones">Corazones ♥ (x2)</option><option value="as">As Maestro (x4)</option>
-                        </select>
-                        <input type="number" id="azar-monto" placeholder="Monto (CUP)" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
+                        <input type="number" id="monto-slots" placeholder="Ej: 100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
                     </div>
-                    <div id="azar-animacion" class="my-6 text-2xl font-bold">🎴 [ ? ] vs [ ? ]</div>
-                    <div id="azar-resultado" class="text-base font-bold my-2 text-gray-700">Listo para jugar</div>
-                    <button id="btn-jugar" onclick="jugarAzar('cartas')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Jugar Carta</button>
+                    <div class="my-6 flex justify-center gap-2">
+                        <div id="slot-1" class="w-16 h-20 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl shadow">🍒</div>
+                        <div id="slot-2" class="w-16 h-20 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl shadow">🍋</div>
+                        <div id="slot-3" class="w-16 h-20 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl shadow">🔔</div>
+                    </div>
+                    <div id="resultado-slots" class="text-base font-bold my-2 text-gray-700">Listo para girar rodillos</div>
+                    <button onclick="jugarSlots()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Slots</button>
                 `;
             }
         };
+
+        function validarApuestaMinimax(monto) {
+            if (isNaN(monto) || monto < 50 || monto > 1000) {
+                alert("La apuesta debe estar entre $50 y $1000 CUP.");
+                return false;
+            }
+            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+            if (!user || user.saldo < monto) {
+                alert("Saldo insuficiente para realizar esta apuesta.");
+                return false;
+            }
+            return true;
+        }
+
+        window.jugarRuleta = function() {
+            const monto = Number(document.getElementById('monto-ruleta').value);
+            if (!validarApuestaMinimax(monto)) return;
+
+            const ruletaUI = document.getElementById('wheel-element');
+            const resultadoDiv = document.getElementById('resultado-ruleta');
+            resultadoDiv.innerHTML = "Gira la ruleta...";
+            ruletaUI.classList.add('animate-spin-fast');
+
+            setTimeout(() => {
+                ruletaUI.classList.remove('animate-spin-fast');
+                
+                let gana = false;
+                if (monto < 500) {
+                    gana = Math.random() < 0.30; 
+                }
+
+                const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                if (gana) {
+                    const premio = monto * 2;
+                    user.saldo += (premio - monto);
+                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡FELICIDADES! Ganaste $${premio} CUP</span>`;
+                } else {
+                    user.saldo -= monto;
+                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">La casa gana. Perdiste $${monto} CUP</span>`;
+                }
+
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+            }, 1500);
+        };
+
+        window.jugarDados = function() {
+            const monto = Number(document.getElementById('monto-dados').value);
+            if (!validarApuestaMinimax(monto)) return;
+
+            const dado1 = document.getElementById('dado-1');
+            const dado2 = document.getElementById('dado-2');
+            const resultadoDiv = document.getElementById('resultado-dados');
+
+            dado1.classList.add('animate-spin-fast');
+            dado2.classList.add('animate-spin-fast');
+            resultadoDiv.innerHTML = "Tirando dados...";
+
+            setTimeout(() => {
+                dado1.classList.remove('animate-spin-fast');
+                dado2.classList.remove('animate-spin-fast');
+
+                let gana = false;
+                if (monto < 500) {
+                    gana = Math.random() < 0.30;
+                }
+
+                let d1, d2;
+                if (gana) {
+                    d1 = Math.floor(Math.random() * 2) + 5;
+                    d2 = Math.floor(Math.random() * 2) + 5;
+                } else {
+                    d1 = Math.floor(Math.random() * 3) + 1;
+                    d2 = Math.floor(Math.random() * 3) + 1;
+                }
+
+                dado1.innerText = d1;
+                dado2.innerText = d2;
+
+                const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                if (gana) {
+                    const premio = monto * 2.5;
+                    user.saldo += (premio - monto);
+                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡EXCELENTE! Ganaste $${premio} CUP</span>`;
+                } else {
+                    user.saldo -= monto;
+                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">Mala suerte, la casa se queda con $${monto} CUP</span>`;
+                }
+
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+            }, 1200);
+        };
+
+        window.jugarSlots = function() {
+            const monto = Number(document.getElementById('monto-slots').value);
+            if (!validarApuestaMinimax(monto)) return;
+
+            const r1 = document.getElementById('slot-1');
+            const r2 = document.getElementById('slot-2');
+            const r3 = document.getElementById('slot-3');
+            const resultadoDiv = document.getElementById('resultado-slots');
+
+            r1.classList.add('animate-spin-fast');
+            r2.classList.add('animate-spin-fast');
+            r3.classList.add('animate-spin-fast');
+            resultadoDiv.innerHTML = "Girando rodillos...";
+
+            const iconos = ["🍒", "🍋", "🔔", "💎", "7️⃣"];
+
+            setTimeout(() => {
+                r1.classList.remove('animate-spin-fast');
+                r2.classList.remove('animate-spin-fast');
+                r3.classList.remove('animate-spin-fast');
+
+                let gana = false;
+                if (monto < 500) {
+                    gana = Math.random() < 0.30;
+                }
+
+                let sim1, sim2, sim3;
+                if (gana) {
+                    const elegido = iconos[Math.floor(Math.random() * iconos.length)];
+                    sim1 = elegido; sim2 = elegido; sim3 = elegido;
+                } else {
+                    sim1 = iconos[Math.floor(Math.random() * iconos.length)];
+                    sim2 = iconos[Math.floor(Math.random() * iconos.length)];
+                    sim3 = iconos[Math.floor(Math.random() * iconos.length)];
+                    if (sim1 === sim2 && sim2 === sim3) {
+                        sim3 = "💩";
+                    }
+                }
+
+                r1.innerText = sim1;
+                r2.innerText = sim2;
+                r3.innerText = sim3;
+
+                const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                if (sim1 === sim2 && sim2 === sim3) {
+                    const premio = monto * 4;
+                    user.saldo += (premio - monto);
+                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡JACKPOT! Ganaste $${premio} CUP</span>`;
+                } else {
+                    user.saldo -= monto;
+                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">No hubo combinación. Perdiste $${monto} CUP</span>`;
+                }
+
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+            }, 1500);
+        };
+
 
         window.jugarAzar = async function(tipo) {
             const montoInput = Number(document.getElementById('azar-monto').value);
