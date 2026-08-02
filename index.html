@@ -88,7 +88,7 @@
             </div>
         </section>
 
-                <!-- MINIJUEGOS -->
+        <!-- MINIJUEGOS -->
         <section id="minijuegos" class="tab-content p-4">
             <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos y Casino</h2>
             <div class="grid grid-cols-2 gap-4 mb-6">
@@ -112,7 +112,6 @@
             <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
             <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center"></div>
         </section>
-
 
         <!-- CONTENEDOR DE DOMINÓ CUBANO -->
         <section id="sala-domino" class="tab-content p-4">
@@ -240,9 +239,9 @@
                 <p class="text-sm text-gray-600">ID de Usuario: <span id="perfil-id" class="font-bold text-green-600"></span></p>
             </div>
 
-            <!-- SECCIÓN DE RECARGAS -->
+            <!-- SECCIÓN DE RECARGAS (AUTOMÁTICA Y ACREDITACIÓN INMEDIATA) -->
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
-                <h3 class="font-bold text-lg mb-4 text-green-700">Solicitar Recarga Manual</h3>
+                <h3 class="font-bold text-lg mb-4 text-green-700">Recargar Saldo Automático</h3>
                 <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
                     <option value="">Selecciona el banco de tu transferencia</option>
                     <option value="BPA">BPA</option>
@@ -258,7 +257,7 @@
                 <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200 font-bold">
                 <label class="block text-xs text-gray-500 font-bold uppercase mb-1">Comprobante de pago (Captura/Foto)</label>
                 <input type="file" id="archivo-comprobante" accept="image/*" class="w-full p-3 mb-4 rounded-xl border border-gray-200 text-xs">
-                <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Depósito</button>
+                <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Confirmar y Acreditar Automáticamente</button>
             </div>
 
             <!-- SECCIÓN DE RETIROS -->
@@ -298,8 +297,8 @@
             </button>
             <div class="space-y-6">
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-4">
-                    <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Pendientes (Con Comprobante)</h3>
-                    <div id="lista-admin-pendientes" class="space-y-4"><p class="text-xs text-gray-500">Cargando solicitudes...</p></div>
+                    <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Registrados (Acreditados Automáticamente)</h3>
+                    <div id="lista-admin-pendientes" class="space-y-4"><p class="text-xs text-gray-500">Cargando depósitos...</p></div>
                 </div>
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-blue-500 space-y-4">
                     <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wide">📤 Solicitudes de Retiro (24 Horas)</h3>
@@ -348,6 +347,7 @@
         let salaActivaId = null;
 
         const BOT_TOKEN_TELEGRAM = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
+        const TELEGRAM_CHAT_ID = "-1004432353397";
 
         window.addEventListener('DOMContentLoaded', () => {
             const usuarioGuardado = localStorage.getItem('cubanbet_usuario');
@@ -490,16 +490,11 @@
                 telefonoUsuarioRecuperando = telefonoIngresado;
                 codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
 
-                const mensajeTelegram = `🔐 *Recuperación de Contraseña - CubanBet*\n\nHola, tu código de verificación de 4 dígitos es: *${codigoRecuperacionTemporal}*\n\nUgrésalo en la aplicación para restablecer tu contraseña.`;
-
-                // Intento de envío automatizado vía Telegram Bot (hacia el chat del usuario si ha interactuado, o vía chat general/canal de soporte vinculado)
-                // Como alternativa segura para asegurar que llegue al usuario o bot de soporte, enviamos al canal/bot configurado
-                const CHAT_ID = "-1004432353397"; 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        chat_id: CHAT_ID, 
+                        chat_id: TELEGRAM_CHAT_ID, 
                         text: `🔑 *Solicitud de Recuperación*\nTeléfono: ${telefonoIngresado}\nCódigo generado: *${codigoRecuperacionTemporal}*`, 
                         parse_mode: 'Markdown' 
                     })
@@ -589,22 +584,23 @@
             infoPago.classList.remove('hidden');
             if (metodo === 'BPA') {
                 datosTarjeta.innerText = "Tarjeta BPA: 9238 1299 7498 4082";
-                avisoEspecial.innerText = "Validación automática de transferencia bancaria.";
+                avisoEspecial.innerText = "Acreditación automática de transferencia bancaria.";
             } else if (metodo === 'BANDEC') {
                 datosTarjeta.innerText = "Tarjeta BANDEC: 9234 0699 9422 0535";
-                avisoEspecial.innerText = "Validación mediante transferencia BANDEC.";
+                avisoEspecial.innerText = "Acreditación automática mediante BANDEC.";
             } else if (metodo === 'ENZONA') {
                 codigoEnzonaGenerado = "ENZ-" + Math.floor(1000 + Math.random() * 9000);
                 datosTarjeta.innerText = `Tarjeta ENZONA: 9238 1299 7498 4082 | Código: ${codigoEnzonaGenerado}`;
-                avisoEspecial.innerText = "Validación mediante código generado.";
+                avisoEspecial.innerText = "Acreditación automática mediante código generado.";
             }
         };
 
+        // LÓGICA DE DEPÓSITO AUTOMÁTICO CON ACREDITACIÓN INMEDIATA Y NOTIFICACIÓN A TELEGRAM
         window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
-            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+            let user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
             if (!user) {
                 alert("Por favor inicia sesión nuevamente.");
@@ -648,14 +644,14 @@
                         ctx.drawImage(img, 0, 0, width, height);
                         
                         const comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                        await procesarEnvioFinal(comprobanteBase64);
+                        await procesarDepositoAutomaticoFinal(comprobanteBase64);
                     } catch (err) {
                         console.error("Error comprimiendo imagen:", err);
-                        await procesarEnvioFinal(e.target.result);
+                        await procesarDepositoAutomaticoFinal(e.target.result);
                     }
                 };
                 img.onerror = async function() { 
-                    await procesarEnvioFinal(e.target.result); 
+                    await procesarDepositoAutomaticoFinal(e.target.result); 
                 };
             };
             reader.onerror = function() {
@@ -663,7 +659,7 @@
             };
             reader.readAsDataURL(archivo);
 
-            async function procesarEnvioFinal(imagenUrlFinal) {
+            async function procesarDepositoAutomaticoFinal(imagenUrlFinal) {
                 try {
                     const fechaObj = new Date();
                     const fechaFormateada = fechaObj.toLocaleString('es-ES', {
@@ -671,7 +667,13 @@
                         hour: '2-digit', minute: '2-digit', second: '2-digit'
                     });
 
-                    // 1. Guardar en Firebase Realtime Database
+                    // 1. ACREDITACIÓN AUTOMÁTICA INMEDIATA DEL SALDO AL USUARIO
+                    user.saldo = Number(user.saldo || 0) + monto;
+                    localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
+                    await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
+                    cargarDatosUsuario(user);
+
+                    // 2. Registrar el depósito en Firebase (para historial/admin)
                     const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
                     await set(nuevoDepositoRef, {
                         id: nuevoDepositoRef.key,
@@ -682,26 +684,25 @@
                         metodo: metodo,
                         comprobanteUrl: imagenUrlFinal,
                         fecha: fechaObj.toISOString(),
-                        fechaLegible: fechaFormateada
+                        fechaLegible: fechaFormateada,
+                        estado: 'Acreditado Automáticamente'
                     });
 
-                    // 2. Notificación automática a Telegram con Aceptación Automática configurada
-                    const CHAT_ID = "-1004432353397"; 
+                    // 3. Notificación automática a Telegram sin fallos
                     const ENLACE_WEB = window.location.href.split('?')[0]; 
-
-                    const captionTexto = `🚨 *¡Nuevo Depósito Automático Registrado!*\n\n` +
+                    const captionTexto = `🔔 *¡Nuevo Depósito Acreditado Automáticamente!*\n\n` +
                         `👤 *Usuario:* ${user.nombre}\n` +
                         `📱 *Teléfono:* ${user.telefono}\n` +
-                        `💰 *Monto:* $${monto} CUP (Aceptado automáticamente)\n` +
+                        `💰 *Monto:* $${monto} CUP\n` +
                         `💳 *Método:* ${metodo}\n` +
                         `🕒 *Fecha:* ${fechaFormateada}\n\n` +
-                        `👉 [Ir al panel de administración](${ENLACE_WEB})`;
+                        `👉 [Verificar en Panel](${ENLACE_WEB})`;
 
                     try {
                         const resB = await fetch(imagenUrlFinal);
                         const blobB = await resB.blob();
                         const formData = new FormData();
-                        formData.append('chat_id', CHAT_ID);
+                        formData.append('chat_id', TELEGRAM_CHAT_ID);
                         formData.append('photo', blobB, 'comprobante.jpg');
                         formData.append('caption', captionTexto);
                         formData.append('parse_mode', 'Markdown');
@@ -716,21 +717,21 @@
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                chat_id: CHAT_ID,
-                                text: captionTexto + "\n\n(No se pudo adjuntar la foto automáticamente, revisa el panel web)",
+                                chat_id: TELEGRAM_CHAT_ID,
+                                text: captionTexto + "\n\n(Comprobante registrado en la base de datos)",
                                 parse_mode: 'Markdown'
                             })
                         });
                     }
 
-                    alert("¡Solicitud de depósito enviada con éxito!");
+                    alert(`¡Depósito de $${monto} CUP acreditado automáticamente con éxito!`);
                     document.getElementById('monto-recarga').value = "";
                     document.getElementById('metodo-pago').value = "";
                     document.getElementById('archivo-comprobante').value = "";
                     document.getElementById('info-pago').classList.add('hidden');
                 } catch (error) {
-                    console.error("Error crítico en el proceso de depósito:", error);
-                    alert("Hubo un error al registrar la solicitud. Revisa la consola o tu conexión.");
+                    console.error("Error crítico en el proceso de depósito automático:", error);
+                    alert("Hubo un error al registrar la solicitud. Revisa tu conexión.");
                 }
             }
         };
@@ -771,13 +772,12 @@
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
                 await update(ref(db, `usuarios/${user.telefono}`), { saldo: nuevoSaldo });
 
-                const CHAT_ID = "-1004432353397"; 
                 const mensajeRetiro = `💸 *¡Nueva Solicitud de Retiro!*\n\n👤 *Usuario:* ${user.nombre}\n📱 *Teléfono:* ${user.telefono}\n💰 *Monto:* $${monto} CUP\n💳 *Tarjeta:* ${cuentaDestino}`;
 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: mensajeRetiro, parse_mode: 'Markdown' })
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: mensajeRetiro, parse_mode: 'Markdown' })
                 });
 
                 alert("¡Retiro solicitado con éxito!");
@@ -1109,7 +1109,7 @@
                 const cont = document.getElementById('lista-admin-pendientes');
                 cont.innerHTML = "";
                 if (!snapshot.exists()) { 
-                    cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`; 
+                    cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos registrados.</p>`; 
                     return; 
                 }
                 snapshot.forEach((childSnap) => {
@@ -1120,10 +1120,10 @@
                         <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
                             <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
                             <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
+                            <div class="text-emerald-300 font-bold">Estado: Acreditado Automáticamente</div>
                             ${imgHtml}
                             <div class="flex gap-2 mt-2">
-                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg">✅ Aprobar</button>
-                                <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg">❌ Denegar</button>
+                                <button onclick="eliminarRegistroDeposito('${id}')" class="w-full bg-red-600 text-white font-bold py-2.5 rounded-lg">🗑️ Eliminar Registro</button>
                             </div>
                         </div>`;
                 });
@@ -1182,29 +1182,10 @@
             });
         }
 
-        window.aprobarDeposito = async function(id, tel, monto) {
-            if (confirm(`¿Aprobar depósito de $${monto} CUP?`)) {
-                const userRef = ref(db, `usuarios/${tel}`);
-                const snap = await get(userRef);
-                if (snap.exists()) {
-                    let u = snap.val();
-                    u.saldo = (u.saldo || 0) + monto;
-                    await set(userRef, u);
-                    const local = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                    if (local && local.telefono === tel) {
-                        localStorage.setItem('cubanbet_usuario', JSON.stringify(u));
-                        cargarDatosUsuario(u);
-                    }
-                }
+        window.eliminarRegistroDeposito = async function(id) {
+            if (confirm("¿Estás seguro de eliminar este registro del panel?")) {
                 await remove(ref(db, 'deposits_pendientes/' + id));
-                alert("¡Depósito aprobado con éxito!");
-            }
-        };
-
-        window.denegarDeposito = async function(id) {
-            if (confirm("¿Estás seguro de denegar este depósito?")) {
-                await remove(ref(db, 'deposits_pendientes/' + id));
-                alert("Depósito denegado.");
+                alert("Registro eliminado.");
             }
         };
 
@@ -1260,3 +1241,4 @@
     </script>
 </body>
 </html>
+
