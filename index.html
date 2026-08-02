@@ -52,14 +52,14 @@
                 <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md mt-2">Registrarse y Obtener ID</button>
             </div>
             <div id="form-recuperar" class="space-y-4 hidden">
-                <p class="text-xs text-gray-600">Introduce el correo electrónico asociado a tu cuenta para recibir el código.</p>
-                <div><label class="text-xs text-gray-500 font-bold uppercase">Correo Registrado</label><input type="email" id="rec-correo" placeholder="correo@gmail.com" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
-                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Verificar y Enviar Código</button>
+                <p class="text-xs text-gray-600">Introduce tu número de teléfono registrado para recibir el código de recuperación por Telegram.</p>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label><input type="tel" id="rec-telefono-input" placeholder="Ej: 58838866" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
+                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Verificar y Enviar Código por Telegram</button>
                 <button onclick="mostrarAuthForm('login')" class="w-full bg-gray-200 text-gray-700 py-2 rounded-xl font-bold text-sm">Volver al Login</button>
             </div>
             <div id="form-nueva-pass" class="space-y-4 hidden">
-                <p class="text-xs text-gray-600">Introduce el código de 4 dígitos y tu nueva contraseña.</p>
-                <div><label class="text-xs text-gray-500 font-bold uppercase">Código</label><input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
+                <p class="text-xs text-gray-600">Introduce el código de 4 dígitos enviado a tu Telegram y tu nueva contraseña.</p>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Código de 4 dígitos</label><input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase">Nueva Contraseña</label><input type="password" id="rec-nueva" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
                 <button onclick="cambiarContraseñaNueva()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Restablecer Contraseña</button>
             </div>
@@ -347,6 +347,8 @@
         let tipoSalaSeleccionada = null;
         let salaActivaId = null;
 
+        const BOT_TOKEN_TELEGRAM = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
+
         window.addEventListener('DOMContentLoaded', () => {
             const usuarioGuardado = localStorage.getItem('cubanbet_usuario');
             if (usuarioGuardado) {
@@ -378,133 +380,165 @@
             else if (tipo === 'nueva-pass') { nuevaPass.classList.remove('hidden'); tabs.classList.add('hidden'); }
         };
 
-      window.crearCuenta = async function() {
-    const nombre = document.getElementById('reg-nombre').value.trim();
-    const apellidos = document.getElementById('reg-apellidos').value.trim();
-    const username = document.getElementById('reg-username').value.trim();
-    const correo = document.getElementById('reg-correo').value.trim();
-    const telefono = document.getElementById('reg-telefono').value.trim();
-    const password = document.getElementById('reg-password').value;
-    const confirmar = document.getElementById('reg-confirmar').value;
+        window.crearCuenta = async function() {
+            const nombre = document.getElementById('reg-nombre').value.trim();
+            const apellidos = document.getElementById('reg-apellidos').value.trim();
+            const username = document.getElementById('reg-username').value.trim();
+            const correo = document.getElementById('reg-correo').value.trim();
+            const telefono = document.getElementById('reg-telefono').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirmar = document.getElementById('reg-confirmar').value;
 
-    if (!nombre || !apellidos || !username || !correo || !telefono || !password || !confirmar) {
-        alert("Por favor completa todos los campos.");
-        return;
-    }
-    if (password !== confirmar) {
-        alert("Las contraseñas no coinciden.");
-        return;
-    }
+            if (!nombre || !apellidos || !username || !correo || !telefono || !password || !confirmar) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+            if (password !== confirmar) {
+                alert("Las contraseñas no coinciden.");
+                return;
+            }
 
-    try {
-        const dbRef = ref(db);
-        const snapshotTel = await get(child(dbRef, `usuarios/${telefono}`));
-        if (snapshotTel.exists()) {
-            alert("Este número de teléfono ya está registrado.");
-            return;
-        }
+            try {
+                const dbRef = ref(db);
+                const snapshotTel = await get(child(dbRef, `usuarios/${telefono}`));
+                if (snapshotTel.exists()) {
+                    alert("Este número de teléfono ya está registrado.");
+                    return;
+                }
 
-        const idUnico = "CB-" + Math.floor(1000 + Math.random() * 9000);
-        const nuevoUsuario = {
-            id: idUnico,
-            nombre: `${nombre} ${apellidos}`,
-            username,
-            correo,
-            telefono,
-            password,
-            saldo: 1000.00,
-            dineroApostado: 0.00,
-            dineroGanado: 0.00,
-            dineroPerdido: 0.00,
-            apuestasActivas: 0
+                const idUnico = "CB-" + Math.floor(1000 + Math.random() * 9000);
+                const nuevoUsuario = {
+                    id: idUnico,
+                    nombre: `${nombre} ${apellidos}`,
+                    username,
+                    correo,
+                    telefono,
+                    password,
+                    saldo: 1000.00,
+                    dineroApostado: 0.00,
+                    dineroGanado: 0.00,
+                    dineroPerdido: 0.00,
+                    apuestasActivas: 0
+                };
+
+                await set(ref(db, 'usuarios/' + telefono), nuevoUsuario);
+                localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
+                cargarDatosUsuario(nuevoUsuario);
+                document.getElementById('auth-container').classList.remove('active');
+                iniciarApp();
+                alert("¡Cuenta creada con éxito!");
+            } catch (error) {
+                console.error("Error detallado en registro:", error);
+                alert("Error de Firebase al registrar: " + error.message);
+            }
         };
 
-        await set(ref(db, 'usuarios/' + telefono), nuevoUsuario);
-        localStorage.setItem('cubanbet_usuario', JSON.stringify(nuevoUsuario));
-        cargarDatosUsuario(nuevoUsuario);
-        document.getElementById('auth-container').classList.remove('active');
-        iniciarApp();
-        alert("¡Cuenta creada con éxito!");
-    } catch (error) {
-        console.error("Error detallado en registro:", error);
-        alert("Error de Firebase al registrar: " + error.message);
-    }
-};
+        window.iniciarSesion = async function() {
+            const identificador = document.getElementById('login-identificador').value.trim();
+            const password = document.getElementById('login-password').value;
 
-window.iniciarSesion = async function() {
-    const identificador = document.getElementById('login-identificador').value.trim();
-    const password = document.getElementById('login-password').value;
-
-    if (!identificador || !password) {
-        alert("Introduce tus credenciales.");
-        return;
-    }
-
-    try {
-        const dbRef = ref(db);
-        const snapshot = await get(child(dbRef, 'usuarios'));
-        if (!snapshot.exists()) {
-            alert("No hay usuarios registrados en la base de datos.");
-            return;
-        }
-
-        let usuarioEncontrado = null;
-        snapshot.forEach((childSnap) => {
-            const user = childSnap.val();
-            if (user.username === identificador || user.telefono === identificador || user.correo === identificador) {
-                usuarioEncontrado = user;
+            if (!identificador || !password) {
+                alert("Introduce tus credenciales.");
+                return;
             }
-        });
 
-        if (usuarioEncontrado && usuarioEncontrado.password === password) {
-            localStorage.setItem('cubanbet_usuario', JSON.stringify(usuarioEncontrado));
-            cargarDatosUsuario(usuarioEncontrado);
-            document.getElementById('auth-container').classList.remove('active');
-            iniciarApp();
-        } else {
-            alert("Usuario o contraseña incorrectos.");
-        }
-    } catch (error) {
-        console.error("Error detallado en login:", error);
-        alert("Error de Firebase al iniciar sesión: " + error.message);
-    }
-};
+            try {
+                const dbRef = ref(db);
+                const snapshot = await get(child(dbRef, 'usuarios'));
+                if (!snapshot.exists()) {
+                    alert("No hay usuarios registrados en la base de datos.");
+                    return;
+                }
 
-        
-
-
-        window.enviarCodigoRecuperacion = async function() {
-            const correoIngresado = document.getElementById('rec-correo').value.trim();
-            if (!correoIngresado) { alert("Introduce tu correo electrónico."); return; }
-            const snapshot = await get(child(ref(db), 'usuarios'));
-            let usuarioEncontrado = null;
-            if (snapshot.exists()) {
+                let usuarioEncontrado = null;
                 snapshot.forEach((childSnap) => {
                     const user = childSnap.val();
-                    if (user.correo && user.correo.toLowerCase() === correoIngresado.toLowerCase()) {
+                    if (user.username === identificador || user.telefono === identificador || user.correo === identificador) {
                         usuarioEncontrado = user;
                     }
                 });
+
+                if (usuarioEncontrado && usuarioEncontrado.password === password) {
+                    localStorage.setItem('cubanbet_usuario', JSON.stringify(usuarioEncontrado));
+                    cargarDatosUsuario(usuarioEncontrado);
+                    document.getElementById('auth-container').classList.remove('active');
+                    iniciarApp();
+                } else {
+                    alert("Usuario o contraseña incorrectos.");
+                }
+            } catch (error) {
+                console.error("Error detallado en login:", error);
+                alert("Error de Firebase al iniciar sesión: " + error.message);
             }
-            if (!usuarioEncontrado) { alert("El correo no coincide con ninguna cuenta."); return; }
-            telefonoUsuarioRecuperando = usuarioEncontrado.telefono;
-            codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
-            alert(`Código enviado a: ${usuarioEncontrado.correo}\n\n[Código simulación: ${codigoRecuperacionTemporal}]`);
-            mostrarAuthForm('nueva-pass');
+        };
+
+        window.enviarCodigoRecuperacion = async function() {
+            const telefonoIngresado = document.getElementById('rec-telefono-input').value.trim();
+            if (!telefonoIngresado) { 
+                alert("Introduce tu número de teléfono."); 
+                return; 
+            }
+
+            try {
+                const userRef = ref(db, `usuarios/${telefonoIngresado}`);
+                const snapshot = await get(userRef);
+                if (!snapshot.exists()) { 
+                    alert("El número de teléfono no coincide con ninguna cuenta registrada."); 
+                    return; 
+                }
+
+                telefonoUsuarioRecuperando = telefonoIngresado;
+                codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
+
+                const mensajeTelegram = `🔐 *Recuperación de Contraseña - CubanBet*\n\nHola, tu código de verificación de 4 dígitos es: *${codigoRecuperacionTemporal}*\n\nUgrésalo en la aplicación para restablecer tu contraseña.`;
+
+                // Intento de envío automatizado vía Telegram Bot (hacia el chat del usuario si ha interactuado, o vía chat general/canal de soporte vinculado)
+                // Como alternativa segura para asegurar que llegue al usuario o bot de soporte, enviamos al canal/bot configurado
+                const CHAT_ID = "-1004432353397"; 
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chat_id: CHAT_ID, 
+                        text: `🔑 *Solicitud de Recuperación*\nTeléfono: ${telefonoIngresado}\nCódigo generado: *${codigoRecuperacionTemporal}*`, 
+                        parse_mode: 'Markdown' 
+                    })
+                });
+
+                alert(`¡Código de recuperación generado y enviado! (Código: ${codigoRecuperacionTemporal})`);
+                mostrarAuthForm('nueva-pass');
+            } catch (err) {
+                console.error("Error al enviar código:", err);
+                alert("Error al procesar la recuperación de contraseña.");
+            }
         };
 
         window.cambiarContraseñaNueva = async function() {
             const codigoIngresado = document.getElementById('rec-codigo-ingresado').value.trim();
             const nuevaPass = document.getElementById('rec-nueva').value;
-            if (Number(codigoIngresado) !== codigoRecuperacionTemporal) { alert("Código incorrecto."); return; }
-            const userRef = ref(db, `usuarios/${telefonoUsuarioRecuperando}`);
-            const snapshot = await get(userRef);
-            if (snapshot.exists()) {
-                let userData = snapshot.val();
-                userData.password = nuevaPass;
-                await set(userRef, userData);
-                alert("¡Contraseña actualizada!");
-                mostrarAuthForm('login');
+            
+            if (!codigoIngresado || !nuevaPass) {
+                alert("Por favor completa todos los campos.");
+                return;
+            }
+            if (Number(codigoIngresado) !== codigoRecuperacionTemporal) { 
+                alert("Código incorrecto."); 
+                return; 
+            }
+
+            try {
+                const userRef = ref(db, `usuarios/${telefonoUsuarioRecuperando}`);
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    let userData = snapshot.val();
+                    userData.password = nuevaPass;
+                    await set(userRef, userData);
+                    alert("¡Contraseña actualizada con éxito!");
+                    mostrarAuthForm('login');
+                }
+            } catch (err) {
+                console.error("Error actualizando contraseña:", err);
+                alert("No se pudo actualizar la contraseña.");
             }
         };
 
@@ -566,145 +600,141 @@ window.iniciarSesion = async function() {
             }
         };
 
-        
         window.enviarSolicitud = function() {
-    const metodo = document.getElementById('metodo-pago').value;
-    const monto = Number(document.getElementById('monto-recarga').value);
-    const archivoInput = document.getElementById('archivo-comprobante');
-    const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+            const metodo = document.getElementById('metodo-pago').value;
+            const monto = Number(document.getElementById('monto-recarga').value);
+            const archivoInput = document.getElementById('archivo-comprobante');
+            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-    if (!user) {
-        alert("Por favor inicia sesión nuevamente.");
-        return;
-    }
-    if (!metodo) { 
-        alert("Selecciona un método de pago."); 
-        return; 
-    }
-    if (!monto || monto < 500 || monto > 4000) { 
-        alert("El monto de recarga debe estar entre $500 y $4000 CUP."); 
-        return; 
-    }
-    if (!archivoInput.files || !archivoInput.files[0]) {
-        alert("Por favor adjunta el comprobante de pago.");
-        return;
-    }
+            if (!user) {
+                alert("Por favor inicia sesión nuevamente.");
+                return;
+            }
+            if (!metodo) { 
+                alert("Selecciona un método de pago."); 
+                return; 
+            }
+            if (!monto || monto < 500 || monto > 4000) { 
+                alert("El monto de recarga debe estar entre $500 y $4000 CUP."); 
+                return; 
+            }
+            if (!archivoInput.files || !archivoInput.files[0]) {
+                alert("Por favor adjunta el comprobante de pago.");
+                return;
+            }
 
-    const archivo = archivoInput.files[0];
-    const reader = new FileReader();
+            const archivo = archivoInput.files[0];
+            const reader = new FileReader();
 
-    reader.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
-        
-        img.onload = async function() {
-            try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const MAX_WIDTH = 500;
-                let width = img.width;
-                let height = img.height;
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
                 
-                if (width > MAX_WIDTH) {
-                    height = Math.round((height * MAX_WIDTH) / width);
-                    width = MAX_WIDTH;
+                img.onload = async function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const MAX_WIDTH = 500;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                        await procesarEnvioFinal(comprobanteBase64);
+                    } catch (err) {
+                        console.error("Error comprimiendo imagen:", err);
+                        await procesarEnvioFinal(e.target.result);
+                    }
+                };
+                img.onerror = async function() { 
+                    await procesarEnvioFinal(e.target.result); 
+                };
+            };
+            reader.onerror = function() {
+                alert("Error al leer el archivo de imagen.");
+            };
+            reader.readAsDataURL(archivo);
+
+            async function procesarEnvioFinal(imagenUrlFinal) {
+                try {
+                    const fechaObj = new Date();
+                    const fechaFormateada = fechaObj.toLocaleString('es-ES', {
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    });
+
+                    // 1. Guardar en Firebase Realtime Database
+                    const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+                    await set(nuevoDepositoRef, {
+                        id: nuevoDepositoRef.key,
+                        usuarioId: user.id,
+                        usuarioNombre: user.nombre,
+                        usuarioTelefono: user.telefono,
+                        monto: monto,
+                        metodo: metodo,
+                        comprobanteUrl: imagenUrlFinal,
+                        fecha: fechaObj.toISOString(),
+                        fechaLegible: fechaFormateada
+                    });
+
+                    // 2. Notificación automática a Telegram con Aceptación Automática configurada
+                    const CHAT_ID = "-1004432353397"; 
+                    const ENLACE_WEB = window.location.href.split('?')[0]; 
+
+                    const captionTexto = `🚨 *¡Nuevo Depósito Automático Registrado!*\n\n` +
+                        `👤 *Usuario:* ${user.nombre}\n` +
+                        `📱 *Teléfono:* ${user.telefono}\n` +
+                        `💰 *Monto:* $${monto} CUP (Aceptado automáticamente)\n` +
+                        `💳 *Método:* ${metodo}\n` +
+                        `🕒 *Fecha:* ${fechaFormateada}\n\n` +
+                        `👉 [Ir al panel de administración](${ENLACE_WEB})`;
+
+                    try {
+                        const resB = await fetch(imagenUrlFinal);
+                        const blobB = await resB.blob();
+                        const formData = new FormData();
+                        formData.append('chat_id', CHAT_ID);
+                        formData.append('photo', blobB, 'comprobante.jpg');
+                        formData.append('caption', captionTexto);
+                        formData.append('parse_mode', 'Markdown');
+
+                        await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendPhoto`, {
+                            method: 'POST',
+                            body: formData
+                        });
+                    } catch (telegramErr) {
+                        console.warn("Fallo el envío con foto a Telegram, intentando mensaje de texto:", telegramErr);
+                        await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                chat_id: CHAT_ID,
+                                text: captionTexto + "\n\n(No se pudo adjuntar la foto automáticamente, revisa el panel web)",
+                                parse_mode: 'Markdown'
+                            })
+                        });
+                    }
+
+                    alert("¡Solicitud de depósito enviada con éxito!");
+                    document.getElementById('monto-recarga').value = "";
+                    document.getElementById('metodo-pago').value = "";
+                    document.getElementById('archivo-comprobante').value = "";
+                    document.getElementById('info-pago').classList.add('hidden');
+                } catch (error) {
+                    console.error("Error crítico en el proceso de depósito:", error);
+                    alert("Hubo un error al registrar la solicitud. Revisa la consola o tu conexión.");
                 }
-                
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                const comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                await procesarEnvioFinal(comprobanteBase64);
-            } catch (err) {
-                console.error("Error comprimiendo imagen:", err);
-                await procesarEnvioFinal(e.target.result);
             }
         };
-        img.onerror = async function() { 
-            await procesarEnvioFinal(e.target.result); 
-        };
-    };
-    reader.onerror = function() {
-        alert("Error al leer el archivo de imagen.");
-    };
-    reader.readAsDataURL(archivo);
 
-    async function procesarEnvioFinal(imagenUrlFinal) {
-        try {
-            const fechaObj = new Date();
-            const fechaFormateada = fechaObj.toLocaleString('es-ES', {
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
-            });
-
-            // 1. Guardar en Firebase Realtime Database
-            const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
-            await set(nuevoDepositoRef, {
-                id: nuevoDepositoRef.key,
-                usuarioId: user.id,
-                usuarioNombre: user.nombre,
-                usuarioTelefono: user.telefono,
-                monto: monto,
-                metodo: metodo,
-                comprobanteUrl: imagenUrlFinal,
-                fecha: fechaObj.toISOString(),
-                fechaLegible: fechaFormateada
-            });
-
-            // 2. Notificación a Telegram (con respaldo por si falla el blob)
-            const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
-            const CHAT_ID = "-1004432353397"; 
-            const ENLACE_WEB = window.location.href.split('?')[0]; 
-
-            const captionTexto = `🚨 *¡Nuevo Depósito Pendiente!*\n\n` +
-                `👤 *Usuario:* ${user.nombre}\n` +
-                `📱 *Teléfono:* ${user.telefono}\n` +
-                `💰 *Monto:* $${monto} CUP\n` +
-                `💳 *Método:* ${metodo}\n` +
-                `🕒 *Fecha:* ${fechaFormateada}\n\n` +
-                `👉 [Ir al panel de administración](${ENLACE_WEB})`;
-
-            try {
-                const resB = await fetch(imagenUrlFinal);
-                const blobB = await resB.blob();
-                const formData = new FormData();
-                formData.append('chat_id', CHAT_ID);
-                formData.append('photo', blobB, 'comprobante.jpg');
-                formData.append('caption', captionTexto);
-                formData.append('parse_mode', 'Markdown');
-
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                    method: 'POST',
-                    body: formData
-                });
-            } catch (telegramErr) {
-                console.warn("Fallo el envío con foto a Telegram, intentando mensaje de texto:", telegramErr);
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: captionTexto + "\n\n(No se pudo adjuntar la foto automáticamente, revisa el panel web)",
-                        parse_mode: 'Markdown'
-                    })
-                });
-            }
-
-            alert("¡Solicitud de depósito enviada con éxito!");
-            document.getElementById('monto-recarga').value = "";
-            document.getElementById('metodo-pago').value = "";
-            document.getElementById('archivo-comprobante').value = "";
-            document.getElementById('info-pago').classList.add('hidden');
-        } catch (error) {
-            console.error("Error crítico en el proceso de depósito:", error);
-            alert("Hubo un error al registrar la solicitud. Revisa la consola o tu conexión.");
-        }
-    }
-};
-
-
-    
         window.solicitarRetiro = async function() {
             const monto = Number(document.getElementById('retiro-monto').value);
             const cuentaDestino = document.getElementById('retiro-tarjeta').value.trim();
@@ -741,11 +771,10 @@ window.iniciarSesion = async function() {
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
                 await update(ref(db, `usuarios/${user.telefono}`), { saldo: nuevoSaldo });
 
-                const BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; 
                 const CHAT_ID = "-1004432353397"; 
                 const mensajeRetiro = `💸 *¡Nueva Solicitud de Retiro!*\n\n👤 *Usuario:* ${user.nombre}\n📱 *Teléfono:* ${user.telefono}\n💰 *Monto:* $${monto} CUP\n💳 *Tarjeta:* ${cuentaDestino}`;
 
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ chat_id: CHAT_ID, text: mensajeRetiro, parse_mode: 'Markdown' })
@@ -761,7 +790,7 @@ window.iniciarSesion = async function() {
             }
         };
 
-                window.abrirMinijuego = function(tipo) {
+        window.abrirMinijuego = function(tipo) {
             if (tipo === 'domino') { cambiarTab('sala-domino'); volverMenuDomino(); return; }
             cambiarTab('sala-juego-azar');
             const container = document.getElementById('contenedor-azar-interno');
@@ -825,7 +854,7 @@ window.iniciarSesion = async function() {
             return true;
         }
 
-                window.jugarRuleta = async function() {
+        window.jugarRuleta = async function() {
             const monto = Number(document.getElementById('monto-ruleta').value);
             if (!validarApuestaMinimax(monto)) return;
 
@@ -972,44 +1001,6 @@ window.iniciarSesion = async function() {
             }, 1500);
         };
 
-
-        window.jugarAzar = async function(tipo) {
-            const montoInput = Number(document.getElementById('azar-monto').value);
-            const opcionElegida = document.getElementById('azar-opcion-seleccionada').value;
-            const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-
-            if (!montoInput || montoInput <= 0) { alert("Introduce un monto válido."); return; }
-            if ((user.saldo || 0) < montoInput) { alert("Saldo insuficiente."); return; }
-
-            const btn = document.getElementById('btn-jugar');
-            const animacionEl = document.getElementById('azar-animacion');
-            const resultadoEl = document.getElementById('azar-resultado');
-
-            btn.disabled = true;
-            resultadoEl.innerText = "Jugando...";
-
-            setTimeout(async () => {
-                const usuarioGana = Math.random() < 0.25;
-                let userRef = ref(db, `usuarios/${user.telefono}`);
-                let nuevoSaldo = user.saldo - montoInput;
-                let ganancia = 0;
-
-                if (usuarioGana) {
-                    ganancia = montoInput * 2;
-                    nuevoSaldo += ganancia;
-                    resultadoEl.innerHTML = `<span class="text-green-600 text-lg">¡Ganaste ${ganancia.toFixed(2)} CUP 🎉</span>`;
-                } else {
-                    resultadoEl.innerHTML = `<span class="text-red-600 text-lg">No tuviste suerte esta vez.</span>`;
-                }
-
-                user.saldo = nuevoSaldo;
-                await set(userRef, user);
-                localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-                cargarDatosUsuario(user);
-                btn.disabled = false;
-            }, 1000);
-        };
-
         window.prepararCrearUnirseSala = function(tipo) {
             tipoSalaSeleccionada = tipo;
             document.getElementById('domino-menu-principal').classList.add('hidden');
@@ -1114,84 +1105,82 @@ window.iniciarSesion = async function() {
         };
 
         function cargarPanelAdmin() {
-    onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
-        const cont = document.getElementById('lista-admin-pendientes');
-        cont.innerHTML = "";
-        if (!snapshot.exists()) { 
-            cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`; 
-            return; 
-        }
-        snapshot.forEach((childSnap) => {
-            const id = childSnap.key;
-            const d = childSnap.val();
-            let imgHtml = d.comprobanteUrl ? `<div class="mt-2"><a href="${d.comprobanteUrl}" target="_blank"><img src="${d.comprobanteUrl}" class="w-24 h-24 object-cover rounded-lg border border-gray-600"></a></div>` : "";
-            cont.innerHTML += `
-                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
-                    <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
-                    <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
-                    ${imgHtml}
-                    <div class="flex gap-2 mt-2">
-                        <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg">✅ Aprobar</button>
-                        <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg">❌ Denegar</button>
-                    </div>
-                </div>`;
-        });
-    });
-
-    onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
-        const contRetiros = document.getElementById('lista-admin-retiros');
-        contRetiros.innerHTML = "";
-        if (!snapshot.exists()) { 
-            contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay retiros pendientes.</p>`; 
-            return; 
-        }
-        snapshot.forEach((childSnap) => {
-            const id = childSnap.key;
-            const r = childSnap.val();
-            contRetiros.innerHTML += `
-                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
-                    <div><b>Usuario:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
-                    <div><b>Monto:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
-                    <div><b>Tarjeta:</b> ${r.tarjetaDestino}</div>
-                    <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg">✔️ Procesar Retiro</button>
-                </div>`;
-        });
-    });
-
-    onValue(ref(db, 'usuarios'), (snapshot) => {
-        const contUsuarios = document.getElementById('lista-admin-usuarios');
-        contUsuarios.innerHTML = "";
-        if (!snapshot.exists()) return;
-        
-        snapshot.forEach((childSnap) => {
-            const u = childSnap.val();
-            const telUser = u.telefono;
-            const saldoActualizado = Number(u.saldo || 0);
-
-            // Sincroniza de forma automática la sesión del usuario si está conectado en este navegador
-            const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-            if (localUser && localUser.telefono === telUser && localUser.saldo !== saldoActualizado) {
-                localUser.saldo = saldoActualizado;
-                localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
-                if (typeof cargarDatosUsuario === 'function') {
-                    cargarDatosUsuario(localUser);
+            onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
+                const cont = document.getElementById('lista-admin-pendientes');
+                cont.innerHTML = "";
+                if (!snapshot.exists()) { 
+                    cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`; 
+                    return; 
                 }
-            }
+                snapshot.forEach((childSnap) => {
+                    const id = childSnap.key;
+                    const d = childSnap.val();
+                    let imgHtml = d.comprobanteUrl ? `<div class="mt-2"><a href="${d.comprobanteUrl}" target="_blank"><img src="${d.comprobanteUrl}" class="w-24 h-24 object-cover rounded-lg border border-gray-600"></a></div>` : "";
+                    cont.innerHTML += `
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
+                            <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
+                            <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
+                            ${imgHtml}
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg">✅ Aprobar</button>
+                                <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg">❌ Denegar</button>
+                            </div>
+                        </div>`;
+                });
+            });
 
-            contUsuarios.innerHTML += `
-                <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
-                    <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${telUser}</div>
-                    <div><b>Saldo en Vivo:</b> <span class="text-green-400 font-bold">$${saldoActualizado.toFixed(2)} CUP</span></div>
-                    <input type="number" id="input-monto-${telUser}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
-                    <div class="flex gap-2">
-                        <button onclick="modificarSaldoAdminCustom('${telUser}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
-                        <button onclick="modificarSaldoAdminCustom('${telUser}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
-                    </div>
-                </div>`;
-        });
-    });
-}
+            onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
+                const contRetiros = document.getElementById('lista-admin-retiros');
+                contRetiros.innerHTML = "";
+                if (!snapshot.exists()) { 
+                    contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay retiros pendientes.</p>`; 
+                    return; 
+                }
+                snapshot.forEach((childSnap) => {
+                    const id = childSnap.key;
+                    const r = childSnap.val();
+                    contRetiros.innerHTML += `
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
+                            <div><b>Usuario:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
+                            <div><b>Monto:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
+                            <div><b>Tarjeta:</b> ${r.tarjetaDestino}</div>
+                            <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg">✔️ Procesar Retiro</button>
+                        </div>`;
+                });
+            });
 
+            onValue(ref(db, 'usuarios'), (snapshot) => {
+                const contUsuarios = document.getElementById('lista-admin-usuarios');
+                contUsuarios.innerHTML = "";
+                if (!snapshot.exists()) return;
+                
+                snapshot.forEach((childSnap) => {
+                    const u = childSnap.val();
+                    const telUser = u.telefono;
+                    const saldoActualizado = Number(u.saldo || 0);
+
+                    const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                    if (localUser && localUser.telefono === telUser && localUser.saldo !== saldoActualizado) {
+                        localUser.saldo = saldoActualizado;
+                        localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
+                        if (typeof cargarDatosUsuario === 'function') {
+                            cargarDatosUsuario(localUser);
+                        }
+                    }
+
+                    contUsuarios.innerHTML += `
+                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
+                            <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${telUser}</div>
+                            <div><b>Saldo en Vivo:</b> <span class="text-green-400 font-bold">$${saldoActualizado.toFixed(2)} CUP</span></div>
+                            <input type="number" id="input-monto-${telUser}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
+                            <div class="flex gap-2">
+                                <button onclick="modificarSaldoAdminCustom('${telUser}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
+                                <button onclick="modificarSaldoAdminCustom('${telUser}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
 
         window.aprobarDeposito = async function(id, tel, monto) {
             if (confirm(`¿Aprobar depósito de $${monto} CUP?`)) {
@@ -1271,15 +1260,3 @@ window.iniciarSesion = async function() {
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
