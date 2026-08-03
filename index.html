@@ -1115,47 +1115,55 @@
             document.getElementById('domino-buscar-sala-panel').classList.remove('hidden');
         };
 
-        window.confirmarCrearUnirSala = async function() {
+                window.confirmarCrearUnirSala = async function() {
             const monto = Number(document.getElementById('domino-monto-apuesta').value);
             const modalidad = document.getElementById('domino-tipo-pareja').value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
+            if (!user) { alert("Inicia sesión primero."); return; }
             if (monto < 150 || monto > 600) { alert("Apuesta entre 150 y 600 CUP."); return; }
             if ((user.saldo || 0) < (monto + 50)) { alert("Saldo insuficiente (Apuesta + 50 CUP de comisión)."); return; }
 
-            const codigoSala = "CB-DOM-" + Math.floor(1000 + Math.random() * 9000);
-            const nuevaSala = {
-                codigo: codigoSala, creador: user.username, apuesta: monto,
-                comisionCasa: 50, modalidad, tipo: tipoSalaSeleccionada, estado: 'esperando',
-                jugadores: { [user.telefono]: { nombre: user.nombre, id: user.id } }
-            };
+            try {
+                const codigoSala = "CB-DOM-" + Math.floor(1000 + Math.random() * 9000);
+                const nuevaSala = {
+                    codigo: codigoSala, creador: user.username, apuesta: monto,
+                    comisionCasa: 50, modalidad, tipo: tipoSalaSeleccionada, estado: 'esperando',
+                    jugadores: { [user.telefono]: { nombre: user.nombre, id: user.id } }
+                };
 
-            await set(ref(db, `salas_domino/${codigoSala}`), nuevaSala);
-            salaActivaId = codigoSala;
+                await set(ref(db, `salas_domino/${codigoSala}`), nuevaSala);
+                salaActivaId = codigoSala;
 
-            document.getElementById('domino-config-sala').classList.add('hidden');
-            document.getElementById('domino-mesa-activa').classList.remove('hidden');
-            document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigoSala} (${modalidad})`;
-            document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión: 50 CUP`;
-            document.getElementById('codigo-invitacion-box').classList.remove('hidden');
-            document.getElementById('txt-codigo-sala').innerText = codigoSala;
-            document.getElementById('domino-mesa-activa').scrollIntoView({ behavior: 'smooth' });
-            
-            onValue(ref(db, `salas_domino/${codigoSala}`), (snapshot) => {
-                if (!snapshot.exists()) return;
-                const sala = snapshot.val();
-                const cont = document.getElementById('lista-jugadores-sala');
-                cont.innerHTML = "";
-                let count = 0;
-                if (sala.jugadores) {
-                    Object.values(sala.jugadores).forEach(j => { count++; cont.innerHTML += `<div>👤 ${j.nombre}</div>`; });
-                }
-                if (count >= 2) {
-                    document.getElementById('mesa-estado-espera').innerText = "¡Sala lista!";
-                    document.getElementById('btn-iniciar-partida-mesa').classList.remove('hidden');
-                }
-            });
+                document.getElementById('domino-config-sala').classList.add('hidden');
+                document.getElementById('domino-mesa-activa').classList.remove('hidden');
+                document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigoSala} (${modalidad})`;
+                document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión: 50 CUP`;
+                document.getElementById('codigo-invitacion-box').classList.remove('hidden');
+                document.getElementById('txt-codigo-sala').innerText = codigoSala;
+                
+                document.getElementById('domino-mesa-activa').scrollIntoView({ behavior: 'smooth' });
+
+                onValue(ref(db, `salas_domino/${codigoSala}`), (snapshot) => {
+                    if (!snapshot.exists()) return;
+                    const sala = snapshot.val();
+                    const cont = document.getElementById('lista-jugadores-sala');
+                    cont.innerHTML = "";
+                    let count = 0;
+                    if (sala.jugadores) {
+                        Object.values(sala.jugadores).forEach(j => { count++; cont.innerHTML += `<div>👤 ${j.nombre}</div>`; });
+                    }
+                    if (count >= 2) {
+                        document.getElementById('mesa-estado-espera').innerText = "¡Sala lista!";
+                        document.getElementById('btn-iniciar-partida-mesa').classList.remove('hidden');
+                    }
+                });
+            } catch (error) {
+                console.error("Error al crear la sala:", error);
+                alert("Error de Firebase al crear la sala: " + error.message);
+            }
         };
+
 
         window.unirsePorCodigoSala = async function() {
             const codigo = document.getElementById('input-buscar-codigo').value.trim().toUpperCase();
