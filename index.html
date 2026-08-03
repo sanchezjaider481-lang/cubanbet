@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CubanBet - Versión Corregida</title>
+    <title>CubanBet - Panel con Buscador de Usuarios</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { margin: 0; font-family: sans-serif; background-color: #f9fafb; }
@@ -304,8 +304,16 @@
                     <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wide">📤 Solicitudes de Retiro (24 Horas)</h3>
                     <div id="lista-admin-retiros" class="space-y-4"><p class="text-xs text-gray-500">Cargando retiros...</p></div>
                 </div>
+                
+                <!-- SECCIÓN DE GESTIÓN DE USUARIOS CON BUSCADOR -->
                 <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-purple-500 space-y-4">
-                    <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wide">👥 Gestión de Usuarios y Saldos</h3>
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                        <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wide">👥 Gestión de Usuarios y Saldos</h3>
+                    </div>
+                    <!-- BARRA DE BÚSQUEDA DE USUARIOS -->
+                    <div>
+                        <input type="text" id="input-buscar-admin-usuario" oninput="filtrarUsuariosAdmin()" placeholder="🔍 Buscar por usuario o teléfono..." class="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm font-bold focus:outline-none focus:border-purple-500">
+                    </div>
                     <div id="lista-admin-usuarios" class="space-y-3"><p class="text-xs text-gray-500">Cargando usuarios...</p></div>
                 </div>
             </div>
@@ -347,6 +355,7 @@
         let tipoSalaSeleccionada = null;
         let salaActivaId = null;
         let userTelegramId = null;
+        let cacheUsuariosAdmin = []; // Caché global para hacer las búsquedas instantáneas
 
         const BOT_TOKEN_TELEGRAM = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
         const TELEGRAM_CHAT_ID = "-1004432353397";
@@ -623,7 +632,6 @@
             }
         };
 
-        // ZONA DE DEPÓSITO RESTAURADA A SOLICITUD PENDIENTE PARA ADMIN
         window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
@@ -1160,31 +1168,63 @@
                 });
             });
 
+            // CARGAR Y GUARDAR EN CACHÉ LOS USUARIOS PARA EL BUSCADOR
             onValue(ref(db, 'usuarios'), (snapshot) => {
-                const contUsuarios = document.getElementById('lista-admin-usuarios');
-                contUsuarios.innerHTML = "";
-                if (!snapshot.exists()) return;
-                
-                snapshot.forEach((childSnap) => {
-                    const u = childSnap.val();
-                    const telUser = u.telefono;
-                    const saldoActualizado = Number(u.saldo || 0);
-
-                    contUsuarios.innerHTML += `
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
-                            <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${telUser}</div>
-                            <div><b>Saldo en Vivo:</b> <span class="text-green-400 font-bold">$${saldoActualizado.toFixed(2)} CUP</span></div>
-                            <input type="number" id="input-monto-${telUser}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
-                            <div class="flex gap-2">
-                                <button onclick="modificarSaldoAdminCustom('${telUser}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
-                                <button onclick="modificarSaldoAdminCustom('${telUser}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
-                            </div>
-                        </div>`;
-                });
+                cacheUsuariosAdmin = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnap) => {
+                        cacheUsuariosAdmin.push(childSnap.val());
+                    });
+                }
+                renderizarUsuariosAdmin(cacheUsuariosAdmin);
             });
         }
 
-        // FUNCIONES DE APROBACIÓN Y DENEGACIÓN RESTAURADAS
+        // RENDERIZADOR DE USUARIOS EN EL PANEL ADMIN
+        function renderizarUsuariosAdmin(listaUsuarios) {
+            const contUsuarios = document.getElementById('lista-admin-usuarios');
+            contUsuarios.innerHTML = "";
+            
+            if (!listaUsuarios || listaUsuarios.length === 0) {
+                contUsuarios.innerHTML = `<p class="text-xs text-gray-500">No se encontraron usuarios.</p>`;
+                return;
+            }
+            
+            listaUsuarios.forEach((u) => {
+                const telUser = u.telefono;
+                const saldoActualizado = Number(u.saldo || 0);
+
+                contUsuarios.innerHTML += `
+                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
+                        <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${telUser}</div>
+                        <div><b>Saldo en Vivo:</b> <span class="text-green-400 font-bold">$${saldoActualizado.toFixed(2)} CUP</span></div>
+                        <input type="number" id="input-monto-${telUser}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
+                        <div class="flex gap-2">
+                            <button onclick="modificarSaldoAdminCustom('${telUser}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
+                            <button onclick="modificarSaldoAdminCustom('${telUser}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // FUNCIÓN FILTRADORA INSTANTÁNEA POR USUARIO O TELÉFONO
+        window.filtrarUsuariosAdmin = function() {
+            const query = document.getElementById('input-buscar-admin-usuario').value.toLowerCase().trim();
+            if (!query) {
+                renderizarUsuariosAdmin(cacheUsuariosAdmin);
+                return;
+            }
+
+            const filtrados = cacheUsuariosAdmin.filter(u => {
+                const usernameMatch = u.username && u.username.toLowerCase().includes(query);
+                const telefonoMatch = u.telefono && u.telefono.toLowerCase().includes(query);
+                const nombreMatch = u.nombre && u.nombre.toLowerCase().includes(query);
+                return usernameMatch || telefonoMatch || nombreMatch;
+            });
+
+            renderizarUsuariosAdmin(filtrados);
+        };
+
         window.aprobarDeposito = async function(id, telefonoUsuario, monto) {
             try {
                 const userRef = ref(db, `usuarios/${telefonoUsuario}`);
@@ -1268,4 +1308,3 @@
     </script>
 </body>
 </html>
-
