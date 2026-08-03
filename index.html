@@ -239,7 +239,7 @@
                 <p class="text-sm text-gray-600">ID de Usuario: <span id="perfil-id" class="font-bold text-green-600"></span></p>
             </div>
 
-            <!-- SECCIÓN DE RECARGAS (AUTOMÁTICA Y ACREDITACIÓN INMEDIATA) -->
+            <!-- SECCIÓN DE RECARGAS -->
             <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
                 <h3 class="font-bold text-lg mb-4 text-green-700">Recargar Saldo Automático</h3>
                 <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
@@ -321,7 +321,8 @@
         <button onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
     </nav>
 
-    <!-- SCRIPT DE FIREBASE Y LÓGICA -->
+    <!-- LIBRERÍA Y SCRIPT DE TELEGRAM Y FIREBASE -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script type="module">
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-messaging.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
@@ -345,11 +346,23 @@
         let telefonoUsuarioRecuperando = null;
         let tipoSalaSeleccionada = null;
         let salaActivaId = null;
+        let userTelegramId = null;
 
         const BOT_TOKEN_TELEGRAM = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
         const TELEGRAM_CHAT_ID = "-1004432353397";
 
-        window.addEventListener('DOMContentLoaded', () => {
+        // Capturar ID de Telegram de forma segura
+        window.addEventListener("DOMContentLoaded", () => {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.expand();
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    userTelegramId = user.id;
+                    console.log("ID de Telegram capturado:", userTelegramId);
+                }
+            }
+
             const usuarioGuardado = localStorage.getItem('cubanbet_usuario');
             if (usuarioGuardado) {
                 const user = JSON.parse(usuarioGuardado);
@@ -361,6 +374,37 @@
                 document.getElementById('loader').style.display = 'none';
             }
         });
+
+        // Función global para enviar códigos por Telegram usando el ID dinámico
+        window.enviarCodigoTelegram = function(codigoGenerado) {
+            if (!userTelegramId) {
+                alert("Por favor, abre la aplicación directamente desde el bot de Telegram para recibir códigos.");
+                return;
+            }
+
+            const mensaje = `Tu código de acceso/recuperación en CubanBet es: *${codigoGenerado}*`;
+
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: userTelegramId,
+                    text: mensaje,
+                    parse_mode: "Markdown"
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    console.log("¡Código enviado con éxito al Telegram del usuario!");
+                } else {
+                    console.error("Error al enviar el mensaje:", data.description);
+                }
+            })
+            .catch(error => {
+                console.error("Error de red:", error);
+            });
+        };
 
         window.mostrarAuthForm = function(tipo) {
             const login = document.getElementById('form-login');
@@ -492,18 +536,21 @@
                 codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
                 telefonoUsuarioRecuperando = telefonoIngresado;
 
+                // Si tenemos el Telegram ID del usuario actual, le enviamos el código directo a él, sino al grupo general
+                const chatDestino = userTelegramId ? userTelegramId : TELEGRAM_CHAT_ID;
+
                 const respuestaTelegram = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: `🔑 *Solicitud de Recuperación*\n\nTeléfono: ${telefonoIngresado}\nCódigo: \`${codigoRecuperacionTemporal}\``,
+                        chat_id: chatDestino,
+                        text: `🔑 *Código de Recuperación CubanBet*\n\nTu código es: \`${codigoRecuperacionTemporal}\``,
                         parse_mode: 'Markdown'
                     })
                 });
 
                 if (respuestaTelegram.ok) {
-                    alert("¡Código de recuperación enviado a Telegram con éxito!");
+                    alert("¡Código de recuperación enviado a tu Telegram con éxito!");
                     mostrarAuthForm('nueva-pass');
                 } else {
                     alert("Error al enviar el código por Telegram.");
@@ -715,16 +762,7 @@
                             body: formData
                         });
                     } catch (telegramErr) {
-                        console.warn("Fallo el envío con foto a Telegram, intentando mensaje de texto:", telegramErr);
-                        await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                chat_id: TELEGRAM_CHAT_ID,
-                                text: captionTexto + "\n\n(Comprobante registrado en la base de datos)",
-                                parse_mode: 'Markdown'
-                            })
-                        });
+                        console.warn("Fallo el envío con foto a Telegram:", telegramErr);
                     }
 
                     alert(`¡Depósito de $${monto} CUP acreditado automáticamente con éxito!`);
@@ -733,8 +771,8 @@
                     document.getElementById('archivo-comprobante').value = "";
                     document.getElementById('info-pago').classList.add('hidden');
                 } catch (error) {
-                    console.error("Error crítico en el proceso de depósito automático:", error);
-                    alert("Hubo un error al registrar la solicitud. Revisa tu conexión.");
+                    console.error("Error crítico:", error);
+                    alert("Hubo un error al registrar la solicitud.");
                 }
             }
         };
@@ -1162,15 +1200,6 @@
                     const telUser = u.telefono;
                     const saldoActualizado = Number(u.saldo || 0);
 
-                    const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                    if (localUser && localUser.telefono === telUser && localUser.saldo !== saldoActualizado) {
-                        localUser.saldo = saldoActualizado;
-                        localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
-                        if (typeof cargarDatosUsuario === 'function') {
-                            cargarDatosUsuario(localUser);
-                        }
-                    }
-
                     contUsuarios.innerHTML += `
                         <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
                             <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${telUser}</div>
@@ -1241,59 +1270,6 @@
                 }
             } catch (error) { console.error("Error push:", error); }
         };
-    function enviarCodigoTelegram(codigoGenerado) {
-    // Validamos si tenemos el ID del usuario capturado
-    if (!userTelegramId) {
-        alert("Por favor, abre la aplicación directamente desde el bot de Telegram para recibir códigos.");
-        return;
-    }
-
-    const BOT_TOKEN_TELEGRAM = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
-    const mensaje = `Tu código de acceso/recuperación en CubanBet es: *${codigoGenerado}*`;
-
-    // Petición automática a la API de Telegram dirigida al chat ID del usuario
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            chat_id: userTelegramId, // <--- Aquí va el ID dinámico del usuario que abrió la web
-            text: mensaje,
-            parse_mode: "Markdown"
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.ok) {
-            console.log("¡Código enviado con éxito al Telegram del usuario!");
-        } else {
-            console.error("Error al enviar el mensaje:", data.description);
-        }
-    })
-    .catch(error => {
-        console.error("Error de red:", error);
-    });
-}
-
-    <!-- Librería oficial de Telegram Web App -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-
-        // Tu código de captura de Telegram va aquí
-        let userTelegramId = null;
-
-        window.addEventListener("DOMContentLoaded", () => {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                tg.expand();
-                const user = tg.initDataUnsafe?.user;
-                if (user) {
-                    userTelegramId = user.id;
-                    console.log("ID de Telegram capturado:", userTelegramId);
-                }
-            }
-        });
     </script>
 </body>
 </html>
