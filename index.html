@@ -473,55 +473,47 @@
         };
 
         window.enviarCodigoRecuperacion = async function() {
-    const telefonoIngresado = document.getElementById("tu_input_telefono").value.trim(); // Asegúrate de que el ID coincida con tu HTML
-    
-    if (!telefonoIngresado) {
-        alert("Introduce tu número de teléfono.");
-        return;
-    }
+            const telefonoIngresado = document.getElementById("rec-telefono-input").value.trim();
+            
+            if (!telefonoIngresado) {
+                alert("Introduce tu número de teléfono.");
+                return;
+            }
 
-    try {
-        const userRef = ref(db, `usuarios/${telefonoIngresado}`);
-        const snapshot = await get(userRef);
-        
-        if (!snapshot.exists()) {
-            alert("El número de teléfono no coincide con ningún registro.");
-            return;
-        }
+            try {
+                const userRef = ref(db, `usuarios/${telefonoIngresado}`);
+                const snapshot = await get(userRef);
+                
+                if (!snapshot.exists()) {
+                    alert("El número de teléfono no coincide con ningún registro.");
+                    return;
+                }
 
-        // Generar código temporal de recuperación (4 dígitos)
-        const codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
-        
-        // Opcional: Guardar el código temporal en la base de datos si lo necesitas para validarlo después
-        // await set(ref(db, `usuarios/${telefonoIngresado}/codigoTemporal`), codigoRecuperacionTemporal);
+                codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
+                telefonoUsuarioRecuperando = telefonoIngresado;
 
-        // Enviar la notificación directamente al bot de Telegram
-        const TELEGRAM_BOT_TOKEN = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo"; // Reemplaza con tu token si no lo tienes global
-        const TELEGRAM_CHAT_ID = "-1004432353397";         // O la variable que estés usando
+                const respuestaTelegram = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: `🔑 *Solicitud de Recuperación*\n\nTeléfono: ${telefonoIngresado}\nCódigo: \`${codigoRecuperacionTemporal}\``,
+                        parse_mode: 'Markdown'
+                    })
+                });
 
-        const respuestaTelegram = await fetch(`https://api.telegram.org/bot${8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: `🔑 *Solicitud de Recuperación*\n\nTeléfono: ${telefonoIngresado}\nCódigo: \`${codigoRecuperacionTemporal}\``,
-                parse_mode: 'Markdown'
-            })
-        });
+                if (respuestaTelegram.ok) {
+                    alert("¡Código de recuperación enviado a Telegram con éxito!");
+                    mostrarAuthForm('nueva-pass');
+                } else {
+                    alert("Error al enviar el código por Telegram.");
+                }
 
-        if (respuestaTelegram.ok) {
-            console.log("Código enviado a Telegram exitosamente.");
-            // Si quieres mostrar un aviso visual elegante en la página en vez de un alert, puedes activarlo aquí:
-            // document.getElementById("contenedorMensaje").innerText = "¡Código enviado a Telegram con éxito!";
-        } else {
-            console.error("Error al notificar a Telegram.");
-        }
-
-    } catch (error) {
-        console.error("Error en la ejecución:", error);
-    }
-}
-
+            } catch (error) {
+                console.error("Error en la ejecución:", error);
+                alert("Ocurrió un error al procesar la recuperación.");
+            }
+        };
 
         window.cambiarContraseñaNueva = async function() {
             const codigoIngresado = document.getElementById('rec-codigo-ingresado').value.trim();
@@ -610,7 +602,6 @@
             }
         };
 
-        // LÓGICA DE DEPÓSITO AUTOMÁTICO CON ACREDITACIÓN INMEDIATA Y NOTIFICACIÓN A TELEGRAM
         window.enviarSolicitud = function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
@@ -682,13 +673,11 @@
                         hour: '2-digit', minute: '2-digit', second: '2-digit'
                     });
 
-                    // 1. ACREDITACIÓN AUTOMÁTICA INMEDIATA DEL SALDO AL USUARIO
                     user.saldo = Number(user.saldo || 0) + monto;
                     localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
                     await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                     cargarDatosUsuario(user);
 
-                    // 2. Registrar el depósito en Firebase (para historial/admin)
                     const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
                     await set(nuevoDepositoRef, {
                         id: nuevoDepositoRef.key,
@@ -703,7 +692,6 @@
                         estado: 'Acreditado Automáticamente'
                     });
 
-                    // 3. Notificación automática a Telegram sin fallos
                     const ENLACE_WEB = window.location.href.split('?')[0]; 
                     const captionTexto = `🔔 *¡Nuevo Depósito Acreditado Automáticamente!*\n\n` +
                         `👤 *Usuario:* ${user.nombre}\n` +
@@ -1256,4 +1244,3 @@
     </script>
 </body>
 </html>
-
