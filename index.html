@@ -52,10 +52,33 @@
                 <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md mt-2">Registrarse y Obtener ID</button>
             </div>
             <div id="form-recuperar" class="space-y-4 hidden">
-                <p class="text-xs text-gray-600">Introduce tu número de teléfono registrado para recibir el código de recuperación por Telegram.</p>
-                <div><label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label><input type="tel" id="rec-telefono-input" placeholder="Ej: 58838866" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
-                <button onclick="enviarCodigoRecuperacion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Verificar y Enviar Código por Telegram</button>
-                <button onclick="mostrarAuthForm('login')" class="w-full bg-gray-200 text-gray-700 py-2 rounded-xl font-bold text-sm">Volver al Login</button>
+                <div class="recovery-modal">
+                    <div class="brand-title">CubanBet</div>
+                    
+                    <!-- Nuevo texto informativo -->
+                    <p class="recovery-instruction">
+                        Su cuenta debe de estar abierta desde el numero de teléfono registrado en el bot con el cual abrio esta MiniApp. De lo contrario no obtendrá en el destino correcto su código de recuperación de cuenta.
+                    </p>
+
+                    <form id="recoveryForm">
+                        <!-- Campo del Captcha / Confirmación "No soy un robot" reemplazando el número de teléfono -->
+                        <div class="captcha-container">
+                            <label class="captcha-label">
+                                <input type="checkbox" id="notRobotCheckbox" onchange="toggleVerifyButton()">
+                                <span>Confirme que no es un robot</span>
+                            </label>
+                        </div>
+
+                        <!-- Botón de acción (inicialmente deshabilitado hasta que se marque el captcha) -->
+                        <button type="submit" id="verifyBtn" class="btn-primary" disabled>
+                            Verificar y Enviar Código por Telegram
+                        </button>
+                        
+                        <button type="button" class="btn-secondary" onclick="mostrarAuthForm('login')">
+                            Volver al Login
+                        </button>
+                    </form>
+                </div>
             </div>
             <div id="form-nueva-pass" class="space-y-4 hidden">
                 <p class="text-xs text-gray-600">Introduce el código de 4 dígitos enviado a tu Telegram y tu nueva contraseña.</p>
@@ -494,56 +517,63 @@
             }
         };
 
-        window.enviarCodigoRecuperacion = async function() {
-            const telefonoIngresado = document.getElementById("rec-telefono-input").value.trim();
+        window.toggleVerifyButton = function() {
+            const checkbox = document.getElementById('notRobotCheckbox');
+            const verifyBtn = document.getElementById('verifyBtn');
             
-            if (!telefonoIngresado) {
-                alert("Introduce tu número de teléfono.");
-                return;
+            verifyBtn.disabled = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                verifyBtn.classList.remove('disabled');
+            } else {
+                verifyBtn.classList.add('disabled');
             }
+        };
 
-            try {
-                const userRef = ref(db, `usuarios/${telefonoIngresado}`);
-                const snapshot = await get(userRef);
+        document.addEventListener('submit', async function(e) {
+            if (e.target && e.target.id === 'recoveryForm') {
+                e.preventDefault();
                 
-                if (!snapshot.exists()) {
-                    alert("El número de teléfono no coincide con ningún registro.");
+                const checkbox = document.getElementById('notRobotCheckbox');
+                if (!checkbox.checked) {
+                    alert("Por favor, confirme que no es un robot.");
                     return;
                 }
 
-                codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
-                telefonoUsuarioRecuperando = telefonoIngresado;
+                try {
+                    codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
 
-                if (userTelegramId) {
-                    const respuestaTelegram = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: userTelegramId,
-                            text: `🔑 *Código de Recuperación CubanBet*\n\nTu código es: \`${codigoRecuperacionTemporal}\``,
-                            parse_mode: 'Markdown'
-                        })
-                    });
+                    if (userTelegramId) {
+                        const respuestaTelegram = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                chat_id: userTelegramId,
+                                text: `🔑 *Código de Recuperación CubanBet*\n\nTu código es: \`${codigoRecuperacionTemporal}\``,
+                                parse_mode: 'Markdown'
+                            })
+                        });
 
-                    const data = await respuestaTelegram.json();
-                    
-                    if (data.ok) {
-                        alert("¡Código enviado automáticamente a tu chat privado de Telegram!");
-                        mostrarAuthForm('nueva-pass');
+                        const data = await respuestaTelegram.json();
+                        
+                        if (data.ok) {
+                            alert("¡Código enviado automáticamente a tu chat privado de Telegram!");
+                            mostrarAuthForm('nueva-pass');
+                        } else {
+                            alert("Por favor, abre primero nuestro bot en Telegram y presiona 'Iniciar' para poder enviarte el código.");
+                        }
                     } else {
-                        alert("Por favor, abre primero nuestro bot en Telegram y presiona 'Iniciar' para poder enviarte el código.");
+                        const confirmarBot = confirm("Para enviarte el código de forma segura y automática, necesitamos abrir nuestro bot de Telegram. ¿Deseas abrirlo ahora?");
+                        if (confirmarBot) {
+                            window.open(`https://t.me/CubanBetClubBot`, '_blank');
+                        }
                     }
-                } else {
-                    const confirmarBot = confirm("Para enviarte el código de forma segura y automática, necesitamos abrir nuestro bot de Telegram. ¿Deseas abrirlo ahora?");
-                    if (confirmarBot) {
-                        window.open(`https://t.me/TuBotNombreBot?start=rec_${telefonoIngresado}`, '_blank');
-                    }
+                } catch (error) {
+                    console.error("Error en la ejecución:", error);
+                    alert("Ocurrió un error al procesar la recuperación.");
                 }
-            } catch (error) {
-                console.error("Error en la ejecución:", error);
-                alert("Ocurrió un error al procesar la recuperación.");
             }
-        };
+        });
 
         window.cambiarContraseñaNueva = async function() {
             const codigoIngresado = document.getElementById('rec-codigo-ingresado').value.trim();
@@ -1308,4 +1338,5 @@
     </script>
 </body>
 </html>
+
 
