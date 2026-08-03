@@ -1241,6 +1241,59 @@
                 }
             } catch (error) { console.error("Error push:", error); }
         };
+    function enviarCodigoTelegram(codigoGenerado) {
+    // Validamos si tenemos el ID del usuario capturado
+    if (!userTelegramId) {
+        alert("Por favor, abre la aplicación directamente desde el bot de Telegram para recibir códigos.");
+        return;
+    }
+
+    const BOT_TOKEN_TELEGRAM = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
+    const mensaje = `Tu código de acceso/recuperación en CubanBet es: *${codigoGenerado}*`;
+
+    // Petición automática a la API de Telegram dirigida al chat ID del usuario
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            chat_id: userTelegramId, // <--- Aquí va el ID dinámico del usuario que abrió la web
+            text: mensaje,
+            parse_mode: "Markdown"
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            console.log("¡Código enviado con éxito al Telegram del usuario!");
+        } else {
+            console.error("Error al enviar el mensaje:", data.description);
+        }
+    })
+    .catch(error => {
+        console.error("Error de red:", error);
+    });
+}
+
+    <!-- Librería oficial de Telegram Web App -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <script>
+        // Tu código de captura de Telegram va aquí
+        let userTelegramId = null;
+
+        window.addEventListener("DOMContentLoaded", () => {
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.expand();
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    userTelegramId = user.id;
+                    console.log("ID de Telegram capturado:", userTelegramId);
+                }
+            }
+        });
     </script>
 </body>
 </html>
