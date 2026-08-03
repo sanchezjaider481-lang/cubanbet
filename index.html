@@ -370,7 +370,8 @@
                 </div>
                 <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200 font-bold">
                 <label class="block text-xs text-gray-500 font-bold uppercase mb-1">Comprobante de pago (Captura/Foto)</label>
-                <input type="file" id="archivo-comprobante" accept="image/*" class="w-full p-3 mb-4 rounded-xl border border-gray-200 text-xs">
+                <input type="file" id="archivo-comprobante" accept="image/*" onchange="procesarComprobante(event)" class="w-full p-2 border rounded-lg">
+
                 <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Solicitar Depósito</button>
             </div>
 
@@ -1445,6 +1446,32 @@
         // o conectar con tu backend / base de datos
         alert('¡Solicitud enviada! Revisa tu Telegram para ver el código de recuperación.');
     });
+        function procesarComprobante(event) {
+    const archivo = event.target.files[0];
+    
+    if (!archivo) return;
+
+    // Validar que sea cualquier tipo de imagen
+    if (!archivo.type.startsWith('image/')) {
+        alert('Por favor, envíe un archivo de imagen válido.');
+        return;
+    }
+
+    const lector = new FileReader();
+    lector.onload = function(e) {
+        const imagenBase64 = e.target.result;
+        
+        // Aquí puedes enviar la imagenBase64 a tu base de datos (Firebase) 
+        // o al bot de Telegram para que el administrador la revise sin problemas de lectura.
+        console.log("Imagen lista para procesar:", imagenBase64);
+        
+        // Ejemplo: Habilitar botón de envío de depósito
+        document.getElementById('enviarDepositoBtn').disabled = false;
+    };
+    
+    lector.readAsDataURL(archivo);
+}
+
 </script>
 
 </body>
