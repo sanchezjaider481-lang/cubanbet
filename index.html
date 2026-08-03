@@ -517,6 +517,7 @@
         };
 
         window.enviarCodigoRecuperacion = async function() {
+                window.enviarCodigoRecuperacion = async function() {
             const telefonoIngresado = document.getElementById("rec-telefono-input").value.trim();
             
             if (!telefonoIngresado) {
@@ -536,24 +537,33 @@
                 codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
                 telefonoUsuarioRecuperando = telefonoIngresado;
 
-                // Si tenemos el Telegram ID del usuario actual, le enviamos el código directo a él, sino al grupo general
-                const chatDestino = userTelegramId ? userTelegramId : TELEGRAM_CHAT_ID;
+                // Si tenemos el ID de Telegram del usuario (porque abrió la app desde Telegram)
+                if (userTelegramId) {
+                    const respuestaTelegram = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: userTelegramId, // Va directo al privado del usuario, nunca al grupo
+                            text: `🔑 *Código de Recuperación CubanBet*\n\nTu código es: \`${codigoRecuperacionTemporal}\``,
+                            parse_mode: 'Markdown'
+                        })
+                    });
 
-                const respuestaTelegram = await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: chatDestino,
-                        text: `🔑 *Código de Recuperación CubanBet*\n\nTu código es: \`${codigoRecuperacionTemporal}\``,
-                        parse_mode: 'Markdown'
-                    })
-                });
-
-                if (respuestaTelegram.ok) {
-                    alert("¡Código de recuperación enviado a tu Telegram con éxito!");
-                    mostrarAuthForm('nueva-pass');
+                    const data = await respuestaTelegram.json();
+                    
+                    if (data.ok) {
+                        alert("¡Código enviado automáticamente a tu chat privado de Telegram!");
+                        mostrarAuthForm('nueva-pass');
+                    } else {
+                        // Si por algo el bot no le puede escribir, le indicamos que inicie el bot antes
+                        alert("Por favor, abre primero nuestro bot en Telegram y presiona 'Iniciar' para poder enviarte el código.");
+                    }
                 } else {
-                    alert("Error al enviar el código por Telegram.");
+                    // Si entró por navegador web puro, le facilitamos el acceso al bot para que el código le llegue allí
+                    const confirmarBot = confirm("Para enviarte el código de forma segura y automática, necesitamos abrir nuestro bot de Telegram. ¿Deseas abrirlo ahora?");
+                    if (confirmarBot) {
+                        window.open(`https://t.me/TuBotNombreBot?start=rec_${telefonoIngresado}`, '_blank');
+                    }
                 }
 
             } catch (error) {
@@ -561,6 +571,7 @@
                 alert("Ocurrió un error al procesar la recuperación.");
             }
         };
+
 
         window.cambiarContraseñaNueva = async function() {
             const codigoIngresado = document.getElementById('rec-codigo-ingresado').value.trim();
