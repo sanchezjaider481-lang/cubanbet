@@ -778,7 +778,13 @@
             }
 
             const archivo = archivoInput.files[0];
-   if (!window.comprobanteBase64) {
+        if (!window.comprobanteBase64) {
+        alert("Por favor, adjunta o espera a que se procese el comprobante.");
+        return;
+    }
+
+    const comprobanteFinal = window.comprobanteBase64;
+
         alert("Por favor, adjunta o espera a que se procese el comprobante.");
         return;
     }
