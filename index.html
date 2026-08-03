@@ -52,33 +52,22 @@
                 <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md mt-2">Registrarse y Obtener ID</button>
             </div>
             <div id="form-recuperar" class="space-y-4 hidden">
-            <div id="form-recuperar" class="space-y-4 hidden">
-    <div class="recovery-modal mx-auto">
-        <div class="brand-title">CubanBet</div>
-        
-        <p class="recovery-instruction">
-            Su cuenta debe de estar abierta desde el numero de teléfono registrado en el bot con el cual abrio esta MiniApp. De lo contrario no obtendrá en el destino correcto su código de recuperación de cuenta.
-        </p>
+                <div class="recovery-modal">
+                    <div class="brand-title">CubanBet</div>
+                    
+                    <!-- Nuevo texto informativo -->
+                    <p class="recovery-instruction">
+                        Su cuenta debe de estar abierta desde el numero de teléfono registrado en el bot con el cual abrio esta MiniApp. De lo contrario no obtendrá en el destino correcto su código de recuperación de cuenta.
+                    </p>
 
-        <form id="recoveryForm">
-            <div class="captcha-container">
-                <label class="captcha-label">
-                    <input type="checkbox" id="notRobotCheckbox" onchange="toggleVerifyButton()">
-                    <span>Confirme que no es un robot</span>
-                </label>
-            </div>
-
-            <button type="submit" id="verifyBtn" class="btn-primary" disabled>
-                Verificar y Enviar Código por Telegram
-            </button>
-            
-            <button type="button" class="btn-secondary" onclick="mostrarAuthForm('login')">
-                Volver al Login
-            </button>
-        </form>
-    </div>
-</div>
-
+                    <form id="recoveryForm">
+                        <!-- Campo del Captcha / Confirmación "No soy un robot" reemplazando el número de teléfono -->
+                        <div class="captcha-container">
+                            <label class="captcha-label">
+                                <input type="checkbox" id="notRobotCheckbox" onchange="toggleVerifyButton()">
+                                <span>Confirme que no es un robot</span>
+                            </label>
+                        </div>
 
                         <!-- Botón de acción (inicialmente deshabilitado hasta que se marque el captcha) -->
                         <button type="submit" id="verifyBtn" class="btn-primary" disabled>
@@ -1349,5 +1338,6 @@
     </script>
 </body>
 </html>
+
 
 
