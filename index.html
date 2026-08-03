@@ -1139,7 +1139,8 @@
             document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión: 50 CUP`;
             document.getElementById('codigo-invitacion-box').classList.remove('hidden');
             document.getElementById('txt-codigo-sala').innerText = codigoSala;
-
+            document.getElementById('domino-mesa-activa').scrollIntoView({ behavior: 'smooth' });
+            
             onValue(ref(db, `salas_domino/${codigoSala}`), (snapshot) => {
                 if (!snapshot.exists()) return;
                 const sala = snapshot.val();
