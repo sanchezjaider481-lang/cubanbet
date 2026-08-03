@@ -1336,6 +1336,26 @@
             } catch (error) { console.error("Error push:", error); }
         };
     </script>
+    
+    // Función para habilitar o deshabilitar el botón según el checkbox del captcha
+    function toggleVerifyButton() {
+        const checkbox = document.getElementById('notRobotCheckbox');
+        const verifyBtn = document.getElementById('verifyBtn');
+        
+        // Si el checkbox está marcado, habilita el botón; si no, lo deshabilita
+        verifyBtn.disabled = !checkbox.checked;
+    }
+
+    // Función para manejar la acción del formulario de recuperación
+    document.getElementById('recoveryForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Aquí puedes colocar la lógica para enviar el código por Telegram 
+        // o conectar con tu backend / base de datos
+        alert('¡Solicitud enviada! Revisa tu Telegram para ver el código de recuperación.');
+    });
+</script>
+
 </body>
 </html>
 
