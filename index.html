@@ -1448,29 +1448,45 @@
     });
         function procesarComprobante(event) {
     const archivo = event.target.files[0];
-    
     if (!archivo) return;
 
-    // Validar que sea cualquier tipo de imagen
+    // Validar que sea una imagen
     if (!archivo.type.startsWith('image/')) {
-        alert('Por favor, envíe un archivo de imagen válido.');
+        alert('Por favor, selecciona un archivo de imagen válido.');
+        event.target.value = ''; // Limpiar el input
         return;
     }
 
     const lector = new FileReader();
     lector.onload = function(e) {
-        const imagenBase64 = e.target.result;
+        const img = new Image();
+        img.src = e.target.result;
         
-        // Aquí puedes enviar la imagenBase64 a tu base de datos (Firebase) 
-        // o al bot de Telegram para que el administrador la revise sin problemas de lectura.
-        console.log("Imagen lista para procesar:", imagenBase64);
-        
-        // Ejemplo: Habilitar botón de envío de depósito
-        document.getElementById('enviarDepositoBtn').disabled = false;
+        img.onload = function() {
+            // Creamos un canvas para redimensionar y limpiar la imagen (evita errores por tamaño o formato pesado)
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Establecemos un ancho máximo prudente para que no de error de almacenamiento
+            const MAX_WIDTH = 800;
+            const scaleSize = MAX_WIDTH / img.width;
+            canvas.width = MAX_WIDTH;
+            canvas.height = img.height * scaleSize;
+
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Convertimos la imagen limpia a formato JPEG comprimido listo para subir
+            const imagenOptimizada = canvas.toDataURL('image/jpeg', 0.7);
+            
+            // Guardamos el resultado en una variable global o temporal para cuando le den a enviar
+            window.comprobanteBase64 = imagenOptimizada;
+            console.log("Imagen procesada y optimizada con éxito.");
+        };
     };
     
     lector.readAsDataURL(archivo);
 }
+
 
 </script>
 
