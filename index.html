@@ -14,95 +14,95 @@
         @keyframes girar { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .animate-spin-fast { animation: girar 0.6s linear infinite; }
         @keyframes spin-slow {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-@keyframes bounce-fast {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-@keyframes pulse-glow {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.05); }
-}
-.animate-spin-dice { animation: spin-slow 0.6s linear infinite; }
-.animate-bounce-card { animation: bounce-fast 0.3s ease-in-out infinite; }
-.animate-win { animation: pulse-glow 0.5s ease-in-out 3; }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes bounce-fast {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .animate-spin-dice { animation: spin-slow 0.6s linear infinite; }
+        .animate-bounce-card { animation: bounce-fast 0.3s ease-in-out infinite; }
+        .animate-win { animation: pulse-glow 0.5s ease-in-out 3; }
 
-.recovery-modal {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 16px;
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    font-family: sans-serif;
-    text-align: center;
-}
+        .recovery-modal {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            font-family: sans-serif;
+            text-align: center;
+        }
 
-.brand-title {
-    color: #1b8a3e;
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 16px;
-}
+        .brand-title {
+            color: #1b8a3e;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
 
-.recovery-instruction {
-    font-size: 14px;
-    color: #4a5568;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    text-align: left;
-}
+        .recovery-instruction {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-align: left;
+        }
 
-.captcha-container {
-    background: #f7fafc;
-    border: 1px solid #e2e8f0;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    text-align: left;
-}
+        .captcha-container {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
 
-.captcha-label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #2d3748;
-}
+        .captcha-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #2d3748;
+        }
 
-.btn-primary {
-    background-color: #22c55e;
-    color: white;
-    border: none;
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: background-color 0.2s;
-}
+        .btn-primary {
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+        }
 
-.btn-primary:disabled {
-    background-color: #cbd5e1;
-    cursor: not-allowed;
-}
+        .btn-primary:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
 
-.btn-secondary {
-    background-color: #e2e8f0;
-    color: #475569;
-    border: none;
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
-}
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #475569;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="pb-20">
@@ -144,30 +144,18 @@
             <div id="form-recuperar" class="space-y-4 hidden">
                 <div class="recovery-modal">
                     <div class="brand-title">CubanBet</div>
-                    
-                    <!-- Nuevo texto informativo -->
                     <p class="recovery-instruction">
                         Su cuenta debe de estar abierta desde el numero de teléfono registrado en el bot con el cual abrio esta MiniApp. De lo contrario no obtendrá en el destino correcto su código de recuperación de cuenta.
                     </p>
-
                     <form id="recoveryForm">
-                        <!-- Campo del Captcha / Confirmación "No soy un robot" reemplazando el número de teléfono -->
                         <div class="captcha-container">
                             <label class="captcha-label">
                                 <input type="checkbox" id="notRobotCheckbox" onchange="toggleVerifyButton()">
                                 <span>Confirme que no es un robot</span>
                             </label>
                         </div>
-
-                        <!-- Botón de acción (inicialmente deshabilitado hasta que se marque el captcha) -->
-                        <button type="submit" id="verifyBtn" class="btn-primary" disabled>
-    Verificar y Enviar Código por Telegram
-</button>
-
-<button type="button" class="btn-secondary" onclick="mostrarAuthForm('login')">
-    Volver al Login
-</button>
-
+                        <button type="submit" id="verifyBtn" class="btn-primary" disabled>Verificar y Enviar Código por Telegram</button>
+                        <button type="button" class="btn-secondary" onclick="mostrarAuthForm('login')">Volver al Login</button>
                     </form>
                 </div>
             </div>
@@ -372,7 +360,7 @@
                 <label class="block text-xs text-gray-500 font-bold uppercase mb-1">Comprobante de pago (Captura/Foto)</label>
                 <input type="file" id="archivo-comprobante" accept="image/*" onchange="procesarComprobante(event)" class="w-full p-2 border rounded-lg">
 
-                <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md">Solicitar Depósito</button>
+                <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md mt-4">Solicitar Depósito</button>
             </div>
 
             <!-- SECCIÓN DE RETIROS -->
@@ -470,12 +458,11 @@
         let tipoSalaSeleccionada = null;
         let salaActivaId = null;
         let userTelegramId = null;
-        let cacheUsuariosAdmin = []; // Caché global para hacer las búsquedas instantáneas
+        let cacheUsuariosAdmin = [];
 
         const BOT_TOKEN_TELEGRAM = "8800459646:AAFuPXErVD2HD3y4gISSkUV9Nm2JSAbkdJo";
         const TELEGRAM_CHAT_ID = "-1004432353397";
 
-        // Capturar ID de Telegram de forma segura
         window.addEventListener("DOMContentLoaded", () => {
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
@@ -612,20 +599,12 @@
         window.toggleVerifyButton = function() {
             const checkbox = document.getElementById('notRobotCheckbox');
             const verifyBtn = document.getElementById('verifyBtn');
-            
             verifyBtn.disabled = !checkbox.checked;
-            
-            if (checkbox.checked) {
-                verifyBtn.classList.remove('disabled');
-            } else {
-                verifyBtn.classList.add('disabled');
-            }
         };
 
         document.addEventListener('submit', async function(e) {
             if (e.target && e.target.id === 'recoveryForm') {
                 e.preventDefault();
-                
                 const checkbox = document.getElementById('notRobotCheckbox');
                 if (!checkbox.checked) {
                     alert("Por favor, confirme que no es un robot.");
@@ -647,18 +626,14 @@
                         });
 
                         const data = await respuestaTelegram.json();
-                        
                         if (data.ok) {
                             alert("¡Código enviado automáticamente a tu chat privado de Telegram!");
                             mostrarAuthForm('nueva-pass');
                         } else {
-                            alert("Por favor, abre primero nuestro bot en Telegram y presiona 'Iniciar' para poder enviarte el código.");
+                            alert("Por favor, abre primero nuestro bot en Telegram y presiona 'Iniciar'.");
                         }
                     } else {
-                        const confirmarBot = confirm("Para enviarte el código de forma segura y automática, necesitamos abrir nuestro bot de Telegram. ¿Deseas abrirlo ahora?");
-                        if (confirmarBot) {
-                            window.open(`https://t.me/CubanBetClubBot`, '_blank');
-                        }
+                        window.open(`https://t.me/CubanBetClubBot`, '_blank');
                     }
                 } catch (error) {
                     console.error("Error en la ejecución:", error);
@@ -754,7 +729,36 @@
             }
         };
 
-        window.enviarSolicitud = function() {
+        window.procesarComprobante = function(event) {
+            const archivo = event.target.files[0];
+            if (!archivo) return;
+
+            if (!archivo.type.startsWith('image/')) {
+                alert('Por favor, selecciona un archivo de imagen válido.');
+                event.target.value = '';
+                return;
+            }
+
+            const lector = new FileReader();
+            lector.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const MAX_WIDTH = 800;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    window.comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    console.log("Imagen procesada y optimizada con éxito.");
+                };
+            };
+            lector.readAsDataURL(archivo);
+        };
+
+        window.enviarSolicitud = async function() {
             const metodo = document.getElementById('metodo-pago').value;
             const monto = Number(document.getElementById('monto-recarga').value);
             const archivoInput = document.getElementById('archivo-comprobante');
@@ -776,78 +780,68 @@
                 alert("Por favor adjunta el comprobante de pago.");
                 return;
             }
+            if (!window.comprobanteBase64) {
+                alert("Por favor, espera a que se procese el comprobante.");
+                return;
+            }
 
-            const archivo = archivoInput.files[0];
-        if (!window.comprobanteBase64) {
-        alert("Por favor, adjunta o espera a que se procese el comprobante.");
-        return;
-    }
+            const comprobanteFinal = window.comprobanteBase64;
 
-    const comprobanteFinal = window.comprobanteBase64;
+            try {
+                const fechaObj = new Date();
+                const fechaFormateada = fechaObj.toLocaleString('es-ES', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                });
 
-        alert("Por favor, adjunta o espera a que se procese el comprobante.");
-        return;
-    }
-    const comprobanteFinal = window.comprobanteBase64;
+                const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
+                await set(nuevoDepositoRef, {
+                    id: nuevoDepositoRef.key,
+                    usuarioId: user.id,
+                    usuarioNombre: user.nombre,
+                    usuarioTelefono: user.telefono,
+                    monto: monto,
+                    metodo: metodo,
+                    comprobanteUrl: comprobanteFinal,
+                    fecha: fechaObj.toISOString(),
+                    fechaLegible: fechaFormateada,
+                    estado: 'Pendiente'
+                });
 
+                const ENLACE_WEB = window.location.href.split('?')[0]; 
+                const captionTexto = `🔔 *¡Nueva Solicitud de Depósito!*\n\n` +
+                    `👤 *Usuario:* ${user.nombre}\n` +
+                    `📱 *Teléfono:* ${user.telefono}\n` +
+                    `💰 *Monto:* $${monto} CUP\n` +
+                    `💳 *Método:* ${metodo}\n` +
+                    `🕒 *Fecha:* ${fechaFormateada}\n\n` +
+                    `👉 [Revisar en Panel](${ENLACE_WEB})`;
 
-            async function procesarSolicitudDepositoFinal(imagenUrlFinal) {
                 try {
-                    const fechaObj = new Date();
-                    const fechaFormateada = fechaObj.toLocaleString('es-ES', {
-                        day: '2-digit', month: '2-digit', year: 'numeric',
-                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    const resB = await fetch(comprobanteFinal);
+                    const blobB = await resB.blob();
+                    const formData = new FormData();
+                    formData.append('chat_id', TELEGRAM_CHAT_ID);
+                    formData.append('photo', blobB, 'comprobante.jpg');
+                    formData.append('caption', captionTexto);
+                    formData.append('parse_mode', 'Markdown');
+
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
                     });
-
-                    const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
-                    await set(nuevoDepositoRef, {
-                        id: nuevoDepositoRef.key,
-                        usuarioId: user.id,
-                        usuarioNombre: user.nombre,
-                        usuarioTelefono: user.telefono,
-                        monto: monto,
-                        metodo: metodo,
-                        comprobanteUrl: imagenUrlFinal,
-                        fecha: fechaObj.toISOString(),
-                        fechaLegible: fechaFormateada,
-                        estado: 'Pendiente'
-                    });
-
-                    const ENLACE_WEB = window.location.href.split('?')[0]; 
-                    const captionTexto = `🔔 *¡Nueva Solicitud de Depósito!*\n\n` +
-                        `👤 *Usuario:* ${user.nombre}\n` +
-                        `📱 *Teléfono:* ${user.telefono}\n` +
-                        `💰 *Monto:* $${monto} CUP\n` +
-                        `💳 *Método:* ${metodo}\n` +
-                        `🕒 *Fecha:* ${fechaFormateada}\n\n` +
-                        `👉 [Revisar en Panel](${ENLACE_WEB})`;
-
-                    try {
-                        const resB = await fetch(imagenUrlFinal);
-                        const blobB = await resB.blob();
-                        const formData = new FormData();
-                        formData.append('chat_id', TELEGRAM_CHAT_ID);
-                        formData.append('photo', blobB, 'comprobante.jpg');
-                        formData.append('caption', captionTexto);
-                        formData.append('parse_mode', 'Markdown');
-
-                        await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendPhoto`, {
-                            method: 'POST',
-                            body: formData
-                        });
-                    } catch (telegramErr) {
-                        console.warn("Fallo el envío con foto a Telegram:", telegramErr);
-                    }
-
-                    alert(`¡Solicitud de depósito de $${monto} CUP enviada al administrador con éxito!`);
-                    document.getElementById('monto-recarga').value = "";
-                    document.getElementById('metodo-pago').value = "";
-                    document.getElementById('archivo-comprobante').value = "";
-                    document.getElementById('info-pago').classList.add('hidden');
-                } catch (error) {
-                    console.error("Error crítico:", error);
-                    alert("Hubo un error al registrar la solicitud.");
+                } catch (telegramErr) {
+                    console.warn("Fallo el envío con foto a Telegram:", telegramErr);
                 }
+
+                alert(`¡Solicitud de depósito de $${monto} CUP enviada al administrador con éxito!`);
+                document.getElementById('monto-recarga').value = "";
+                document.getElementById('metodo-pago').value = "";
+                document.getElementById('archivo-comprobante').value = "";
+                document.getElementById('info-pago').classList.add('hidden');
+            } catch (error) {
+                console.error("Error crítico:", error);
+                alert("Hubo un error al registrar la solicitud.");
             }
         };
 
@@ -980,11 +974,7 @@
 
             setTimeout(async () => {
                 ruletaUI.classList.remove('animate-spin-fast');
-                
-                let gana = false;
-                if (monto < 500) {
-                    gana = Math.random() < 0.38; 
-                }
+                let gana = monto < 500 && Math.random() < 0.38;
 
                 const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                 if (gana) {
@@ -1000,7 +990,7 @@
                 try {
                     await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 } catch (e) { console.error(e); }
-                if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+                cargarDatosUsuario(user);
             }, 1500);
         };
 
@@ -1020,11 +1010,7 @@
                 dado1.classList.remove('animate-spin-fast');
                 dado2.classList.remove('animate-spin-fast');
 
-                let gana = false;
-                if (monto < 500) {
-                    gana = Math.random() < 0.38;
-                }
-
+                let gana = monto < 500 && Math.random() < 0.38;
                 let d1, d2;
                 if (gana) {
                     d1 = Math.floor(Math.random() * 2) + 5;
@@ -1051,7 +1037,7 @@
                 try {
                     await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 } catch (e) { console.error(e); }
-                if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+                cargarDatosUsuario(user);
             }, 1200);
         };
 
@@ -1076,11 +1062,7 @@
                 r2.classList.remove('animate-spin-fast');
                 r3.classList.remove('animate-spin-fast');
 
-                let gana = false;
-                if (monto < 500) {
-                    gana = Math.random() < 0.38;
-                }
-
+                let gana = monto < 500 && Math.random() < 0.38;
                 let sim1, sim2, sim3;
                 if (gana) {
                     const elegido = iconos[Math.floor(Math.random() * iconos.length)];
@@ -1089,9 +1071,7 @@
                     sim1 = iconos[Math.floor(Math.random() * iconos.length)];
                     sim2 = iconos[Math.floor(Math.random() * iconos.length)];
                     sim3 = iconos[Math.floor(Math.random() * iconos.length)];
-                    if (sim1 === sim2 && sim2 === sim3) {
-                        sim3 = "💩";
-                    }
+                    if (sim1 === sim2 && sim2 === sim3) sim3 = "💩";
                 }
 
                 r1.innerText = sim1;
@@ -1112,7 +1092,7 @@
                 try {
                     await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 } catch (e) { console.error(e); }
-                if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario(user);
+                cargarDatosUsuario(user);
             }, 1500);
         };
 
@@ -1264,7 +1244,6 @@
                 });
             });
 
-            // CARGAR Y GUARDAR EN CACHÉ LOS USUARIOS PARA EL BUSCADOR
             onValue(ref(db, 'usuarios'), (snapshot) => {
                 cacheUsuariosAdmin = [];
                 if (snapshot.exists()) {
@@ -1276,7 +1255,6 @@
             });
         }
 
-        // RENDERIZADOR DE USUARIOS EN EL PANEL ADMIN
         function renderizarUsuariosAdmin(listaUsuarios) {
             const contUsuarios = document.getElementById('lista-admin-usuarios');
             contUsuarios.innerHTML = "";
@@ -1303,21 +1281,18 @@
             });
         }
 
-        // FUNCIÓN FILTRADORA INSTANTÁNEA POR USUARIO O TELÉFONO
         window.filtrarUsuariosAdmin = function() {
             const query = document.getElementById('input-buscar-admin-usuario').value.toLowerCase().trim();
             if (!query) {
                 renderizarUsuariosAdmin(cacheUsuariosAdmin);
                 return;
             }
-
             const filtrados = cacheUsuariosAdmin.filter(u => {
                 const usernameMatch = u.username && u.username.toLowerCase().includes(query);
                 const telefonoMatch = u.telefono && u.telefono.toLowerCase().includes(query);
                 const nombreMatch = u.nombre && u.nombre.toLowerCase().includes(query);
                 return usernameMatch || telefonoMatch || nombreMatch;
             });
-
             renderizarUsuariosAdmin(filtrados);
         };
 
@@ -1401,71 +1376,6 @@
                 }
             } catch (error) { console.error("Error push:", error); }
         };
-    
-    
-    // Función para habilitar o deshabilitar el botón según el checkbox del captcha
-    function toggleVerifyButton() {
-        const checkbox = document.getElementById('notRobotCheckbox');
-        const verifyBtn = document.getElementById('verifyBtn');
-        
-        // Si el checkbox está marcado, habilita el botón; si no, lo deshabilita
-        verifyBtn.disabled = !checkbox.checked;
-    }
-
-    // Función para manejar la acción del formulario de recuperación
-    document.getElementById('recoveryForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Aquí puedes colocar la lógica para enviar el código por Telegram 
-        // o conectar con tu backend / base de datos
-        alert('¡Solicitud enviada! Revisa tu Telegram para ver el código de recuperación.');
-    });
-        function procesarComprobante(event) {
-    const archivo = event.target.files[0];
-    if (!archivo) return;
-
-    // Validar que sea una imagen
-    if (!archivo.type.startsWith('image/')) {
-        alert('Por favor, selecciona un archivo de imagen válido.');
-        event.target.value = ''; // Limpiar el input
-        return;
-    }
-
-    const lector = new FileReader();
-    lector.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
-        
-        img.onload = function() {
-            // Creamos un canvas para redimensionar y limpiar la imagen (evita errores por tamaño o formato pesado)
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Establecemos un ancho máximo prudente para que no de error de almacenamiento
-            const MAX_WIDTH = 800;
-            const scaleSize = MAX_WIDTH / img.width;
-            canvas.width = MAX_WIDTH;
-            canvas.height = img.height * scaleSize;
-
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            
-            // Convertimos la imagen limpia a formato JPEG comprimido listo para subir
-            const imagenOptimizada = canvas.toDataURL('image/jpeg', 0.7);
-            
-            // Guardamos el resultado en una variable global o temporal para cuando le den a enviar
-            window.comprobanteBase64 = imagenOptimizada;
-            console.log("Imagen procesada y optimizada con éxito.");
-        };
-    };
-    
-    lector.readAsDataURL(archivo);
-}
-
-
-</script>
-
+    </script>
 </body>
 </html>
-
-
-
