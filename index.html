@@ -1612,6 +1612,170 @@ window.abandonarMesa = function() {
     document.getElementById('domino-mesa-activa').classList.add('hidden');
     document.getElementById('domino-menu-principal').classList.remove('hidden');
 };
+// ==========================================
+// MOTOR DE DOMINÓ LOCAL (PRÁCTICA VS BOTS)
+// ==========================================
+
+let estadoJuego = {
+    manoJugador: [],
+    extremoIzquierdo: null,
+    extremoDerecho: null,
+    turnoActual: 0, // 0: Tú, 1: Bot Izq, 2: Bot Norte, 3: Bot Der
+    bloqueado: false
+};
+
+// 1. Iniciar la pantalla limpia
+window.iniciarJuegoBotsOficial = function() {
+    // Ocultar el menú de salas completo
+    const menu = document.getElementById('domino-menu-principal') || document.getElementById('contenedor-opciones-salas');
+    if (menu) menu.classList.add('hidden');
+
+    const panelBuscar = document.getElementById('domino-buscar-sala-panel');
+    if (panelBuscar) panelBuscar.classList.add('hidden');
+
+    // Mostrar el contenedor de la mesa activa
+    const mesa = document.getElementById('domino-mesa-activa');
+    if (mesa) {
+        mesa.classList.remove('hidden');
+        mesa.scrollIntoView({ behavior: 'smooth' }); // Centrar pantalla
+    }
+
+    const estadoEspera = document.getElementById('mesa-estado-espera');
+    if (estadoEspera) estadoEspera.classList.add('hidden');
+
+    const tableroJuego = document.getElementById('mesa-tablero-juego');
+    if (tableroJuego) tableroJuego.classList.remove('hidden');
+
+    // Iniciar lógica de partida
+    generarPartidaLocal();
+};
+
+// 2. Generar fichas y repartir
+function generarPartidaLocal() {
+    // Crear el pozo de fichas (hasta el 6/6)
+    let pozo = [];
+    for (let i = 0; i <= 6; i++) {
+        for (let j = i; j <= 6; j++) {
+            pozo.push([i, j]);
+        }
+    }
+    
+    // Barajar
+    pozo.sort(() => Math.random() - 0.5);
+
+    // Dar 7 fichas al jugador
+    estadoJuego.manoJugador = pozo.splice(0, 7);
+
+    // Salida inicial automática (coloca la primera ficha en la mesa)
+    const fichaSalida = pozo.pop();
+    estadoJuego.extremoIzquierdo = fichaSalida[0];
+    estadoJuego.extremoDerecho = fichaSalida[1];
+    estadoJuego.turnoActual = 0; // Turno del jugador
+
+    // Renderizar mesa
+    actualizarTableroVisual(fichaSalida);
+    renderizarManoJugador();
+}
+
+// 3. Dibujar la mesa
+function actualizarTableroVisual(ficha) {
+    const tablero = document.getElementById('tablero-fichas-colocadas');
+    if (tablero) {
+        tablero.innerHTML = crearFichaSVG(estadoJuego.extremoIzquierdo, estadoJuego.extremoDerecho, false);
+    }
+}
+
+// 4. Renderizar fichas del jugador y hacerlas interactiva/clicables
+function renderizarManoJugador() {
+    const contenedorMano = document.getElementById('tus-fichas-mano');
+    if (!contenedorMano) return;
+
+    contenedorMano.innerHTML = '';
+    
+    estadoJuego.manoJugador.forEach((ficha, index) => {
+        const divFicha = document.createElement('div');
+        divFicha.className = 'cursor-pointer hover:-translate-y-2 transition-transform';
+        divFicha.innerHTML = crearFichaSVG(ficha[0], ficha[1], false);
+        
+        // Evento al tocar la ficha
+        divFicha.onclick = () => intentarJugarFicha(index, ficha);
+        contenedorMano.appendChild(divFicha);
+    });
+}
+
+// 5. Intentar jugar una ficha (Reglas de jugada)
+function intentarJugarFicha(index, ficha) {
+    if (estadoJuego.turnoActual !== 0) {
+        alert("Es el turno de los bots, espera un momento.");
+        return;
+    }
+
+    const [v1, v2] = ficha;
+    let jugadaValida = false;
+
+    // Conectar por la derecha
+    if (v1 === estadoJuego.extremoDerecho) {
+        estadoJuego.extremoDerecho = v2;
+        jugadaValida = true;
+    } else if (v2 === estadoJuego.extremoDerecho) {
+        estadoJuego.extremoDerecho = v1;
+        jugadaValida = true;
+    } 
+    // Conectar por la izquierda
+    else if (v1 === estadoJuego.extremoIzquierdo) {
+        estadoJuego.extremoIzquierdo = v2;
+        jugadaValida = true;
+    } else if (v2 === estadoJuego.extremoIzquierdo) {
+        estadoJuego.extremoIzquierdo = v1;
+        jugadaValida = true;
+    }
+
+    if (jugadaValida) {
+        // Eliminar ficha de la mano
+        estadoJuego.manoJugador.splice(index, 1);
+        
+        // Agregar visualmente al tablero
+        const tablero = document.getElementById('tablero-fichas-colocadas');
+        tablero.innerHTML += crearFichaSVG(v1, v2, false);
+
+        // Volver a dibujar tus fichas restantes
+        renderizarManoJugador();
+
+        // Pasar turno al Bot 1
+        estadoJuego.turnoActual = 1;
+        turnosBots();
+    } else {
+        alert("Esta ficha no encaja en ninguno de los dos extremos.");
+    }
+}
+
+// 6. Inteligencia Artificial / Turno de los Bots
+function turnosBots() {
+    if (estadoJuego.turnoActual === 0) return; // Le toca al usuario
+
+    // Simular tiempo de pensamiento del Bot (1 segundo)
+    setTimeout(() => {
+        console.log(`Turno del Bot ${estadoJuego.turnoActual}`);
+        
+        // Pasar turno al siguiente bot o de vuelta al usuario
+        estadoJuego.turnoActual = (estadoJuego.turnoActual + 1) % 4;
+        
+        if (estadoJuego.turnoActual !== 0) {
+            turnosBots(); // Siguiente bot juega
+        } else {
+            console.log("Turno del usuario.");
+        }
+    }, 1000);
+}
+
+// Botón para salir/abandonar mesa
+window.salirDeSalaDomino = function() {
+    const mesa = document.getElementById('domino-mesa-activa');
+    if (mesa) mesa.classList.add('hidden');
+
+    const menu = document.getElementById('domino-menu-principal') || document.getElementById('contenedor-opciones-salas');
+    if (menu) menu.classList.remove('hidden');
+};
 
     </script>
 </body>
