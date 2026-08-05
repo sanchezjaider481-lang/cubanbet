@@ -260,6 +260,19 @@
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4 text-xs text-gray-600">
                     <b>Reglas:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. Comisión de la casa: <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Fichas hasta el 6/6.
                 </div>
+                <!-- BOTÓN MODO BOTS / PRÁCTICA -->
+<button onclick="iniciarModoBotsDirecto()" class="w-full bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-2xl shadow-lg text-left flex items-center justify-between transition transform active:scale-95">
+    <div>
+        <div class="font-bold text-lg flex items-center gap-2">
+            🤖 Práctica vs Bots
+        </div>
+        <div class="text-xs text-purple-200">
+            Juega al instante sin esperar otros usuarios.
+        </div>
+    </div>
+    <span class="text-2xl">➔</span>
+</button>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-green-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-green-700" onclick="prepararCrearUnirseSala('aleatoria')">
                         <h3 class="font-black text-lg mb-1">🎲 Sala Aleatoria</h3>
@@ -1561,6 +1574,39 @@
                 elemento.remove();
             }
         };
+        window.iniciarModoBotsDirecto = function() {
+    // 1. Ocultar el menú de selección de salas
+    // (Asegúrate de poner aquí el ID del div contenedor de tus botones)
+    const menuSalas = document.getElementById('contenedor-opciones-salas');
+    if (menuSalas) menuSalas.classList.add('hidden');
+
+    // 2. Mostrar la mesa de juego
+    const mesaActiva = document.getElementById('domino-mesa-activa');
+    if (mesaActiva) mesaActiva.classList.remove('hidden');
+
+    // 3. Ocultar la espera y lanzar la partida directamente con bots
+    document.getElementById('mesa-estado-espera').classList.add('hidden');
+    document.getElementById('btn-iniciar-partida-mesa').classList.add('hidden');
+    document.getElementById('mesa-tablero-juego').classList.remove('hidden');
+
+    // Asignar nombres a los bots
+    document.getElementById('nombre-bot-norte').innerText = 'Bot Norte 🤖';
+
+    // Limpiar tablero e inyectar ficha de salida
+    const tablero = document.getElementById('tablero-fichas-colocadas');
+    tablero.innerHTML = crearFichaSVG(6, 6, false);
+
+    // Repartir tus 7 fichas
+    const mano = document.getElementById('tus-fichas-mano');
+    mano.innerHTML = 
+        crearFichaSVG(6, 3, false) +
+        crearFichaSVG(6, 1, false) +
+        crearFichaSVG(3, 4, false) +
+        crearFichaSVG(0, 2, false) +
+        crearFichaSVG(5, 5, false) +
+        crearFichaSVG(2, 6, false) +
+        crearFichaSVG(1, 1, false);
+};
 
     </script>
 </body>
