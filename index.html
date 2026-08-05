@@ -1270,29 +1270,52 @@
             document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigo}`;
         };
 
-                window.iniciarPartidaDominoAccion = function() {
+                        window.iniciarPartidaDominoAccion = function() {
             document.getElementById('mesa-estado-espera').classList.add('hidden');
             document.getElementById('btn-iniciar-partida-mesa').classList.add('hidden');
             document.getElementById('mesa-tablero-juego').classList.remove('hidden');
 
-            // Renderizar la mesa central con tiradas iniciales de prueba
-            const tablero = document.getElementById('tablero-fichas-colocadas');
-            tablero.innerHTML = 
-                crearFichaSVG(6, 6, false) +
-                crearFichaSVG(6, 3, true) +
-                crearFichaSVG(3, 1, true);
+            // 1. Simulación/Detección de Jugadores Activos y Relleno con Bots
+            // (Si en la sala no hay 4 personas, asignamos Bots a las posiciones vacías)
+            const jugadoresEnSala = Array.from(document.querySelectorAll('#lista-jugadores-sala > div'));
+            const cantidadHumanos = jugadoresEnSala.length || 1; // Mínimo tú
 
-            // Repartir 7 fichas al usuario en crema
+            const nombresBots = ['Bot-Norte 🤖', 'Bot-Izquierda 🤖', 'Bot-Derecha 🤖'];
+            let botsRequeridos = 4 - cantidadHumanos;
+
+            // Actualizar etiquetas en la interfaz
+            document.getElementById('nombre-bot-norte').innerText = botsRequeridos > 0 ? nombresBots[0] : (jugadoresEnSala[1]?.innerText || 'Jugador 2');
+            
+            // 2. Limpiar e Iniciar Tablero Central
+            const tablero = document.getElementById('tablero-fichas-colocadas');
+            tablero.innerHTML = ''; // Limpia mesa
+            
+            // Colocar la ficha de salida inicial (Ejemplo: Doble 6)
+            tablero.innerHTML += crearFichaSVG(6, 6, false);
+
+            // 3. Repartir 7 fichas al usuario humano
             const mano = document.getElementById('tus-fichas-mano');
             mano.innerHTML = 
-                crearFichaSVG(1, 4, false) +
-                crearFichaSVG(4, 5, false) +
+                crearFichaSVG(6, 3, false) +
+                crearFichaSVG(6, 1, false) +
+                crearFichaSVG(3, 4, false) +
                 crearFichaSVG(0, 2, false) +
-                crearFichaSVG(3, 3, false) +
                 crearFichaSVG(5, 5, false) +
                 crearFichaSVG(2, 6, false) +
                 crearFichaSVG(1, 1, false);
+
+            // 4. Si hay bots, programar su turno automático sencillo
+            if (botsRequeridos > 0) {
+                iniciarTurnosBots();
+            }
         };
+
+        // Lógica simple para que los bots simulen jugadas periódicas si faltan usuarios
+        function iniciarTurnosBots() {
+            console.log("Modo con Bots activado para completar los 4 asientos.");
+            // Aquí puedes conectar tu función de IA para que tiren automáticamente
+        }
+
 
 
         window.salirDeSalaDomino = async function() {
