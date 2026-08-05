@@ -103,6 +103,40 @@
             font-size: 15px;
             cursor: pointer;
         }
+                /* Estilos específicos para la mesa de Dominó Sexto */
+        .domino-table-green {
+            background: radial-gradient(circle at center, #15803d 0%, #064e3b 100%);
+            box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.6);
+        }
+
+        .player-wood-card {
+            background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+            border: 2px solid #b45309;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+        }
+
+        .domino-tile {
+            display: inline-flex;
+            cursor: pointer;
+            transition: transform 0.15s ease, filter 0.15s ease;
+            user-select: none;
+        }
+
+        .domino-tile:hover {
+            transform: translateY(-8px);
+            filter: drop-shadow(0 8px 10px rgba(0,0,0,0.5));
+        }
+
+        .domino-tile.disabled {
+            filter: brightness(0.5);
+            cursor: not-allowed;
+        }
+
+        .domino-tile.disabled:hover {
+            transform: none;
+        }
+
     </style>
 </head>
 <body class="pb-20">
@@ -267,7 +301,8 @@
                 </div>
             </div>
 
-            <div id="domino-mesa-activa" class="hidden bg-gray-900 text-white p-6 rounded-2xl shadow-xl space-y-4 mt-4">
+                        <!-- CONTENEDOR DE LA MESA ACTIVA DE DOMINÓ -->
+            <div id="domino-mesa-activa" class="hidden bg-gray-900 text-white p-4 rounded-2xl shadow-xl space-y-4 mt-4">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                     <div>
                         <h3 id="mesa-nombre-sala" class="font-bold text-sm text-green-400">Sala: Cargando...</h3>
@@ -275,6 +310,7 @@
                     </div>
                     <button onclick="salirDeSalaDomino()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Abandonar</button>
                 </div>
+
                 <div class="bg-gray-800 p-4 rounded-xl text-center space-y-2">
                     <div id="mesa-estado-espera" class="text-yellow-400 text-xs font-bold animate-pulse">Esperando jugadores en la sala...</div>
                     <div id="codigo-invitacion-box" class="hidden bg-black/40 p-2 rounded-xl text-xs">
@@ -282,19 +318,70 @@
                     </div>
                     <div id="lista-jugadores-sala" class="grid grid-cols-2 gap-2 text-xs text-gray-300 pt-2"></div>
                 </div>
-                <div id="mesa-tablero-juego" class="hidden space-y-4">
-                    <div class="bg-green-900/50 border border-green-600 p-4 rounded-xl text-center">
-                        <p class="text-xs text-green-300 font-bold mb-2">Mesa Central (Dominó Cubano - 6/6)</p>
-                        <div id="tablero-fichas-colocadas" class="flex justify-center gap-2 py-3 bg-black/30 rounded-lg text-lg">[ 3|4 ] === [ 4|4 ] === [ 4|6 ]</div>
-                        <p id="marcador-puntos-partida" class="text-xs text-yellow-300 mt-2">Puntuación: Pareja A: 45 pts | Pareja B: 30 pts (Meta: 300 pts)</p>
+
+                <!-- TABLERO VISUAL TAPETE VERDE -->
+                <div id="mesa-tablero-juego" class="hidden relative w-full h-[520px] domino-table-green rounded-2xl flex flex-col justify-between p-4 overflow-hidden border-4 border-amber-950 select-none mx-auto my-2">
+                    
+                    <!-- BOT NORTE -->
+                    <div class="absolute top-2 left-1/2 -translate-x-1/2 flex items-center gap-3">
+                        <div class="player-wood-card px-3 py-1 flex items-center gap-2 text-white text-xs">
+                            <span>🤖</span>
+                            <div>
+                                <div id="nombre-bot-norte" class="font-bold">Bot Norte</div>
+                                <div class="text-yellow-400 font-bold">0 PTS</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-1">
+                            <div class="w-4 h-7 bg-amber-100 border border-amber-300 rounded shadow"></div>
+                            <div class="w-4 h-7 bg-amber-100 border border-amber-300 rounded shadow"></div>
+                            <div class="w-4 h-7 bg-amber-100 border border-amber-300 rounded shadow"></div>
+                        </div>
                     </div>
-                    <div class="bg-gray-800 p-4 rounded-xl">
-                        <p class="text-xs text-gray-400 font-bold mb-2">Tus Fichas (Selecciona para tirar):</p>
-                        <div id="tus-fichas-mano" class="flex flex-wrap gap-2 justify-center"></div>
+
+                    <!-- BOT OESTE (Izquierda) -->
+                    <div class="absolute left-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
+                        <div class="player-wood-card p-1.5 text-center text-white text-xs w-16">
+                            <span>🤖</span>
+                            <div class="font-bold text-[10px]">Bot Izq</div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
+                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- BOT ESTE (Derecha) -->
+                    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
+                        <div class="flex flex-col gap-1">
+                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
+                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
+                        </div>
+                        <div class="player-wood-card p-1.5 text-center text-white text-xs w-16">
+                            <span>🤖</span>
+                            <div class="font-bold text-[10px]">Bot Der</div>
+                        </div>
+                    </div>
+
+                    <!-- TABLERO CENTRAL DE JUEGO (Fichas en la mesa) -->
+                    <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 my-12 overflow-x-auto">
+                        <!-- Las fichas jugadas se inyectan dinámicamente -->
+                    </div>
+
+                    <!-- JUGADOR HUMANO -->
+                    <div class="w-full flex flex-col items-center z-10">
+                        <div id="tus-fichas-mano" class="flex gap-1.5 justify-center items-end bg-amber-950/40 p-2.5 rounded-t-2xl border-t border-amber-600/30 max-w-full overflow-x-auto">
+                            <!-- Tus 7 fichas en crema SVG se inyectan aquí -->
+                        </div>
+                        <div class="player-wood-card px-6 py-1 flex items-center gap-4 text-white text-xs rounded-t-none">
+                            <span class="font-bold text-green-400">TÚ</span>
+                            <div>Puntos: <span id="puntos-humano" class="text-yellow-400 font-bold">0</span></div>
+                        </div>
                     </div>
                 </div>
+
                 <button id="btn-iniciar-partida-mesa" onclick="iniciarPartidaDominoAccion()" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-md">Comenzar Partida</button>
             </div>
+
 
             <div id="domino-buscar-sala-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
                 <h3 class="font-bold text-lg text-blue-700">Buscar Sala Activa</h3>
@@ -1183,16 +1270,30 @@
             document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigo}`;
         };
 
-        window.iniciarPartidaDominoAccion = function() {
+                window.iniciarPartidaDominoAccion = function() {
             document.getElementById('mesa-estado-espera').classList.add('hidden');
             document.getElementById('btn-iniciar-partida-mesa').classList.add('hidden');
             document.getElementById('mesa-tablero-juego').classList.remove('hidden');
+
+            // Renderizar la mesa central con tiradas iniciales de prueba
+            const tablero = document.getElementById('tablero-fichas-colocadas');
+            tablero.innerHTML = 
+                crearFichaSVG(6, 6, false) +
+                crearFichaSVG(6, 3, true) +
+                crearFichaSVG(3, 1, true);
+
+            // Repartir 7 fichas al usuario en crema
             const mano = document.getElementById('tus-fichas-mano');
-            mano.innerHTML = "";
-            [" [ 6|6 ] ", " [ 5|4 ] ", " [ 3|2 ] "].forEach(f => {
-                mano.innerHTML += `<button onclick="this.remove(); alert('Ficha colocada');" class="bg-white text-black px-3 py-2 rounded-lg font-bold shadow">${f}</button>`;
-            });
+            mano.innerHTML = 
+                crearFichaSVG(1, 4, false) +
+                crearFichaSVG(4, 5, false) +
+                crearFichaSVG(0, 2, false) +
+                crearFichaSVG(3, 3, false) +
+                crearFichaSVG(5, 5, false) +
+                crearFichaSVG(2, 6, false) +
+                crearFichaSVG(1, 1, false);
         };
+
 
         window.salirDeSalaDomino = async function() {
             if (salaActivaId) await remove(ref(db, `salas_domino/${salaActivaId}`));
@@ -1386,6 +1487,58 @@
                 }
             } catch (error) { console.error("Error push:", error); }
         };
+                // Renderizador de Fichas SVG en Crema (Dominó Sexto 0 a 6)
+        function crearFichaSVG(valArriba, valAbajo, esHorizontal = false, esDisabled = false) {
+            if (valArriba > 6 || valAbajo > 6) return '';
+
+            const posicionesPuntos = {
+                0: [],
+                1: [{x: 15, y: 15}],
+                2: [{x: 8, y: 8}, {x: 22, y: 22}],
+                3: [{x: 8, y: 8}, {x: 15, y: 15}, {x: 22, y: 22}],
+                4: [{x: 8, y: 8}, {x: 22, y: 8}, {x: 8, y: 22}, {x: 22, y: 22}],
+                5: [{x: 8, y: 8}, {x: 22, y: 8}, {x: 15, y: 15}, {x: 8, y: 22}, {x: 22, y: 22}],
+                6: [{x: 8, y: 7}, {x: 22, y: 7}, {x: 8, y: 15}, {x: 22, y: 15}, {x: 8, y: 23}, {x: 22, y: 23}]
+            };
+
+            function renderPuntos(val, offsetX = 0, offsetY = 0) {
+                return (posicionesPuntos[val] || []).map(p => 
+                    `<circle cx="${p.x + offsetX}" cy="${p.y + offsetY}" r="2.5" fill="#1e293b" />`
+                ).join('');
+            }
+
+            const ancho = esHorizontal ? 60 : 32;
+            const alto = esHorizontal ? 32 : 60;
+            const disabledClass = esDisabled ? 'disabled' : '';
+
+            let puntos = '', linea = '';
+            if (!esHorizontal) {
+                puntos = renderPuntos(valArriba, 1, 1) + renderPuntos(valAbajo, 1, 30);
+                linea = `<line x1="4" y1="30" x2="28" y2="30" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/>`;
+            } else {
+                puntos = renderPuntos(valArriba, 1, 1) + renderPuntos(valAbajo, 30, 1);
+                linea = `<line x1="30" y1="4" x2="30" y2="28" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/>`;
+            }
+
+            return `
+                <div class="domino-tile ${disabledClass}" onclick="jugarFichaMano(this, ${valArriba}, ${valAbajo})">
+                    <svg width="${ancho}" height="${alto}" viewBox="0 0 ${ancho} ${alto}">
+                        <rect width="${ancho}" height="${alto}" rx="5" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+                        ${linea}
+                        ${puntos}
+                    </svg>
+                </div>
+            `;
+        }
+
+        window.jugarFichaMano = function(elemento, arriba, abajo) {
+            const tablero = document.getElementById('tablero-fichas-colocadas');
+            if (tablero) {
+                tablero.innerHTML += crearFichaSVG(arriba, abajo, false, false);
+                elemento.remove();
+            }
+        };
+
     </script>
 </body>
                     </html>
