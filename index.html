@@ -261,6 +261,19 @@
                     <b>Reglas:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. Comisión de la casa: <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Fichas hasta el 6/6.
                 </div>
                 <!-- BOTÓN MODO BOTS / PRÁCTICA -->
+<button onclick="iniciarModoBotsDirecto()" class="w-full bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-2xl shadow-lg text-left flex items-center justify-between transition transform active:scale-95 mb-3">
+    <div>
+        <div class="font-bold text-lg flex items-center gap-2">
+            🤖 Práctica vs Bots
+        </div>
+        <div class="text-xs text-purple-200">
+            Juega al instante sin esperar otros usuarios.
+        </div>
+    </div>
+    <span class="text-2xl">➔</span>
+</button>
+
+                <!-- BOTÓN MODO BOTS / PRÁCTICA -->
 <button onclick="iniciarModoBotsDirecto()" class="w-full bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-2xl shadow-lg text-left flex items-center justify-between transition transform active:scale-95">
     <div>
         <div class="font-bold text-lg flex items-center gap-2">
@@ -314,86 +327,85 @@
                 </div>
             </div>
 
-                        <!-- CONTENEDOR DE LA MESA ACTIVA DE DOMINÓ -->
-            <div id="domino-mesa-activa" class="hidden bg-gray-900 text-white p-4 rounded-2xl shadow-xl space-y-4 mt-4">
-                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
-                    <div>
-                        <h3 id="mesa-nombre-sala" class="font-bold text-sm text-green-400">Sala: Cargando...</h3>
-                        <p id="mesa-info-apuesta" class="text-xs text-gray-400">Apuesta: 0 CUP | Comisión Casa: 50 CUP</p>
-                    </div>
-                    <button onclick="salirDeSalaDomino()" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Abandonar</button>
-                </div>
+                        <!-- CONTENEDOR MESA DE JUEGO -->
+<div id="domino-mesa-activa" class="hidden relative w-full min-h-[550px] bg-slate-900 rounded-3xl p-3 flex flex-col justify-between select-none overflow-hidden">
+    
+    <!-- ENCABEZADO -->
+    <div class="flex justify-between items-center bg-slate-800/80 p-3 rounded-2xl backdrop-blur-md z-10">
+        <div>
+            <h3 id="titulo-sala-activa" class="font-bold text-emerald-400 text-sm">Sala: Práctica vs Bots</h3>
+            <p class="text-[10px] text-gray-300">Apuesta: 0 CUP | Comisión Casa: 50 CUP</p>
+        </div>
+        <button onclick="abandonarMesa()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl">
+            Abandonar
+        </button>
+    </div>
 
-                <div class="bg-gray-800 p-4 rounded-xl text-center space-y-2">
-                    <div id="mesa-estado-espera" class="text-yellow-400 text-xs font-bold animate-pulse">Esperando jugadores en la sala...</div>
-                    <div id="codigo-invitacion-box" class="hidden bg-black/40 p-2 rounded-xl text-xs">
-                        Código de invitación: <b id="txt-codigo-sala" class="text-green-400 text-sm"></b>
-                    </div>
-                    <div id="lista-jugadores-sala" class="grid grid-cols-2 gap-2 text-xs text-gray-300 pt-2"></div>
-                </div>
-
-                <!-- TABLERO VISUAL TAPETE VERDE -->
-                <div id="mesa-tablero-juego" class="hidden relative w-full h-[520px] domino-table-green rounded-2xl flex flex-col justify-between p-4 overflow-hidden border-4 border-amber-950 select-none mx-auto my-2">
-                    
-                    <!-- BOT NORTE -->
-                    <div class="absolute top-2 left-1/2 -translate-x-1/2 flex items-center gap-3">
-                        <div class="player-wood-card px-3 py-1 flex items-center gap-2 text-white text-xs">
-                            <span>🤖</span>
-                            <div>
-                                <div id="nombre-bot-norte" class="font-bold">Bot Norte</div>
-                                <div class="text-yellow-400 font-bold">0 PTS</div>
-                            </div>
-                        </div>
-                        <div class="flex gap-1">
-                            <div class="w-4 h-7 bg-amber-100 border border-amber-300 rounded shadow"></div>
-                            <div class="w-4 h-7 bg-amber-100 border border-amber-300 rounded shadow"></div>
-                            <div class="w-4 h-7 bg-amber-100 border border-amber-300 rounded shadow"></div>
-                        </div>
-                    </div>
-
-                    <!-- BOT OESTE (Izquierda) -->
-                    <div class="absolute left-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
-                        <div class="player-wood-card p-1.5 text-center text-white text-xs w-16">
-                            <span>🤖</span>
-                            <div class="font-bold text-[10px]">Bot Izq</div>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
-                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
-                        </div>
-                    </div>
-
-                    <!-- BOT ESTE (Derecha) -->
-                    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
-                        <div class="flex flex-col gap-1">
-                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
-                            <div class="w-7 h-4 bg-amber-100 border border-amber-300 rounded shadow"></div>
-                        </div>
-                        <div class="player-wood-card p-1.5 text-center text-white text-xs w-16">
-                            <span>🤖</span>
-                            <div class="font-bold text-[10px]">Bot Der</div>
-                        </div>
-                    </div>
-
-                    <!-- TABLERO CENTRAL DE JUEGO (Fichas en la mesa) -->
-                    <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 my-12 overflow-x-auto">
-                        <!-- Las fichas jugadas se inyectan dinámicamente -->
-                    </div>
-
-                    <!-- JUGADOR HUMANO -->
-                    <div class="w-full flex flex-col items-center z-10">
-                        <div id="tus-fichas-mano" class="flex gap-1.5 justify-center items-end bg-amber-950/40 p-2.5 rounded-t-2xl border-t border-amber-600/30 max-w-full overflow-x-auto">
-                            <!-- Tus 7 fichas en crema SVG se inyectan aquí -->
-                        </div>
-                        <div class="player-wood-card px-6 py-1 flex items-center gap-4 text-white text-xs rounded-t-none">
-                            <span class="font-bold text-green-400">TÚ</span>
-                            <div>Puntos: <span id="puntos-humano" class="text-yellow-400 font-bold">0</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <button id="btn-iniciar-partida-mesa" onclick="iniciarPartidaDominoAccion()" class="hidden w-full bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold shadow-md">Comenzar Partida</button>
+    <!-- TAPETE VERDE (BOARD) -->
+    <div class="relative w-full flex-1 bg-emerald-800 border-4 border-amber-900 rounded-2xl my-2 flex flex-col justify-between p-2 shadow-inner overflow-hidden">
+        
+        <!-- JUGADOR NORTE (BOT) -->
+        <div class="w-full flex justify-center items-center gap-2 z-10">
+            <div class="bg-amber-950/90 text-amber-200 text-center px-3 py-1 rounded-xl border border-amber-700 shadow-md">
+                <span class="text-xs font-bold block">🤖 Bot Norte</span>
+                <span class="text-[10px] text-amber-400">0 PTS</span>
             </div>
+            <!-- Fichas ocultas Norte -->
+            <div class="flex gap-1">
+                <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+            </div>
+        </div>
+
+        <!-- ZONA CENTRAL: BOT IZQ - TABLERO - BOT DER -->
+        <div class="flex-1 flex justify-between items-center my-2 relative">
+            
+            <!-- BOT IZQUIERDA -->
+            <div class="flex flex-col items-center gap-1 z-10">
+                <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
+                    <span class="text-[10px] font-bold block">🤖 Bot Izq</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                </div>
+            </div>
+
+            <!-- TABLERO CENTRAL DONDE SE JUEGA -->
+            <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 overflow-x-auto p-2 min-h-[100px]">
+                <!-- Las fichas jugadas se inyectan aquí -->
+            </div>
+
+            <!-- BOT DERECHA -->
+            <div class="flex flex-col items-center gap-1 z-10">
+                <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
+                    <span class="text-[10px] font-bold block">🤖 Bot Der</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JUGADOR SUR (TÚ) -->
+        <div class="w-full flex flex-col items-center z-10">
+            <!-- TUS FICHAS -->
+            <div id="tus-fichas-mano" class="flex justify-center items-center gap-1 overflow-x-auto max-w-full p-2 bg-black/20 rounded-xl backdrop-blur-sm">
+                <!-- Fichas SVG inyectadas con JS -->
+            </div>
+            
+            <!-- TU ETIQUETA -->
+            <div class="bg-amber-950/90 text-amber-200 text-center px-4 py-1 rounded-xl border border-amber-700 shadow-md mt-1">
+                <span class="text-xs font-bold">TÚ</span>
+                <span class="text-[10px] text-amber-400 ml-2">Puntos: 0</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
 
             <div id="domino-buscar-sala-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
@@ -1606,6 +1618,10 @@
         crearFichaSVG(5, 5, false) +
         crearFichaSVG(2, 6, false) +
         crearFichaSVG(1, 1, false);
+};
+window.abandonarMesa = function() {
+    document.getElementById('domino-mesa-activa').classList.add('hidden');
+    document.getElementById('domino-menu-principal').classList.remove('hidden');
 };
 
     </script>
