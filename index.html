@@ -103,7 +103,7 @@
             font-size: 15px;
             cursor: pointer;
         }
-                /* Estilos específicos para la mesa de Dominó Sexto */
+        /* Estilos específicos para la mesa de Dominó Sexto */
         .domino-table-green {
             background: radial-gradient(circle at center, #15803d 0%, #064e3b 100%);
             box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.6);
@@ -136,7 +136,6 @@
         .domino-tile.disabled:hover {
             transform: none;
         }
-
     </style>
 </head>
 <body class="pb-20">
@@ -260,20 +259,19 @@
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4 text-xs text-gray-600">
                     <b>Reglas:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. Comisión de la casa: <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Fichas hasta el 6/6.
                 </div>
+                
                 <!-- BOTÓN MODO BOTS / PRÁCTICA -->
-<button onclick="iniciarModoBotsDirecto()" class="w-full bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-2xl shadow-lg text-left flex items-center justify-between transition transform active:scale-95 mb-3">
-    <div>
-        <div class="font-bold text-lg flex items-center gap-2">
-            🤖 Práctica vs Bots
-        </div>
-        <div class="text-xs text-purple-200">
-            Juega al instante sin esperar otros usuarios.
-        </div>
-    </div>
-    <span class="text-2xl">➔</span>
-</button>
-
-    
+                <button onclick="iniciarJuegoBotsOficial()" class="w-full bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-2xl shadow-lg text-left flex items-center justify-between transition transform active:scale-95 mb-3">
+                    <div>
+                        <div class="font-bold text-lg flex items-center gap-2">
+                            🤖 Práctica vs Bots
+                        </div>
+                        <div class="text-xs text-purple-200">
+                            Juega al instante sin esperar otros usuarios.
+                        </div>
+                    </div>
+                    <span class="text-2xl">➔</span>
+                </button>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-green-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-green-700" onclick="prepararCrearUnirseSala('aleatoria')">
@@ -310,92 +308,89 @@
                     </select>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="confirmarCrearUnirSala()" id="btn-confirmar-sala">Confirmar y Entrar</button>
-
+                    <button onclick="confirmarCrearUnirSala()" id="btn-confirmar-sala" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold">Confirmar y Entrar</button>
                     <button onclick="volverMenuDomino()" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-xl font-bold">Cancelar</button>
                 </div>
             </div>
 
-                        <!-- CONTENEDOR MESA DE JUEGO -->
-<div id="domino-mesa-activa" class="hidden relative w-full min-h-[550px] bg-slate-900 rounded-3xl p-3 flex flex-col justify-between select-none overflow-hidden">
-    
-    <!-- ENCABEZADO -->
-    <div class="flex justify-between items-center bg-slate-800/80 p-3 rounded-2xl backdrop-blur-md z-10">
-        <div>
-            <h3 id="titulo-sala-activa" class="font-bold text-emerald-400 text-sm">Sala: Práctica vs Bots</h3>
-            <p class="text-[10px] text-gray-300">Apuesta: 0 CUP | Comisión Casa: 50 CUP</p>
-        </div>
-        <button onclick="abandonarMesa()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl">
-            Abandonar
-        </button>
-    </div>
-
-    <!-- TAPETE VERDE (BOARD) -->
-    <div class="relative w-full flex-1 bg-emerald-800 border-4 border-amber-900 rounded-2xl my-2 flex flex-col justify-between p-2 shadow-inner overflow-hidden">
-        
-        <!-- JUGADOR NORTE (BOT) -->
-        <div class="w-full flex justify-center items-center gap-2 z-10">
-            <div class="bg-amber-950/90 text-amber-200 text-center px-3 py-1 rounded-xl border border-amber-700 shadow-md">
-                <span class="text-xs font-bold block">🤖 Bot Norte</span>
-                <span class="text-[10px] text-amber-400">0 PTS</span>
-            </div>
-            <!-- Fichas ocultas Norte -->
-            <div class="flex gap-1">
-                <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-            </div>
-        </div>
-
-        <!-- ZONA CENTRAL: BOT IZQ - TABLERO - BOT DER -->
-        <div class="flex-1 flex justify-between items-center my-2 relative">
-            
-            <!-- BOT IZQUIERDA -->
-            <div class="flex flex-col items-center gap-1 z-10">
-                <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
-                    <span class="text-[10px] font-bold block">🤖 Bot Izq</span>
+            <!-- CONTENEDOR MESA DE JUEGO (MESA VISUAL COMPLETA Y LIMPIA) -->
+            <div id="domino-mesa-activa" class="hidden relative w-full min-h-[550px] bg-slate-900 rounded-3xl p-3 flex flex-col justify-between select-none overflow-hidden">
+                
+                <!-- ENCABEZADO DE MESA -->
+                <div class="flex justify-between items-center bg-slate-800/80 p-3 rounded-2xl backdrop-blur-md z-10">
+                    <div>
+                        <h3 id="titulo-sala-activa" class="font-bold text-emerald-400 text-sm">Mesa de Juego: Práctica vs Bots</h3>
+                        <p class="text-[10px] text-gray-300">Modo Entrenamiento - Partida Rápida</p>
+                    </div>
+                    <button onclick="abandonarMesa()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow">
+                        ← Salir
+                    </button>
                 </div>
-                <div class="flex flex-col gap-1">
-                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+
+                <!-- TAPETE VERDE (BOARD) -->
+                <div class="relative w-full flex-1 bg-emerald-800 border-4 border-amber-900 rounded-2xl my-2 flex flex-col justify-between p-2 shadow-inner overflow-hidden">
+                    
+                    <!-- JUGADOR NORTE (BOT) -->
+                    <div class="w-full flex justify-center items-center gap-2 z-10">
+                        <div class="bg-amber-950/90 text-amber-200 text-center px-3 py-1 rounded-xl border border-amber-700 shadow-md">
+                            <span class="text-xs font-bold block" id="nombre-bot-norte">🤖 Bot Norte</span>
+                            <span class="text-[10px] text-amber-400">0 PTS</span>
+                        </div>
+                        <!-- Fichas ocultas Norte -->
+                        <div class="flex gap-1">
+                            <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                            <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                            <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                        </div>
+                    </div>
+
+                    <!-- ZONA CENTRAL: BOT IZQ - TABLERO - BOT DER -->
+                    <div class="flex-1 flex justify-between items-center my-2 relative">
+                        
+                        <!-- BOT IZQUIERDA -->
+                        <div class="flex flex-col items-center gap-1 z-10">
+                            <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
+                                <span class="text-[10px] font-bold block">🤖 Bot Izq</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                            </div>
+                        </div>
+
+                        <!-- TABLERO CENTRAL DONDE SE JUEGA -->
+                        <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 overflow-x-auto p-2 min-h-[100px]">
+                            <!-- Las fichas jugadas se inyectan dinámicamente aquí -->
+                        </div>
+
+                        <!-- BOT DERECHA -->
+                        <div class="flex flex-col items-center gap-1 z-10">
+                            <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
+                                <span class="text-[10px] font-bold block">🤖 Bot Der</span>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JUGADOR SUR (TÚ) -->
+                    <div class="w-full flex flex-col items-center z-10">
+                        <!-- TUS FICHAS -->
+                        <div id="tus-fichas-mano" class="flex justify-center items-center gap-1 overflow-x-auto max-w-full p-2 bg-black/20 rounded-xl backdrop-blur-sm">
+                            <!-- Fichas SVG inyectadas con JS -->
+                        </div>
+                        
+                        <!-- TU ETIQUETA -->
+                        <div class="bg-amber-950/90 text-amber-200 text-center px-4 py-1 rounded-xl border border-amber-700 shadow-md mt-1">
+                            <span class="text-xs font-bold">TÚ (Jugador Principal)</span>
+                            <span class="text-[10px] text-amber-400 ml-2">Puntos: 0</span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
-            <!-- TABLERO CENTRAL DONDE SE JUEGA -->
-            <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 overflow-x-auto p-2 min-h-[100px]">
-                <!-- Las fichas jugadas se inyectan aquí -->
-            </div>
-
-            <!-- BOT DERECHA -->
-            <div class="flex flex-col items-center gap-1 z-10">
-                <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
-                    <span class="text-[10px] font-bold block">🤖 Bot Der</span>
-                </div>
-                <div class="flex flex-col gap-1">
-                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                    <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- JUGADOR SUR (TÚ) -->
-        <div class="w-full flex flex-col items-center z-10">
-            <!-- TUS FICHAS -->
-            <div id="tus-fichas-mano" class="flex justify-center items-center gap-1 overflow-x-auto max-w-full p-2 bg-black/20 rounded-xl backdrop-blur-sm">
-                <!-- Fichas SVG inyectadas con JS -->
-            </div>
-            
-            <!-- TU ETIQUETA -->
-            <div class="bg-amber-950/90 text-amber-200 text-center px-4 py-1 rounded-xl border border-amber-700 shadow-md mt-1">
-                <span class="text-xs font-bold">TÚ</span>
-                <span class="text-[10px] text-amber-400 ml-2">Puntos: 0</span>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-
 
             <div id="domino-buscar-sala-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
                 <h3 class="font-bold text-lg text-blue-700">Buscar Sala Activa</h3>
@@ -1217,7 +1212,7 @@
             document.getElementById('domino-buscar-sala-panel').classList.remove('hidden');
         };
 
-                window.confirmarCrearUnirSala = async function() {
+        window.confirmarCrearUnirSala = async function() {
             const monto = Number(document.getElementById('domino-monto-apuesta').value);
             const modalidad = document.getElementById('domino-tipo-pareja').value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
@@ -1239,33 +1234,15 @@
 
                 document.getElementById('domino-config-sala').classList.add('hidden');
                 document.getElementById('domino-mesa-activa').classList.remove('hidden');
-                document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigoSala} (${modalidad})`;
-                document.getElementById('mesa-info-apuesta').innerText = `Apuesta: ${monto} CUP | Comisión: 50 CUP`;
-                document.getElementById('codigo-invitacion-box').classList.remove('hidden');
-                document.getElementById('txt-codigo-sala').innerText = codigoSala;
+                document.getElementById('titulo-sala-activa').innerText = `Sala: ${codigoSala} (${modalidad})`;
                 
                 document.getElementById('domino-mesa-activa').scrollIntoView({ behavior: 'smooth' });
 
-                onValue(ref(db, `salas_domino/${codigoSala}`), (snapshot) => {
-                    if (!snapshot.exists()) return;
-                    const sala = snapshot.val();
-                    const cont = document.getElementById('lista-jugadores-sala');
-                    cont.innerHTML = "";
-                    let count = 0;
-                    if (sala.jugadores) {
-                        Object.values(sala.jugadores).forEach(j => { count++; cont.innerHTML += `<div>👤 ${j.nombre}</div>`; });
-                    }
-                    if (count >= 2) {
-                        document.getElementById('mesa-estado-espera').innerText = "¡Sala lista!";
-                        document.getElementById('btn-iniciar-partida-mesa').classList.remove('hidden');
-                    }
-                });
             } catch (error) {
                 console.error("Error al crear la sala:", error);
                 alert("Error de Firebase al crear la sala: " + error.message);
             }
         };
-
 
         window.unirsePorCodigoSala = async function() {
             const codigo = document.getElementById('input-buscar-codigo').value.trim().toUpperCase();
@@ -1281,60 +1258,7 @@
 
             document.getElementById('domino-buscar-sala-panel').classList.add('hidden');
             document.getElementById('domino-mesa-activa').classList.remove('hidden');
-            document.getElementById('mesa-nombre-sala').innerText = `Sala: ${codigo}`;
-        };
-
-                        window.iniciarPartidaDominoAccion = function() {
-            document.getElementById('mesa-estado-espera').classList.add('hidden');
-            document.getElementById('btn-iniciar-partida-mesa').classList.add('hidden');
-            document.getElementById('mesa-tablero-juego').classList.remove('hidden');
-
-            // 1. Simulación/Detección de Jugadores Activos y Relleno con Bots
-            // (Si en la sala no hay 4 personas, asignamos Bots a las posiciones vacías)
-            const jugadoresEnSala = Array.from(document.querySelectorAll('#lista-jugadores-sala > div'));
-            const cantidadHumanos = jugadoresEnSala.length || 1; // Mínimo tú
-
-            const nombresBots = ['Bot-Norte 🤖', 'Bot-Izquierda 🤖', 'Bot-Derecha 🤖'];
-            let botsRequeridos = 4 - cantidadHumanos;
-
-            // Actualizar etiquetas en la interfaz
-            document.getElementById('nombre-bot-norte').innerText = botsRequeridos > 0 ? nombresBots[0] : (jugadoresEnSala[1]?.innerText || 'Jugador 2');
-            
-            // 2. Limpiar e Iniciar Tablero Central
-            const tablero = document.getElementById('tablero-fichas-colocadas');
-            tablero.innerHTML = ''; // Limpia mesa
-            
-            // Colocar la ficha de salida inicial (Ejemplo: Doble 6)
-            tablero.innerHTML += crearFichaSVG(6, 6, false);
-
-            // 3. Repartir 7 fichas al usuario humano
-            const mano = document.getElementById('tus-fichas-mano');
-            mano.innerHTML = 
-                crearFichaSVG(6, 3, false) +
-                crearFichaSVG(6, 1, false) +
-                crearFichaSVG(3, 4, false) +
-                crearFichaSVG(0, 2, false) +
-                crearFichaSVG(5, 5, false) +
-                crearFichaSVG(2, 6, false) +
-                crearFichaSVG(1, 1, false);
-
-            // 4. Si hay bots, programar su turno automático sencillo
-            if (botsRequeridos > 0) {
-                iniciarTurnosBots();
-            }
-        };
-
-        // Lógica simple para que los bots simulen jugadas periódicas si faltan usuarios
-        function iniciarTurnosBots() {
-            console.log("Modo con Bots activado para completar los 4 asientos.");
-            // Aquí puedes conectar tu función de IA para que tiren automáticamente
-        }
-
-
-
-        window.salirDeSalaDomino = async function() {
-            if (salaActivaId) await remove(ref(db, `salas_domino/${salaActivaId}`));
-            volverMenuDomino();
+            document.getElementById('titulo-sala-activa').innerText = `Sala: ${codigo}`;
         };
 
         window.activarAdmin = function() {
@@ -1524,7 +1448,8 @@
                 }
             } catch (error) { console.error("Error push:", error); }
         };
-                // Renderizador de Fichas SVG en Crema (Dominó Sexto 0 a 6)
+
+        // Renderizador de Fichas SVG en Crema (Dominó Sexto 0 a 6)
         function crearFichaSVG(valArriba, valAbajo, esHorizontal = false, esDisabled = false) {
             if (valArriba > 6 || valAbajo > 6) return '';
 
@@ -1558,7 +1483,7 @@
             }
 
             return `
-                <div class="domino-tile ${disabledClass}" onclick="jugarFichaMano(this, ${valArriba}, ${valAbajo})">
+                <div class="domino-tile ${disabledClass}">
                     <svg width="${ancho}" height="${alto}" viewBox="0 0 ${ancho} ${alto}">
                         <rect width="${ancho}" height="${alto}" rx="5" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
                         ${linea}
@@ -1568,215 +1493,157 @@
             `;
         }
 
-        window.jugarFichaMano = function(elemento, arriba, abajo) {
+        // ==========================================
+        // MOTOR DE DOMINÓ LOCAL (PRÁCTICA VS BOTS)
+        // ==========================================
+
+        let estadoJuego = {
+            manoJugador: [],
+            extremoIzquierdo: null,
+            extremoDerecho: null,
+            turnoActual: 0, // 0: Tú, 1: Bot Izq, 2: Bot Norte, 3: Bot Der
+            bloqueado: false
+        };
+
+        // 1. Iniciar la pantalla limpia de Práctica vs Bots
+        window.iniciarJuegoBotsOficial = function() {
+            const menu = document.getElementById('domino-menu-principal');
+            if (menu) menu.classList.add('hidden');
+
+            const panelBuscar = document.getElementById('domino-buscar-sala-panel');
+            if (panelBuscar) panelBuscar.classList.add('hidden');
+
+            const configSala = document.getElementById('domino-config-sala');
+            if (configSala) configSala.classList.add('hidden');
+
+            // Mostrar la mesa activa limpia
+            const mesa = document.getElementById('domino-mesa-activa');
+            if (mesa) {
+                mesa.classList.remove('hidden');
+                mesa.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Iniciar la lógica de partida local
+            generarPartidaLocal();
+        };
+
+        // 2. Generar fichas y repartir
+        function generarPartidaLocal() {
+            let pozo = [];
+            for (let i = 0; i <= 6; i++) {
+                for (let j = i; j <= 6; j++) {
+                    pozo.push([i, j]);
+                }
+            }
+            
+            // Barajar
+            pozo.sort(() => Math.random() - 0.5);
+
+            // Entregar 7 fichas al jugador
+            estadoJuego.manoJugador = pozo.splice(0, 7);
+
+            // Salida inicial en la mesa
+            const fichaSalida = pozo.pop();
+            estadoJuego.extremoIzquierdo = fichaSalida[0];
+            estadoJuego.extremoDerecho = fichaSalida[1];
+            estadoJuego.turnoActual = 0; // Turno del usuario
+
+            // Dibujar tablero y tus fichas
+            actualizarTableroVisual(fichaSalida);
+            renderizarManoJugador();
+        }
+
+        // 3. Dibujar la mesa de juego con la ficha inicial
+        function actualizarTableroVisual(ficha) {
             const tablero = document.getElementById('tablero-fichas-colocadas');
             if (tablero) {
-                tablero.innerHTML += crearFichaSVG(arriba, abajo, false, false);
-                elemento.remove();
+                tablero.innerHTML = crearFichaSVG(estadoJuego.extremoIzquierdo, estadoJuego.extremoDerecho, false);
             }
+        }
+
+        // 4. Renderizar fichas interactiva/clicables
+        function renderizarManoJugador() {
+            const contenedorMano = document.getElementById('tus-fichas-mano');
+            if (!contenedorMano) return;
+
+            contenedorMano.innerHTML = '';
+            
+            estadoJuego.manoJugador.forEach((ficha, index) => {
+                const divFicha = document.createElement('div');
+                divFicha.className = 'cursor-pointer hover:-translate-y-2 transition-transform';
+                divFicha.innerHTML = crearFichaSVG(ficha[0], ficha[1], false);
+                
+                divFicha.onclick = () => intentarJugarFicha(index, ficha);
+                contenedorMano.appendChild(divFicha);
+            });
+        }
+
+        // 5. Intentar jugar una ficha
+        function intentarJugarFicha(index, ficha) {
+            if (estadoJuego.turnoActual !== 0) {
+                alert("Es el turno de los bots, espera un momento.");
+                return;
+            }
+
+            const [v1, v2] = ficha;
+            let jugadaValida = false;
+
+            if (v1 === estadoJuego.extremoDerecho) {
+                estadoJuego.extremoDerecho = v2;
+                jugadaValida = true;
+            } else if (v2 === estadoJuego.extremoDerecho) {
+                estadoJuego.extremoDerecho = v1;
+                jugadaValida = true;
+            } 
+            else if (v1 === estadoJuego.extremoIzquierdo) {
+                estadoJuego.extremoIzquierdo = v2;
+                jugadaValida = true;
+            } else if (v2 === estadoJuego.extremoIzquierdo) {
+                estadoJuego.extremoIzquierdo = v1;
+                jugadaValida = true;
+            }
+
+            if (jugadaValida) {
+                estadoJuego.manoJugador.splice(index, 1);
+                
+                const tablero = document.getElementById('tablero-fichas-colocadas');
+                tablero.innerHTML += crearFichaSVG(v1, v2, false);
+
+                renderizarManoJugador();
+
+                estadoJuego.turnoActual = 1;
+                turnosBots();
+            } else {
+                alert("Esta ficha no encaja en ninguno de los dos extremos.");
+            }
+        }
+
+        // 6. Inteligencia de los Bots
+        function turnosBots() {
+            if (estadoJuego.turnoActual === 0) return;
+
+            setTimeout(() => {
+                estadoJuego.turnoActual = (estadoJuego.turnoActual + 1) % 4;
+                
+                if (estadoJuego.turnoActual !== 0) {
+                    turnosBots();
+                }
+            }, 800);
+        }
+
+        // Botón para salir/abandonar mesa y volver a los menús
+        window.abandonarMesa = function() {
+            if (salaActivaId) {
+                remove(ref(db, `salas_domino/${salaActivaId}`));
+                salaActivaId = null;
+            }
+            volverMenuDomino();
         };
-        window.iniciarModoBotsDirecto = function() {
-    // 1. Ocultar el menú de selección de salas
-    // (Asegúrate de poner aquí el ID del div contenedor de tus botones)
-    const menuSalas = document.getElementById('contenedor-opciones-salas');
-    if (menuSalas) menuSalas.classList.add('hidden');
 
-    // 2. Mostrar la mesa de juego
-    const mesaActiva = document.getElementById('domino-mesa-activa');
-    if (mesaActiva) mesaActiva.classList.remove('hidden');
-
-    // 3. Ocultar la espera y lanzar la partida directamente con bots
-    document.getElementById('mesa-estado-espera').classList.add('hidden');
-    document.getElementById('btn-iniciar-partida-mesa').classList.add('hidden');
-    document.getElementById('mesa-tablero-juego').classList.remove('hidden');
-
-    // Asignar nombres a los bots
-    document.getElementById('nombre-bot-norte').innerText = 'Bot Norte 🤖';
-
-    // Limpiar tablero e inyectar ficha de salida
-    const tablero = document.getElementById('tablero-fichas-colocadas');
-    tablero.innerHTML = crearFichaSVG(6, 6, false);
-
-    // Repartir tus 7 fichas
-    const mano = document.getElementById('tus-fichas-mano');
-    mano.innerHTML = 
-        crearFichaSVG(6, 3, false) +
-        crearFichaSVG(6, 1, false) +
-        crearFichaSVG(3, 4, false) +
-        crearFichaSVG(0, 2, false) +
-        crearFichaSVG(5, 5, false) +
-        crearFichaSVG(2, 6, false) +
-        crearFichaSVG(1, 1, false);
-};
-window.abandonarMesa = function() {
-    document.getElementById('domino-mesa-activa').classList.add('hidden');
-    document.getElementById('domino-menu-principal').classList.remove('hidden');
-};
-// ==========================================
-// MOTOR DE DOMINÓ LOCAL (PRÁCTICA VS BOTS)
-// ==========================================
-
-let estadoJuego = {
-    manoJugador: [],
-    extremoIzquierdo: null,
-    extremoDerecho: null,
-    turnoActual: 0, // 0: Tú, 1: Bot Izq, 2: Bot Norte, 3: Bot Der
-    bloqueado: false
-};
-
-// 1. Iniciar la pantalla limpia
-window.iniciarJuegoBotsOficial = function() {
-    // Ocultar el menú de salas completo
-    const menu = document.getElementById('domino-menu-principal') || document.getElementById('contenedor-opciones-salas');
-    if (menu) menu.classList.add('hidden');
-
-    const panelBuscar = document.getElementById('domino-buscar-sala-panel');
-    if (panelBuscar) panelBuscar.classList.add('hidden');
-
-    // Mostrar el contenedor de la mesa activa
-    const mesa = document.getElementById('domino-mesa-activa');
-    if (mesa) {
-        mesa.classList.remove('hidden');
-        mesa.scrollIntoView({ behavior: 'smooth' }); // Centrar pantalla
-    }
-
-    const estadoEspera = document.getElementById('mesa-estado-espera');
-    if (estadoEspera) estadoEspera.classList.add('hidden');
-
-    const tableroJuego = document.getElementById('mesa-tablero-juego');
-    if (tableroJuego) tableroJuego.classList.remove('hidden');
-
-    // Iniciar lógica de partida
-    generarPartidaLocal();
-};
-
-// 2. Generar fichas y repartir
-function generarPartidaLocal() {
-    // Crear el pozo de fichas (hasta el 6/6)
-    let pozo = [];
-    for (let i = 0; i <= 6; i++) {
-        for (let j = i; j <= 6; j++) {
-            pozo.push([i, j]);
-        }
-    }
-    
-    // Barajar
-    pozo.sort(() => Math.random() - 0.5);
-
-    // Dar 7 fichas al jugador
-    estadoJuego.manoJugador = pozo.splice(0, 7);
-
-    // Salida inicial automática (coloca la primera ficha en la mesa)
-    const fichaSalida = pozo.pop();
-    estadoJuego.extremoIzquierdo = fichaSalida[0];
-    estadoJuego.extremoDerecho = fichaSalida[1];
-    estadoJuego.turnoActual = 0; // Turno del jugador
-
-    // Renderizar mesa
-    actualizarTableroVisual(fichaSalida);
-    renderizarManoJugador();
-}
-
-// 3. Dibujar la mesa
-function actualizarTableroVisual(ficha) {
-    const tablero = document.getElementById('tablero-fichas-colocadas');
-    if (tablero) {
-        tablero.innerHTML = crearFichaSVG(estadoJuego.extremoIzquierdo, estadoJuego.extremoDerecho, false);
-    }
-}
-
-// 4. Renderizar fichas del jugador y hacerlas interactiva/clicables
-function renderizarManoJugador() {
-    const contenedorMano = document.getElementById('tus-fichas-mano');
-    if (!contenedorMano) return;
-
-    contenedorMano.innerHTML = '';
-    
-    estadoJuego.manoJugador.forEach((ficha, index) => {
-        const divFicha = document.createElement('div');
-        divFicha.className = 'cursor-pointer hover:-translate-y-2 transition-transform';
-        divFicha.innerHTML = crearFichaSVG(ficha[0], ficha[1], false);
-        
-        // Evento al tocar la ficha
-        divFicha.onclick = () => intentarJugarFicha(index, ficha);
-        contenedorMano.appendChild(divFicha);
-    });
-}
-
-// 5. Intentar jugar una ficha (Reglas de jugada)
-function intentarJugarFicha(index, ficha) {
-    if (estadoJuego.turnoActual !== 0) {
-        alert("Es el turno de los bots, espera un momento.");
-        return;
-    }
-
-    const [v1, v2] = ficha;
-    let jugadaValida = false;
-
-    // Conectar por la derecha
-    if (v1 === estadoJuego.extremoDerecho) {
-        estadoJuego.extremoDerecho = v2;
-        jugadaValida = true;
-    } else if (v2 === estadoJuego.extremoDerecho) {
-        estadoJuego.extremoDerecho = v1;
-        jugadaValida = true;
-    } 
-    // Conectar por la izquierda
-    else if (v1 === estadoJuego.extremoIzquierdo) {
-        estadoJuego.extremoIzquierdo = v2;
-        jugadaValida = true;
-    } else if (v2 === estadoJuego.extremoIzquierdo) {
-        estadoJuego.extremoIzquierdo = v1;
-        jugadaValida = true;
-    }
-
-    if (jugadaValida) {
-        // Eliminar ficha de la mano
-        estadoJuego.manoJugador.splice(index, 1);
-        
-        // Agregar visualmente al tablero
-        const tablero = document.getElementById('tablero-fichas-colocadas');
-        tablero.innerHTML += crearFichaSVG(v1, v2, false);
-
-        // Volver a dibujar tus fichas restantes
-        renderizarManoJugador();
-
-        // Pasar turno al Bot 1
-        estadoJuego.turnoActual = 1;
-        turnosBots();
-    } else {
-        alert("Esta ficha no encaja en ninguno de los dos extremos.");
-    }
-}
-
-// 6. Inteligencia Artificial / Turno de los Bots
-function turnosBots() {
-    if (estadoJuego.turnoActual === 0) return; // Le toca al usuario
-
-    // Simular tiempo de pensamiento del Bot (1 segundo)
-    setTimeout(() => {
-        console.log(`Turno del Bot ${estadoJuego.turnoActual}`);
-        
-        // Pasar turno al siguiente bot o de vuelta al usuario
-        estadoJuego.turnoActual = (estadoJuego.turnoActual + 1) % 4;
-        
-        if (estadoJuego.turnoActual !== 0) {
-            turnosBots(); // Siguiente bot juega
-        } else {
-            console.log("Turno del usuario.");
-        }
-    }, 1000);
-}
-
-// Botón para salir/abandonar mesa
-window.salirDeSalaDomino = function() {
-    const mesa = document.getElementById('domino-mesa-activa');
-    if (mesa) mesa.classList.add('hidden');
-
-    const menu = document.getElementById('domino-menu-principal') || document.getElementById('contenedor-opciones-salas');
-    if (menu) menu.classList.remove('hidden');
-};
-
+        window.salirDeSalaDomino = function() {
+            abandonarMesa();
+        };
     </script>
 </body>
-                    </html>
+</html>
+
