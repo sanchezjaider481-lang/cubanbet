@@ -3,32 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CubanBet - Panel con Buscador de Usuarios</title>
+    <title>CubanBet - Panel de Juegos y Administración</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { margin: 0; font-family: sans-serif; background-color: #f9fafb; }
+        body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background-color: #f9fafb; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .auth-screen { display: none; }
         .auth-screen.active { display: flex; }
         @keyframes girar { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .animate-spin-fast { animation: girar 0.6s linear infinite; }
-        @keyframes spin-slow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes bounce-fast {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.05); }
-        }
-        .animate-spin-dice { animation: spin-slow 0.6s linear infinite; }
-        .animate-bounce-card { animation: bounce-fast 0.3s ease-in-out infinite; }
-        .animate-win { animation: pulse-glow 0.5s ease-in-out 3; }
-
+        
         .recovery-modal {
             background: #ffffff;
             padding: 24px;
@@ -36,84 +21,23 @@
             max-width: 400px;
             width: 100%;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            font-family: sans-serif;
             text-align: center;
         }
 
         .brand-title {
-            color: #1b8a3e;
+            color: #16a34a;
             font-size: 28px;
-            font-weight: bold;
+            font-weight: 800;
             margin-bottom: 16px;
         }
 
-        .recovery-instruction {
-            font-size: 14px;
-            color: #4a5568;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
         .captcha-container {
-            background: #f7fafc;
+            background: #f8fafc;
             border: 1px solid #e2e8f0;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
             text-align: left;
-        }
-
-        .captcha-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            color: #2d3748;
-        }
-
-        .btn-primary {
-            background-color: #22c55e;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: background-color 0.2s;
-        }
-
-        .btn-primary:disabled {
-            background-color: #cbd5e1;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background-color: #e2e8f0;
-            color: #475569;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        /* Estilos específicos para la mesa de Dominó Sexto */
-        .domino-table-green {
-            background: radial-gradient(circle at center, #15803d 0%, #064e3b 100%);
-            box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.6);
-        }
-
-        .player-wood-card {
-            background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
-            border: 2px solid #b45309;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
         }
 
         .domino-tile {
@@ -124,17 +48,13 @@
         }
 
         .domino-tile:hover {
-            transform: translateY(-8px);
-            filter: drop-shadow(0 8px 10px rgba(0,0,0,0.5));
+            transform: translateY(-4px);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
 
         .domino-tile.disabled {
             filter: brightness(0.5);
             cursor: not-allowed;
-        }
-
-        .domino-tile.disabled:hover {
-            transform: none;
         }
     </style>
 </head>
@@ -148,20 +68,24 @@
                 <button onclick="mostrarAuthForm('login')" id="btn-tab-login" class="w-1/2 pb-2 font-bold text-green-600 border-b-2 border-green-600">Iniciar Sesión</button>
                 <button onclick="mostrarAuthForm('registro')" id="btn-tab-registro" class="w-1/2 pb-2 font-bold text-gray-400">Crear Cuenta</button>
             </div>
+            
+            <!-- FORM LOGIN -->
             <div id="form-login" class="space-y-4">
                 <div>
                     <label class="text-xs text-gray-500 font-bold uppercase">Usuario, Teléfono o Correo</label>
-                    <input type="text" id="login-identificador" placeholder="Tu usuario, tel o correo" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                    <input type="text" id="login-identificador" placeholder="Tu usuario, tel o correo" class="w-full mt-1 p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-green-600">
                 </div>
                 <div>
                     <label class="text-xs text-gray-500 font-bold uppercase">Contraseña</label>
-                    <input type="password" id="login-password" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200">
+                    <input type="password" id="login-password" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200 focus:outline-none focus:border-green-600">
                 </div>
                 <div class="text-right">
                     <button onclick="mostrarAuthForm('recuperar')" class="text-xs text-green-600 font-bold hover:underline">¿Olvidó su contraseña?</button>
                 </div>
-                <button onclick="iniciarSesion()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Entrar</button>
+                <button onclick="iniciarSesion()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-md transition">Entrar</button>
             </div>
+
+            <!-- FORM REGISTRO -->
             <div id="form-registro" class="space-y-3 hidden">
                 <div class="grid grid-cols-2 gap-2">
                     <div><label class="text-xs text-gray-500 font-bold uppercase">Nombre</label><input type="text" id="reg-nombre" placeholder="Nombre" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
@@ -172,29 +96,33 @@
                 <div><label class="text-xs text-gray-500 font-bold uppercase">Número de Teléfono</label><input type="tel" id="reg-telefono" placeholder="Ej: 58838866" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase">Contraseña</label><input type="password" id="reg-password" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase">Confirmar Contraseña</label><input type="password" id="reg-confirmar" placeholder="••••••••" class="w-full mt-1 p-2.5 rounded-xl border border-gray-200 text-sm"></div>
-                <button onclick="crearCuenta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md mt-2">Registrarse y Obtener ID</button>
+                <button onclick="crearCuenta()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold shadow-md mt-2 transition">Registrarse y Obtener ID</button>
             </div>
+
+            <!-- FORM RECUPERAR -->
             <div id="form-recuperar" class="space-y-4 hidden">
                 <div class="recovery-modal">
                     <div class="brand-title">CubanBet</div>
-                    <p class="recovery-instruction">
-                        Su cuenta debe de estar abierta desde el numero de teléfono registrado en el bot con el cual abrio esta MiniApp. De lo contrario no obtendrá en el destino correcto su código de recuperación de cuenta.
+                    <p class="text-xs text-gray-600 mb-4 text-left leading-relaxed">
+                        Su cuenta debe estar vinculada al número desde el cual interactúa en Telegram para recibir el código de validación.
                     </p>
                     <form id="recoveryForm">
                         <div class="captcha-container">
-                            <label class="captcha-label">
+                            <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-700">
                                 <input type="checkbox" id="notRobotCheckbox" onchange="toggleVerifyButton()">
                                 <span>Confirme que no es un robot</span>
                             </label>
                         </div>
-                        <button type="submit" id="verifyBtn" class="btn-primary" disabled>Verificar y Enviar Código por Telegram</button>
-                        <button type="button" class="btn-secondary" onclick="mostrarAuthForm('login')">Volver al Login</button>
+                        <button type="submit" id="verifyBtn" class="w-full bg-green-600 disabled:bg-gray-300 text-white py-3 rounded-xl font-bold text-sm mb-2 transition" disabled>Enviar Código por Telegram</button>
+                        <button type="button" class="w-full bg-gray-100 text-gray-600 py-3 rounded-xl font-bold text-sm" onclick="mostrarAuthForm('login')">Volver al Login</button>
                     </form>
                 </div>
             </div>
+
+            <!-- FORM NUEVA CONTRASEÑA -->
             <div id="form-nueva-pass" class="space-y-4 hidden">
                 <p class="text-xs text-gray-600">Introduce el código de 4 dígitos enviado a tu Telegram y tu nueva contraseña.</p>
-                <div><label class="text-xs text-gray-500 font-bold uppercase">Código de 4 dígitos</label><input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase">Código de 4 dígitos</label><input type="text" id="rec-codigo-ingresado" placeholder="Ej: 4829" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold"></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase">Nueva Contraseña</label><input type="password" id="rec-nueva" placeholder="••••••••" class="w-full mt-1 p-3 rounded-xl border border-gray-200"></div>
                 <button onclick="cambiarContraseñaNueva()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Restablecer Contraseña</button>
             </div>
@@ -202,10 +130,10 @@
     </div>
 
     <!-- LOADER -->
-    <div id="loader" class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-white">
-        <div class="w-16 h-16 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <h1 class="text-3xl font-black text-green-600 tracking-tighter">CubanBet</h1>
-        <p id="porcentaje" class="text-green-600 font-bold mt-2">0%</p>
+    <div id="loader" class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-white transition-opacity duration-300">
+        <div class="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h1 class="text-2xl font-black text-green-600 tracking-tighter">CubanBet</h1>
+        <p id="porcentaje" class="text-green-600 font-bold mt-1 text-sm">0%</p>
     </div>
 
     <!-- CONTENIDO PRINCIPAL -->
@@ -213,190 +141,146 @@
         <!-- INICIO -->
         <section id="inicio" class="tab-content active p-4">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-green-600">CubanBet</h1>
-                <div class="bg-gray-200 px-3 py-1 rounded-full text-sm font-bold" id="display-saldo">CUP 0.00</div>
+                <h1 class="text-2xl font-black text-green-600">CubanBet</h1>
+                <div class="bg-gray-100 px-4 py-1.5 rounded-full text-sm font-extrabold text-gray-800" id="display-saldo">CUP 0.00</div>
             </div>
-            <div class="mb-6"><input type="text" placeholder="Buscar..." class="w-full p-3 rounded-lg border border-gray-300"></div>
+            <div class="mb-6"><input type="text" placeholder="Buscar partidos, eventos o juegos..." class="w-full p-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-green-600"></div>
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Apuestas Activas</p><p class="text-xl font-bold" id="stat-activas">0</p></div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><p class="text-gray-500 text-xs">Ganancia Potencial</p><p class="text-xl font-bold text-green-600" id="stat-ganancia-pot">CUP 0.00</p></div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100"><p class="text-gray-400 text-xs font-bold uppercase">Apuestas Activas</p><p class="text-xl font-black mt-1" id="stat-activas">0</p></div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100"><p class="text-gray-400 text-xs font-bold uppercase">Ganancia Potencial</p><p class="text-xl font-black text-green-600 mt-1" id="stat-ganancia-pot">CUP 0.00</p></div>
             </div>
         </section>
 
         <!-- MINIJUEGOS -->
         <section id="minijuegos" class="tab-content p-4">
-            <h2 class="text-2xl font-bold text-green-600 mb-6">Minijuegos y Casino</h2>
+            <h2 class="text-2xl font-black text-green-600 mb-6">Minijuegos & Casino</h2>
             <div class="grid grid-cols-2 gap-4 mb-6">
-                <div onclick="abrirMinijuego('ruleta')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
-                    <span class="text-4xl">🎰</span><p class="font-bold mt-2">Ruleta</p><span class="text-xs text-gray-400">Gira y gana</span>
+                <div onclick="abrirMinijuego('ruleta')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-50 cursor-pointer hover:border-green-500 transition">
+                    <span class="text-4xl">🎰</span><p class="font-bold mt-2 text-sm">Ruleta</p><span class="text-[10px] text-gray-400 uppercase font-bold">Gira y gana</span>
                 </div>
-                <div onclick="abrirMinijuego('dados')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
-                    <span class="text-4xl">🎲</span><p class="font-bold mt-2">Dados</p><span class="text-xs text-gray-400">Suerte rápida</span>
+                <div onclick="abrirMinijuego('dados')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-50 cursor-pointer hover:border-green-500 transition">
+                    <span class="text-4xl">🎲</span><p class="font-bold mt-2 text-sm">Dados</p><span class="text-[10px] text-gray-400 uppercase font-bold">Suerte rápida</span>
                 </div>
-                <div onclick="abrirMinijuego('cartas')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-100 cursor-pointer hover:border-green-500">
-                    <span class="text-4xl">🃏</span><p class="font-bold mt-2">Slots</p><span class="text-xs text-gray-400">Tragamonedas</span>
+                <div onclick="abrirMinijuego('cartas')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-50 cursor-pointer hover:border-green-500 transition">
+                    <span class="text-4xl">🃏</span><p class="font-bold mt-2 text-sm">Slots</p><span class="text-[10px] text-gray-400 uppercase font-bold">Tragamonedas</span>
                 </div>
-                <div onclick="abrirMinijuego('domino')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-200 bg-green-50 cursor-pointer hover:border-green-600 col-span-2">
-                    <span class="text-4xl">🁢🀰</span><p class="font-bold mt-2 text-green-800">Dominó Cubano (Salas en Línea)</p><span class="text-xs text-green-600">Hasta 6/6 • Parejas o Individual • 150 a 600 CUP</span>
+                <div onclick="abrirMinijuego('domino')" class="bg-white p-6 rounded-2xl shadow-sm text-center border-2 border-green-200 bg-green-50/50 cursor-pointer hover:border-green-600 col-span-2 transition">
+                    <span class="text-4xl">🁢🀰</span><p class="font-bold mt-2 text-green-800">Dominó Cubano (Salas en Línea)</p><span class="text-xs text-green-600 font-semibold">Hasta 6/6 • Parejas o Individual • 150 a 600 CUP</span>
                 </div>
             </div>
         </section>
 
-        <!-- CONTENEDOR DE JUEGO ACTIVO -->
+        <!-- CONTENEDOR DE JUEGO AZAR ACTIVO -->
         <section id="sala-juego-azar" class="tab-content p-4">
-            <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
+            <button onclick="cambiarTab('minijuegos')" class="mb-4 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">← Volver a Minijuegos</button>
             <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center"></div>
         </section>
 
         <!-- CONTENEDOR DE DOMINÓ CUBANO -->
         <section id="sala-domino" class="tab-content p-4">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-green-700">🁢🀰 Dominó Cubano (Fichas hasta 6/6)</h2>
+                <h2 class="text-xl font-extrabold text-green-700">🁢🀰 Dominó Cubano (0 al 6)</h2>
                 <button onclick="cambiarTab('minijuegos')" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded-xl font-bold text-xs">Volver</button>
             </div>
 
             <div id="domino-menu-principal" class="space-y-4">
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4 text-xs text-gray-600">
-                    <b>Reglas:</b> Apuesta por jugador de <b>150 a 600 CUP</b>. Comisión de la casa: <b>50 CUP</b> por partida. Partida a <b>300 puntos</b>. Fichas hasta el 6/6.
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 text-xs text-gray-600 leading-relaxed">
+                    <b>Reglas:</b> Apuestas por jugador de <b>150 a 600 CUP</b>. Comisión de casa: <b>50 CUP</b>. Partidas a <b>300 puntos</b> con fichas tradicionales hasta el 6/6.
                 </div>
                 
-                <!-- BOTÓN MODO BOTS / PRÁCTICA -->
-                <button onclick="iniciarJuegoBotsOficial()" class="w-full bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-2xl shadow-lg text-left flex items-center justify-between transition transform active:scale-95 mb-3">
+                <button onclick="iniciarJuegoBotsOficial()" class="w-full bg-purple-700 hover:bg-purple-800 text-white p-4 rounded-2xl shadow-md text-left flex items-center justify-between transition active:scale-95">
                     <div>
-                        <div class="font-bold text-lg flex items-center gap-2">
-                            🤖 Práctica vs Bots
-                        </div>
-                        <div class="text-xs text-purple-200">
-                            Juega al instante sin esperar otros usuarios.
-                        </div>
+                        <div class="font-bold text-base flex items-center gap-2">🤖 Práctica vs Bots</div>
+                        <div class="text-xs text-purple-200">Juega una partida local al instante sin esperas.</div>
                     </div>
-                    <span class="text-2xl">➔</span>
+                    <span class="text-xl">➔</span>
                 </button>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-green-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-green-700" onclick="prepararCrearUnirseSala('aleatoria')">
-                        <h3 class="font-black text-lg mb-1">🎲 Sala Aleatoria</h3>
-                        <p class="text-xs text-green-100">Matchmaking automático contra jugadores.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-green-600 text-white p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-green-700 transition" onclick="prepararCrearUnirseSala('aleatoria')">
+                        <h3 class="font-black text-base mb-0.5">🎲 Sala Aleatoria</h3>
+                        <p class="text-xs text-green-100">Matchmaking automático contra otros jugadores.</p>
                     </div>
-                    <div class="bg-emerald-700 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-emerald-800" onclick="prepararCrearUnirseSala('publica')">
-                        <h3 class="font-black text-lg mb-1">🌐 Sala Pública</h3>
-                        <p class="text-xs text-emerald-100">Crea una sala y comparte el código con amigos.</p>
+                    <div class="bg-emerald-700 text-white p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-emerald-800 transition" onclick="prepararCrearUnirseSala('publica')">
+                        <h3 class="font-black text-base mb-0.5">🌐 Sala Pública</h3>
+                        <p class="text-xs text-emerald-100">Crea una sala visible y comparte tu código.</p>
                     </div>
-                    <div class="bg-yellow-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-yellow-700" onclick="prepararCrearUnirseSala('privada')">
-                        <h3 class="font-black text-lg mb-1">🔒 Sala Privada</h3>
-                        <p class="text-xs text-yellow-100">Partida cuadrada 2v2 cerrada.</p>
+                    <div class="bg-amber-600 text-white p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-amber-700 transition" onclick="prepararCrearUnirseSala('privada')">
+                        <h3 class="font-black text-base mb-0.5">🔒 Sala Privada</h3>
+                        <p class="text-xs text-amber-100">Partida cerrada en parejas (2 vs 2).</p>
                     </div>
-                    <div class="bg-blue-600 text-white p-5 rounded-2xl shadow-md cursor-pointer hover:bg-blue-700" onclick="mostrarBuscadorSalas()">
-                        <h3 class="font-black text-lg mb-1">🔍 Buscar Sala</h3>
-                        <p class="text-xs text-blue-100">Busca salas activas por código.</p>
+                    <div class="bg-blue-600 text-white p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-blue-700 transition" onclick="mostrarBuscadorSalas()">
+                        <h3 class="font-black text-base mb-0.5">🔍 Buscar Sala</h3>
+                        <p class="text-xs text-blue-100">Ingresa mediante código de sala existente.</p>
                     </div>
                 </div>
             </div>
 
-            <div id="domino-config-sala" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
-                <h3 id="titulo-modo-sala" class="font-bold text-lg text-green-700">Configurar Sala de Dominó</h3>
+            <!-- CONFIGURADOR DE SALA -->
+            <div id="domino-config-sala" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4">
+                <h3 id="titulo-modo-sala" class="font-bold text-lg text-green-700">Configurar Sala</h3>
                 <div>
                     <label class="text-xs text-gray-500 font-bold uppercase">Apuesta por Jugador (150 a 600 CUP)</label>
-                    <input type="number" id="domino-monto-apuesta" min="150" max="600" value="150" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
-                    <p class="text-[10px] text-gray-400 mt-1">Comisión de la casa por partida: 50 CUP.</p>
+                    <input type="number" id="domino-monto-apuesta" min="150" max="600" value="150" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold focus:outline-none focus:border-green-600">
+                    <p class="text-[10px] text-gray-400 mt-1">Comisión de la casa: 50 CUP por participante.</p>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Modalidad de Juego</label>
+                    <label class="text-xs text-gray-500 font-bold uppercase">Modalidad</label>
                     <select id="domino-tipo-pareja" class="w-full mt-1 p-3 rounded-xl border border-gray-200 bg-gray-50 font-bold">
                         <option value="parejas">Por Parejas (2 vs 2)</option>
                         <option value="individual">Individual (Todos contra todos)</option>
                     </select>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="confirmarCrearUnirSala()" id="btn-confirmar-sala" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold">Confirmar y Entrar</button>
-                    <button onclick="volverMenuDomino()" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-xl font-bold">Cancelar</button>
+                    <button onclick="confirmarCrearUnirSala()" id="btn-confirmar-sala" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-sm">Confirmar y Entrar</button>
+                    <button onclick="volverMenuDomino()" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-xl font-bold text-sm">Cancelar</button>
                 </div>
             </div>
 
-            <!-- CONTENEDOR MESA DE JUEGO (MESA VISUAL COMPLETA Y LIMPIA) -->
-            <div id="domino-mesa-activa" class="hidden relative w-full min-h-[550px] bg-slate-900 rounded-3xl p-3 flex flex-col justify-between select-none overflow-hidden">
-                
-                <!-- ENCABEZADO DE MESA -->
-                <div class="flex justify-between items-center bg-slate-800/80 p-3 rounded-2xl backdrop-blur-md z-10">
+            <!-- MESA DE JUEGO MODO TABLERO -->
+            <div id="domino-mesa-activa" class="hidden relative w-full min-h-[520px] bg-slate-900 rounded-3xl p-3 flex flex-col justify-between select-none overflow-hidden">
+                <div class="flex justify-between items-center bg-slate-800/90 p-3 rounded-2xl backdrop-blur-md z-10">
                     <div>
-                        <h3 id="titulo-sala-activa" class="font-bold text-emerald-400 text-sm">Mesa de Juego: Práctica vs Bots</h3>
-                        <p class="text-[10px] text-gray-300">Modo Entrenamiento - Partida Rápida</p>
+                        <h3 id="titulo-sala-activa" class="font-bold text-emerald-400 text-xs">Mesa: Práctica vs Bots</h3>
+                        <p class="text-[10px] text-gray-400">Modo Entrenamiento Local</p>
                     </div>
-                    <button onclick="abandonarMesa()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow">
-                        ← Salir
-                    </button>
+                    <button onclick="abandonarMesa()" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-xl">← Salir</button>
                 </div>
 
-                <!-- TAPETE VERDE (BOARD) -->
-                <div class="relative w-full flex-1 bg-emerald-800 border-4 border-amber-900 rounded-2xl my-2 flex flex-col justify-between p-2 shadow-inner overflow-hidden">
-                    
-                    <!-- JUGADOR NORTE (BOT) -->
+                <div class="relative w-full flex-1 bg-emerald-800 border-4 border-amber-950 rounded-2xl my-2 flex flex-col justify-between p-2 shadow-inner overflow-hidden">
                     <div class="w-full flex justify-center items-center gap-2 z-10">
                         <div class="bg-amber-950/90 text-amber-200 text-center px-3 py-1 rounded-xl border border-amber-700 shadow-md">
                             <span class="text-xs font-bold block" id="nombre-bot-norte">🤖 Bot Norte</span>
-                            <span class="text-[10px] text-amber-400">0 PTS</span>
-                        </div>
-                        <!-- Fichas ocultas Norte -->
-                        <div class="flex gap-1">
-                            <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                            <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                            <div class="w-4 h-6 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
                         </div>
                     </div>
 
-                    <!-- ZONA CENTRAL: BOT IZQ - TABLERO - BOT DER -->
                     <div class="flex-1 flex justify-between items-center my-2 relative">
-                        
-                        <!-- BOT IZQUIERDA -->
-                        <div class="flex flex-col items-center gap-1 z-10">
-                            <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
-                                <span class="text-[10px] font-bold block">🤖 Bot Izq</span>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                            </div>
+                        <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md z-10">
+                            <span class="text-[10px] font-bold block">🤖 Bot Izq</span>
                         </div>
 
-                        <!-- TABLERO CENTRAL DONDE SE JUEGA -->
-                        <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 overflow-x-auto p-2 min-h-[100px]">
-                            <!-- Las fichas jugadas se inyectan dinámicamente aquí -->
-                        </div>
+                        <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 overflow-x-auto p-2 min-h-[90px]"></div>
 
-                        <!-- BOT DERECHA -->
-                        <div class="flex flex-col items-center gap-1 z-10">
-                            <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md">
-                                <span class="text-[10px] font-bold block">🤖 Bot Der</span>
-                            </div>
-                            <div class="flex flex-col gap-1">
-                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                                <div class="w-6 h-4 bg-amber-100 rounded-sm border border-amber-300 shadow"></div>
-                            </div>
+                        <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md z-10">
+                            <span class="text-[10px] font-bold block">🤖 Bot Der</span>
                         </div>
                     </div>
 
-                    <!-- JUGADOR SUR (TÚ) -->
                     <div class="w-full flex flex-col items-center z-10">
-                        <!-- TUS FICHAS -->
-                        <div id="tus-fichas-mano" class="flex justify-center items-center gap-1 overflow-x-auto max-w-full p-2 bg-black/20 rounded-xl backdrop-blur-sm">
-                            <!-- Fichas SVG inyectadas con JS -->
-                        </div>
-                        
-                        <!-- TU ETIQUETA -->
+                        <div id="tus-fichas-mano" class="flex justify-center items-center gap-1 overflow-x-auto max-w-full p-2 bg-black/30 rounded-xl backdrop-blur-sm"></div>
                         <div class="bg-amber-950/90 text-amber-200 text-center px-4 py-1 rounded-xl border border-amber-700 shadow-md mt-1">
                             <span class="text-xs font-bold">TÚ (Jugador Principal)</span>
-                            <span class="text-[10px] text-amber-400 ml-2">Puntos: 0</span>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <div id="domino-buscar-sala-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4 mt-4">
+            <!-- BUSCADOR DE SALAS -->
+            <div id="domino-buscar-sala-panel" class="hidden bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4">
                 <h3 class="font-bold text-lg text-blue-700">Buscar Sala Activa</h3>
                 <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Código o Nombre de Sala</label>
-                    <input type="text" id="input-buscar-codigo" placeholder="Ej: CB-DOM-1234" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold uppercase">
+                    <label class="text-xs text-gray-500 font-bold uppercase">Código de Sala</label>
+                    <input type="text" id="input-buscar-codigo" placeholder="Ej: CB-DOM-1234" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold uppercase focus:outline-none focus:border-blue-600">
                 </div>
                 <div class="flex gap-2">
                     <button onclick="unirsePorCodigoSala()" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">Unirse a Sala</button>
@@ -407,134 +291,144 @@
 
         <!-- DEPORTES -->
         <section id="deportes" class="tab-content p-4">
-            <h2 class="text-2xl font-bold text-green-600 mb-4">Deportes</h2>
-            <div id="lista-partidos" class="space-y-4"></div>
+            <h2 class="text-2xl font-black text-green-600 mb-4">Deportes</h2>
+            <div id="lista-partidos" class="space-y-4 text-center text-gray-400 py-8 text-sm">No hay eventos deportivos disponibles en este momento.</div>
         </section>
 
         <!-- BOLETA -->
         <section id="boleta" class="tab-content p-4">
-            <h2 class="text-2xl font-bold text-green-600 mb-6">Tu Boleta</h2>
-            <div id="lista-boleta" class="space-y-4"><p class="text-gray-500 text-center py-10">Tu boleta está vacía</p></div>
-            <div class="mt-8 bg-white p-4 rounded-xl shadow-lg border border-gray-100">
+            <h2 class="text-2xl font-black text-green-600 mb-6">Tu Boleta</h2>
+            <div id="lista-boleta" class="space-y-4"><p class="text-gray-400 text-center py-10 text-sm font-semibold">Tu boleta de apuestas está vacía.</p></div>
+            <div class="mt-8 bg-white p-5 rounded-2xl shadow-lg border border-gray-100">
                 <div class="mb-4">
                     <label class="text-xs text-gray-500 font-bold uppercase">Monto a apostar (CUP)</label>
-                    <input type="number" id="input-monto" placeholder="Ej: 100" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border border-gray-200 font-bold">
+                    <input type="number" id="input-monto" placeholder="Ej: 100" class="w-full mt-1 p-3 bg-gray-50 rounded-xl border border-gray-200 font-bold focus:outline-none focus:border-green-600">
                 </div>
-                <div class="flex justify-between mb-2"><span>Total cuota:</span><span id="display-total-cuota" class="font-bold">0.00</span></div>
-                <div class="flex justify-between mb-4"><span>Ganancia:</span><span id="display-ganancia" class="text-green-600 font-bold">CUP 0.00</span></div>
-                <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">Realizar Apuesta</button>
+                <div class="flex justify-between mb-2 text-sm"><span>Total cuota:</span><span id="display-total-cuota" class="font-bold">0.00</span></div>
+                <div class="flex justify-between mb-4 text-sm"><span>Ganancia:</span><span id="display-ganancia" class="text-green-600 font-bold">CUP 0.00</span></div>
+                <button class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Realizar Apuesta</button>
             </div>
         </section>
 
-        <!-- PERFIL, RECARGAS Y RETIROS -->
+        <!-- PERFIL & TRANSACCIONES -->
         <section id="perfil" class="tab-content p-4">
-            <h2 class="text-2xl font-bold text-green-600 mb-6">Mi Perfil</h2>
-            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
-                <h3 class="font-bold text-lg mb-2 text-green-700">Datos de Usuario</h3>
-                <p class="text-sm text-gray-600">Nombre: <span id="perfil-nombre" class="font-bold text-black"></span></p>
-                <p class="text-sm text-gray-600">Usuario: <span id="perfil-username" class="font-bold text-black"></span></p>
-                <p class="text-sm text-gray-600">Correo: <span id="perfil-correo" class="font-bold text-black"></span></p>
-                <p class="text-sm text-gray-600">Teléfono: <span id="perfil-telefono" class="font-bold text-black"></span></p>
-                <p class="text-sm text-gray-600">ID de Usuario: <span id="perfil-id" class="font-bold text-green-600"></span></p>
+            <h2 class="text-2xl font-black text-green-600 mb-6">Mi Perfil</h2>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                <h3 class="font-bold text-base mb-3 text-green-700">Datos de Usuario</h3>
+                <div class="space-y-1.5 text-xs text-gray-600">
+                    <p>Nombre: <span id="perfil-nombre" class="font-bold text-gray-900"></span></p>
+                    <p>Usuario: <span id="perfil-username" class="font-bold text-gray-900"></span></p>
+                    <p>Correo: <span id="perfil-correo" class="font-bold text-gray-900"></span></p>
+                    <p>Teléfono: <span id="perfil-telefono" class="font-bold text-gray-900"></span></p>
+                    <p>ID Único: <span id="perfil-id" class="font-bold text-green-600"></span></p>
+                </div>
             </div>
 
-            <!-- SECCIÓN DE RECARGAS -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
-                <h3 class="font-bold text-lg mb-4 text-green-700">Recargar Saldo</h3>
-                <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-4 rounded-xl border border-gray-200 bg-gray-50 font-bold">
-                    <option value="">Selecciona el banco de tu transferencia</option>
+            <!-- RECARGAS -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                <h3 class="font-bold text-base mb-3 text-green-700">Recargar Saldo</h3>
+                <select id="metodo-pago" onchange="mostrarDatos()" class="w-full p-3 mb-3 rounded-xl border border-gray-200 bg-gray-50 font-bold text-xs">
+                    <option value="">Selecciona la vía de transferencia</option>
                     <option value="BPA">BPA</option>
                     <option value="BANDEC">BANDEC</option>
                     <option value="ENZONA">ENZONA</option>
                 </select>
-                <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-sm border border-gray-200 text-center">
-                    <p id="datos-tarjeta" class="font-bold text-gray-800 text-lg"></p>
-                    <p class="text-gray-500 mt-2">Confirmar a: <span class="text-black font-bold">58838866</span></p>
-                    <p id="aviso-especial" class="text-blue-600 font-bold mt-2 text-xs"></p>
-                    <p class="text-red-500 font-bold mt-2 text-xs">Min $500 - Max $4000</p>
+                <div id="info-pago" class="hidden bg-gray-50 p-4 rounded-xl mb-4 text-xs border border-gray-200 text-center space-y-1">
+                    <p id="datos-tarjeta" class="font-bold text-gray-800 text-sm"></p>
+                    <p class="text-gray-500">Confirmar WhatsApp/Telegram: <span class="text-gray-900 font-bold">58838866</span></p>
+                    <p id="aviso-especial" class="text-blue-600 font-bold"></p>
+                    <p id="limites-deposito-info" class="text-red-500 font-bold"></p>
                 </div>
-                <input type="number" id="monto-recarga" placeholder="Monto (CUP)" class="w-full p-3 mb-4 rounded-xl border border-gray-200 font-bold">
-                <label class="block text-xs text-gray-500 font-bold uppercase mb-1">Comprobante de pago (Captura/Foto)</label>
-                <input type="file" id="archivo-comprobante" accept="image/*" onchange="procesarComprobante(event)" class="w-full p-2 border rounded-lg">
+                <input type="number" id="monto-recarga" placeholder="Monto en CUP" class="w-full p-3 mb-3 rounded-xl border border-gray-200 font-bold text-sm focus:outline-none focus:border-green-600">
+                <label class="block text-xs text-gray-500 font-bold uppercase mb-1">Adjuntar comprobante</label>
+                <input type="file" id="archivo-comprobante" accept="image/*" onchange="procesarComprobante(event)" class="w-full p-2 border rounded-xl text-xs bg-gray-50">
 
-                <button onclick="enviarSolicitud()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-md mt-4">Solicitar Depósito</button>
+                <button onclick="enviarSolicitud()" class="w-full bg-green-600 hover:bg-green-700 text-white p-3.5 rounded-xl font-bold shadow-md mt-4 transition text-sm">Solicitar Depósito</button>
             </div>
 
-            <!-- SECCIÓN DE RETIROS -->
-            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
-                <h3 class="font-bold text-lg mb-4 text-blue-700">Solicitar Retiro de Fondos</h3>
-                <p class="text-xs text-gray-500 mb-3">Límites: Mínimo 500 CUP, Máximo 4000 CUP por solicitud (Procesado en 24 horas).</p>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Número de Tarjeta de Destino</label>
-                    <input type="text" id="retiro-tarjeta" placeholder="Ej: 9238 1299 7498 4082" class="w-full mt-1 mb-4 p-3 rounded-xl border border-gray-200 font-bold">
+            <!-- RETIROS -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                <h3 class="font-bold text-base mb-1 text-blue-700">Solicitar Retiro</h3>
+                <p id="limites-retiro-info" class="text-xs text-gray-400 mb-4"></p>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs text-gray-500 font-bold uppercase">Tarjeta Destino</label>
+                        <input type="text" id="retiro-tarjeta" placeholder="Número de tarjeta de cobro" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold text-sm focus:outline-none focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto Retiro (CUP)</label>
+                        <input type="number" id="retiro-monto" placeholder="Monto a retirar" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold text-sm focus:outline-none focus:border-blue-600">
+                    </div>
+                    <button onclick="solicitarRetiro()" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-xl font-bold shadow-md transition text-sm">Enviar Solicitud de Retiro</button>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-500 font-bold uppercase">Monto a Retirar (CUP)</label>
-                    <input type="number" id="retiro-monto" placeholder="Ej: 1000" class="w-full mt-1 mb-4 p-3 rounded-xl border border-gray-200 font-bold">
-                </div>
-                <button onclick="solicitarRetiro()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold shadow-md">Enviar Solicitud de Retiro</button>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                <div class="border-t pt-4">
-                    <a href="https://t.me/CubanBetClubBot" target="_blank" class="block w-full text-center bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md">💬 Atención al Cliente Telegram</a>
-                </div>
-                <button onclick="cerrarSesion()" class="w-full mt-4 bg-white p-4 rounded-xl border border-gray-100 text-red-600 font-bold">Cerrar Sesión</button>
-                <div class="mt-8 text-center">
-                    <button onclick="activarAdmin()" class="text-xs text-gray-300 hover:text-gray-500">⚙️ Configuración del sistema (Admin)</button>
-                </div>
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 text-center space-y-3">
+                <a href="https://t.me/CubanBetClubBot" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold shadow-md text-sm transition">💬 Soporte Oficial Telegram</a>
+                <button onclick="cerrarSesion()" class="w-full bg-gray-50 hover:bg-gray-100 py-3 rounded-xl border border-gray-200 text-red-600 font-bold text-sm">Cerrar Sesión</button>
+                <button onclick="activarAdmin()" class="text-xs text-gray-300 hover:text-gray-500 pt-2 block mx-auto">⚙️ Consola Admin</button>
             </div>
         </section>
 
         <!-- PANEL ADMIN -->
         <section id="admin" class="tab-content p-4">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-green-600">Panel de Administración</h2>
-                <button onclick="cambiarTab('perfil')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">Volver a Perfil</button>
+                <h2 class="text-2xl font-black text-green-600">Panel Admin</h2>
+                <button onclick="cambiarTab('perfil')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">Volver</button>
             </div>
-            <button onclick="activarNotificacionesPushAdmin()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl shadow mb-4">
+
+            <button onclick="activarNotificacionesPushAdmin()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-3 rounded-xl shadow mb-6 text-xs transition">
                 🔔 Activar Notificaciones Push en este Dispositivo
             </button>
+
             <div class="space-y-6">
-                <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-green-500 space-y-4">
-                    <h3 class="text-sm font-bold text-yellow-400 uppercase tracking-wide">📥 Depósitos Pendientes</h3>
-                    <div id="lista-admin-pendientes" class="space-y-4"><p class="text-xs text-gray-500">Cargando depósitos...</p></div>
+                <!-- DEPÓSITOS PENDIENTES -->
+                <div class="bg-gray-900 text-white p-5 rounded-2xl shadow-lg border border-green-500/30 space-y-3">
+                    <h3 class="text-xs font-bold text-yellow-400 uppercase tracking-wider">📥 Depósitos Pendientes</h3>
+                    <div id="lista-admin-pendientes" class="space-y-3"><p class="text-xs text-gray-500">Cargando...</p></div>
                 </div>
-                <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-blue-500 space-y-4">
-                    <h3 class="text-sm font-bold text-blue-400 uppercase tracking-wide">📤 Solicitudes de Retiro (24 Horas)</h3>
-                    <div id="lista-admin-retiros" class="space-y-4"><p class="text-xs text-gray-500">Cargando retiros...</p></div>
+
+                <!-- RETIROS PENDIENTES -->
+                <div class="bg-gray-900 text-white p-5 rounded-2xl shadow-lg border border-blue-500/30 space-y-3">
+                    <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wider">📤 Solicitudes de Retiro</h3>
+                    <div id="lista-admin-retiros" class="space-y-3"><p class="text-xs text-gray-500">Cargando...</p></div>
                 </div>
                 
-                <!-- SECCIÓN DE GESTIÓN DE USUARIOS CON BUSCADOR -->
-                <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg border-2 border-purple-500 space-y-4">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-                        <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wide">👥 Gestión de Usuarios y Saldos</h3>
-                    </div>
-                    <!-- BARRA DE BÚSQUEDA DE USUARIOS -->
+                <!-- BÚSQUEDA Y GESTIÓN DE USUARIOS -->
+                <div class="bg-gray-900 text-white p-5 rounded-2xl shadow-lg border border-purple-500/30 space-y-4">
+                    <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider">👥 Gestión de Usuarios y Saldos</h3>
                     <div>
-                        <input type="text" id="input-buscar-admin-usuario" oninput="filtrarUsuariosAdmin()" placeholder="🔍 Buscar por usuario o teléfono..." class="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white text-sm font-bold focus:outline-none focus:border-purple-500">
+                        <input type="text" id="input-buscar-admin-usuario" oninput="filtrarUsuariosAdmin()" placeholder="🔍 Buscar por nombre, usuario o teléfono..." class="w-full p-3 rounded-xl bg-gray-800 border border-gray-700 text-white text-xs font-bold focus:outline-none focus:border-purple-500">
                     </div>
-                    <div id="lista-admin-usuarios" class="space-y-3"><p class="text-xs text-gray-500">Cargando usuarios...</p></div>
+                    <div id="lista-admin-usuarios" class="space-y-3"><p class="text-xs text-gray-500">Cargando lista de usuarios...</p></div>
                 </div>
             </div>
         </section>
     </main>
 
     <!-- NAVEGACIÓN INFERIOR -->
-    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-between px-4 py-3 shadow-lg z-30">
-        <button onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold">Inicio</button>
-        <button onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold">Juegos</button>
-        <button onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold">Deportes</button>
-        <button onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold">Boleta</button>
-        <button onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold">Perfil</button>
+    <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around py-3 shadow-lg z-30">
+        <button onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold flex flex-col items-center"><span>🏠</span>Inicio</button>
+        <button onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>🎰</span>Juegos</button>
+        <button onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>⚽</span>Deportes</button>
+        <button onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>🎟️</span>Boleta</button>
+        <button onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>👤</span>Perfil</button>
     </nav>
 
-    <!-- LIBRERÍA Y SCRIPT DE TELEGRAM Y FIREBASE -->
+    <!-- JS TELEGRAM & FIREBASE API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script type="module">
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-messaging.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-messaging.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+        // CONFIGURACIÓN DE PARÁMETROS GLOBALES Y LÍMITES DINÁMICOS
+        const LIMITES_TRANSACCIONALES = {
+            depositoMinimo: 500,
+            depositoMaximo: 4000,
+            retiroMinimo: 500,
+            retiroMaximo: 4000
+        };
 
         const firebaseConfig = {
             apiKey: "AIzaSyBaR9vwVuQph--DQ9pEAciPk21ZOgZVM2o",
@@ -548,7 +442,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        
+
         let codigoEnzonaGenerado = "";
         let codigoRecuperacionTemporal = null;
         let telefonoUsuarioRecuperando = null;
@@ -561,13 +455,16 @@
         const TELEGRAM_CHAT_ID = "-1004432353397";
 
         window.addEventListener("DOMContentLoaded", () => {
+            // Inicializar textos dinámicos de límites en UI
+            document.getElementById('limites-deposito-info').innerText = `Mínimo $${LIMITES_TRANSACCIONALES.depositoMinimo} - Máximo $${LIMITES_TRANSACCIONALES.depositoMaximo} CUP`;
+            document.getElementById('limites-retiro-info').innerText = `Límites: Mínimo $${LIMITES_TRANSACCIONALES.retiroMinimo} CUP, Máximo $${LIMITES_TRANSACCIONALES.retiroMaximo} CUP por solicitud.`;
+
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
                 tg.expand();
                 const user = tg.initDataUnsafe?.user;
                 if (user) {
                     userTelegramId = user.id;
-                    console.log("ID de Telegram capturado:", userTelegramId);
                 }
             }
 
@@ -611,11 +508,11 @@
             const confirmar = document.getElementById('reg-confirmar').value;
 
             if (!nombre || !apellidos || !username || !correo || !telefono || !password || !confirmar) {
-                alert("Por favor completa todos los campos.");
+                alert("Por favor completa todos los campos requeridos.");
                 return;
             }
             if (password !== confirmar) {
-                alert("Las contraseñas no coinciden.");
+                alert("Las contraseñas ingresadas no coinciden.");
                 return;
             }
 
@@ -647,10 +544,10 @@
                 cargarDatosUsuario(nuevoUsuario);
                 document.getElementById('auth-container').classList.remove('active');
                 iniciarApp();
-                alert("¡Cuenta creada con éxito!");
+                alert("¡Cuenta registrada con éxito!");
             } catch (error) {
-                console.error("Error detallado en registro:", error);
-                alert("Error de Firebase al registrar: " + error.message);
+                console.error("Error al registrar:", error);
+                alert("Error de conexión al registrar: " + error.message);
             }
         };
 
@@ -667,7 +564,7 @@
                 const dbRef = ref(db);
                 const snapshot = await get(child(dbRef, 'usuarios'));
                 if (!snapshot.exists()) {
-                    alert("No hay usuarios registrados en la base de datos.");
+                    alert("No hay registros en el sistema.");
                     return;
                 }
 
@@ -685,29 +582,22 @@
                     document.getElementById('auth-container').classList.remove('active');
                     iniciarApp();
                 } else {
-                    alert("Usuario o contraseña incorrectos.");
+                    alert("Credenciales incorrectas.");
                 }
             } catch (error) {
-                console.error("Error detallado en login:", error);
-                alert("Error de Firebase al iniciar sesión: " + error.message);
+                console.error("Error al iniciar sesión:", error);
+                alert("Error al validar sesión: " + error.message);
             }
         };
 
         window.toggleVerifyButton = function() {
             const checkbox = document.getElementById('notRobotCheckbox');
-            const verifyBtn = document.getElementById('verifyBtn');
-            verifyBtn.disabled = !checkbox.checked;
+            document.getElementById('verifyBtn').disabled = !checkbox.checked;
         };
 
         document.addEventListener('submit', async function(e) {
             if (e.target && e.target.id === 'recoveryForm') {
                 e.preventDefault();
-                const checkbox = document.getElementById('notRobotCheckbox');
-                if (!checkbox.checked) {
-                    alert("Por favor, confirme que no es un robot.");
-                    return;
-                }
-
                 try {
                     codigoRecuperacionTemporal = Math.floor(1000 + Math.random() * 9000);
 
@@ -724,17 +614,16 @@
 
                         const data = await respuestaTelegram.json();
                         if (data.ok) {
-                            alert("¡Código enviado automáticamente a tu chat privado de Telegram!");
+                            alert("¡Código enviado a Telegram!");
                             mostrarAuthForm('nueva-pass');
                         } else {
-                            alert("Por favor, abre primero nuestro bot en Telegram y presiona 'Iniciar'.");
+                            alert("Abre la conversación con el bot de Telegram primero.");
                         }
                     } else {
                         window.open(`https://t.me/CubanBetClubBot`, '_blank');
                     }
                 } catch (error) {
-                    console.error("Error en la ejecución:", error);
-                    alert("Ocurrió un error al procesar la recuperación.");
+                    console.error("Error al procesar recuperación:", error);
                 }
             }
         });
@@ -743,14 +632,8 @@
             const codigoIngresado = document.getElementById('rec-codigo-ingresado').value.trim();
             const nuevaPass = document.getElementById('rec-nueva').value;
             
-            if (!codigoIngresado || !nuevaPass) {
-                alert("Por favor completa todos los campos.");
-                return;
-            }
-            if (Number(codigoIngresado) !== codigoRecuperacionTemporal) { 
-                alert("Código incorrecto."); 
-                return; 
-            }
+            if (!codigoIngresado || !nuevaPass) { alert("Completa los campos."); return; }
+            if (Number(codigoIngresado) !== codigoRecuperacionTemporal) { alert("Código inválido."); return; }
 
             try {
                 const userRef = ref(db, `usuarios/${telefonoUsuarioRecuperando}`);
@@ -759,12 +642,11 @@
                     let userData = snapshot.val();
                     userData.password = nuevaPass;
                     await set(userRef, userData);
-                    alert("¡Contraseña actualizada con éxito!");
+                    alert("¡Contraseña restablecida con éxito!");
                     mostrarAuthForm('login');
                 }
             } catch (err) {
-                console.error("Error actualizando contraseña:", err);
-                alert("No se pudo actualizar la contraseña.");
+                console.error(err);
             }
         };
 
@@ -774,11 +656,11 @@
         };
 
         function cargarDatosUsuario(user) {
-            document.getElementById('perfil-nombre').innerText = user.nombre;
-            document.getElementById('perfil-username').innerText = user.username;
-            document.getElementById('perfil-correo').innerText = user.correo;
-            document.getElementById('perfil-telefono').innerText = user.telefono;
-            document.getElementById('perfil-id').innerText = user.id;
+            document.getElementById('perfil-nombre').innerText = user.nombre || 'N/A';
+            document.getElementById('perfil-username').innerText = user.username || 'N/A';
+            document.getElementById('perfil-correo').innerText = user.correo || 'N/A';
+            document.getElementById('perfil-telefono').innerText = user.telefono || 'N/A';
+            document.getElementById('perfil-id').innerText = user.id || 'N/A';
             document.getElementById('display-saldo').innerText = `CUP ${(user.saldo || 0).toFixed(2)}`;
             document.getElementById('stat-activas').innerText = user.apuestasActivas || 0;
             document.getElementById('stat-ganancia-pot').innerText = `CUP ${(user.dineroGanado || 0).toFixed(2)}`;
@@ -794,9 +676,9 @@
                 if(el) el.innerText = progreso + "%";
                 if(progreso >= 100) {
                     clearInterval(interval);
-                    if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 500); }
+                    if(loader) { loader.style.opacity = '0'; setTimeout(() => { loader.style.display = 'none'; }, 300); }
                 }
-            }, 100);
+            }, 80);
         }
 
         window.cambiarTab = function(id) {
@@ -815,26 +697,20 @@
             infoPago.classList.remove('hidden');
             if (metodo === 'BPA') {
                 datosTarjeta.innerText = "Tarjeta BPA: 9238 1299 7498 4082";
-                avisoEspecial.innerText = "Realice su transferencia y adjunte el comprobante.";
+                avisoEspecial.innerText = "Transferencia directa por Banca Móvil.";
             } else if (metodo === 'BANDEC') {
                 datosTarjeta.innerText = "Tarjeta BANDEC: 9234 0699 9422 0535";
-                avisoEspecial.innerText = "Realice su transferencia y adjunte el comprobante.";
+                avisoEspecial.innerText = "Transferencia directa por Transfermóvil.";
             } else if (metodo === 'ENZONA') {
                 codigoEnzonaGenerado = "ENZ-" + Math.floor(1000 + Math.random() * 9000);
-                datosTarjeta.innerText = `Tarjeta ENZONA: 9238 1299 7498 4082 | Código: ${codigoEnzonaGenerado}`;
-                avisoEspecial.innerText = "Incluya el código en la descripción.";
+                datosTarjeta.innerText = `Tarjeta ENZONA: 9238 1299 7498 4082 | Cód: ${codigoEnzonaGenerado}`;
+                avisoEspecial.innerText = "Añade el código en el concepto de pago.";
             }
         };
 
         window.procesarComprobante = function(event) {
             const archivo = event.target.files[0];
-            if (!archivo) return;
-
-            if (!archivo.type.startsWith('image/')) {
-                alert('Por favor, selecciona un archivo de imagen válido.');
-                event.target.value = '';
-                return;
-            }
+            if (!archivo || !archivo.type.startsWith('image/')) return;
 
             const lector = new FileReader();
             lector.onload = function(e) {
@@ -849,7 +725,6 @@
                     canvas.height = img.height * scaleSize;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     window.comprobanteBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    console.log("Imagen procesada y optimizada con éxito.");
                 };
             };
             lector.readAsDataURL(archivo);
@@ -861,35 +736,20 @@
             const archivoInput = document.getElementById('archivo-comprobante');
             let user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (!user) {
-                alert("Por favor inicia sesión nuevamente.");
-                return;
-            }
-            if (!metodo) { 
-                alert("Selecciona un método de pago."); 
+            if (!user) { alert("Inicia sesión para realizar recargas."); return; }
+            if (!metodo) { alert("Selecciona una vía de transferencia."); return; }
+            if (!monto || monto < LIMITES_TRANSACCIONALES.depositoMinimo || monto > LIMITES_TRANSACCIONALES.depositoMaximo) { 
+                alert(`El depósito debe ser entre $${LIMITES_TRANSACCIONALES.depositoMinimo} y $${LIMITES_TRANSACCIONALES.depositoMaximo} CUP.`); 
                 return; 
             }
-            if (!monto || monto < 500 || monto > 4000) { 
-                alert("El monto de recarga debe estar entre $500 y $4000 CUP."); 
-                return; 
-            }
-            if (!archivoInput.files || !archivoInput.files[0]) {
-                alert("Por favor adjunta el comprobante de pago.");
+            if (!archivoInput.files || !archivoInput.files[0] || !window.comprobanteBase64) {
+                alert("Por favor adjunta la captura o comprobante procesado.");
                 return;
             }
-            if (!window.comprobanteBase64) {
-                alert("Por favor, espera a que se procese el comprobante.");
-                return;
-            }
-
-            const comprobanteFinal = window.comprobanteBase64;
 
             try {
                 const fechaObj = new Date();
-                const fechaFormateada = fechaObj.toLocaleString('es-ES', {
-                    day: '2-digit', month: '2-digit', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                });
+                const fechaFormateada = fechaObj.toLocaleString('es-ES');
 
                 const nuevoDepositoRef = push(ref(db, 'deposits_pendientes'));
                 await set(nuevoDepositoRef, {
@@ -899,23 +759,16 @@
                     usuarioTelefono: user.telefono,
                     monto: monto,
                     metodo: metodo,
-                    comprobanteUrl: comprobanteFinal,
+                    comprobanteUrl: window.comprobanteBase64,
                     fecha: fechaObj.toISOString(),
                     fechaLegible: fechaFormateada,
                     estado: 'Pendiente'
                 });
 
-                const ENLACE_WEB = window.location.href.split('?')[0]; 
-                const captionTexto = `🔔 *¡Nueva Solicitud de Depósito!*\n\n` +
-                    `👤 *Usuario:* ${user.nombre}\n` +
-                    `📱 *Teléfono:* ${user.telefono}\n` +
-                    `💰 *Monto:* $${monto} CUP\n` +
-                    `💳 *Método:* ${metodo}\n` +
-                    `🕒 *Fecha:* ${fechaFormateada}\n\n` +
-                    `👉 [Revisar en Panel](${ENLACE_WEB})`;
+                const captionTexto = `🔔 *¡Nuevo Depósito Pendiente!*\n\n👤 *Usuario:* ${user.nombre}\n📱 *Teléfono:* ${user.telefono}\n💰 *Monto:* $${monto} CUP\n💳 *Método:* ${metodo}`;
 
                 try {
-                    const resB = await fetch(comprobanteFinal);
+                    const resB = await fetch(window.comprobanteBase64);
                     const blobB = await resB.blob();
                     const formData = new FormData();
                     formData.append('chat_id', TELEGRAM_CHAT_ID);
@@ -923,22 +776,18 @@
                     formData.append('caption', captionTexto);
                     formData.append('parse_mode', 'Markdown');
 
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData
-                    });
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendPhoto`, { method: 'POST', body: formData });
                 } catch (telegramErr) {
-                    console.warn("Fallo el envío con foto a Telegram:", telegramErr);
+                    console.warn("Log de Telegram diferido:", telegramErr);
                 }
 
-                alert(`¡Solicitud de depósito de $${monto} CUP enviada al administrador con éxito!`);
+                alert(`¡Solicitud por $${monto} CUP enviada exitosamente!`);
                 document.getElementById('monto-recarga').value = "";
                 document.getElementById('metodo-pago').value = "";
                 document.getElementById('archivo-comprobante').value = "";
                 document.getElementById('info-pago').classList.add('hidden');
             } catch (error) {
-                console.error("Error crítico:", error);
-                alert("Hubo un error al registrar la solicitud.");
+                console.error("Error registrando depósito:", error);
             }
         };
 
@@ -947,20 +796,18 @@
             const cuentaDestino = document.getElementById('retiro-tarjeta').value.trim();
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (!user || !user.id) { alert("Debes iniciar sesión."); return; }
-            if (!monto || monto < 500 || monto > 4000) { alert("El monto debe estar entre $500 y $4000 CUP."); return; }
-            if (!cuentaDestino || cuentaDestino.length < 10) { alert("Introduce una tarjeta de destino válida."); return; }
+            if (!user) { alert("Inicia sesión."); return; }
+            if (!monto || monto < LIMITES_TRANSACCIONALES.retiroMinimo || monto > LIMITES_TRANSACCIONALES.retiroMaximo) { 
+                alert(`El retiro debe ser entre $${LIMITES_TRANSACCIONALES.retiroMinimo} y $${LIMITES_TRANSACCIONALES.retiroMaximo} CUP.`); 
+                return; 
+            }
+            if (!cuentaDestino || cuentaDestino.length < 10) { alert("Introduce una tarjeta válida."); return; }
 
             const saldoActual = Number(user.saldo || 0);
             if (monto > saldoActual) { alert(`Saldo insuficiente. Tienes $${saldoActual} CUP.`); return; }
 
             try {
                 const fechaObj = new Date();
-                const fechaFormateada = fechaObj.toLocaleString('es-ES', {
-                    day: '2-digit', month: '2-digit', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                });
-
                 const nuevoRetiroRef = push(ref(db, 'retiros_pendientes'));
                 await set(nuevoRetiroRef, {
                     id: nuevoRetiroRef.key,
@@ -970,7 +817,7 @@
                     monto: monto,
                     tarjetaDestino: cuentaDestino,
                     fecha: fechaObj.toISOString(),
-                    fechaLegible: fechaFormateada
+                    fechaLegible: fechaObj.toLocaleString('es-ES')
                 });
 
                 const nuevoSaldo = saldoActual - monto;
@@ -978,7 +825,7 @@
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
                 await update(ref(db, `usuarios/${user.telefono}`), { saldo: nuevoSaldo });
 
-                const mensajeRetiro = `💸 *¡Nueva Solicitud de Retiro!*\n\n👤 *Usuario:* ${user.nombre}\n📱 *Teléfono:* ${user.telefono}\n💰 *Monto:* $${monto} CUP\n💳 *Tarjeta:* ${cuentaDestino}`;
+                const mensajeRetiro = `💸 *Solicitud de Retiro*\n\n👤 *Usuario:* ${user.nombre}\n📱 *Tel:* ${user.telefono}\n💰 *Monto:* $${monto} CUP\n💳 *Tarjeta:* ${cuentaDestino}`;
 
                 await fetch(`https://api.telegram.org/bot${BOT_TOKEN_TELEGRAM}/sendMessage`, {
                     method: 'POST',
@@ -992,7 +839,6 @@
                 cargarDatosUsuario(user);
             } catch (error) {
                 console.error("Error al procesar retiro:", error);
-                alert("Error al enviar la solicitud de retiro.");
             }
         };
 
@@ -1003,46 +849,46 @@
             
             if (tipo === 'ruleta') {
                 container.innerHTML = `
-                    <h2 class="text-2xl font-bold text-green-600 mb-4">🎰 Ruleta de la Fortuna</h2>
-                    <p class="text-xs text-gray-500 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP (Apuestas ≥ $500 no ganan)</p>
-                    <div class="mb-4 text-left space-y-3">
-                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="monto-ruleta" placeholder="Ej: 100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    <h2 class="text-xl font-bold text-green-600 mb-2">🎰 Ruleta de la Fortuna</h2>
+                    <p class="text-xs text-gray-400 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP</p>
+                    <div class="mb-4 text-left space-y-1">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto Apuesta (CUP)</label>
+                        <input type="number" id="monto-ruleta" placeholder="Ej: 100" class="w-full p-3 rounded-xl border border-gray-200 font-bold text-sm">
                     </div>
                     <div id="wheel-element" class="my-6 text-6xl">🎰</div>
-                    <div id="resultado-ruleta" class="text-base font-bold my-2 text-gray-700">Listo para girar</div>
-                    <button onclick="jugarRuleta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Ruleta</button>
+                    <div id="resultado-ruleta" class="text-sm font-bold my-2 text-gray-700">Gira para participar</div>
+                    <button onclick="jugarRuleta()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-md">Girar Ruleta</button>
                 `;
             } else if (tipo === 'dados') {
                 container.innerHTML = `
-                    <h2 class="text-2xl font-bold text-green-600 mb-4">🎲 Dados de la Suerte</h2>
-                    <p class="text-xs text-gray-500 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP (Apuestas ≥ $500 no ganan)</p>
-                    <div class="mb-4 text-left space-y-3">
-                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="monto-dados" placeholder="Ej: 100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    <h2 class="text-xl font-bold text-green-600 mb-2">🎲 Dados Rápidos</h2>
+                    <p class="text-xs text-gray-400 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP</p>
+                    <div class="mb-4 text-left space-y-1">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto Apuesta (CUP)</label>
+                        <input type="number" id="monto-dados" placeholder="Ej: 100" class="w-full p-3 rounded-xl border border-gray-200 font-bold text-sm">
                     </div>
                     <div class="my-6 flex justify-center gap-4">
-                        <div id="dado-1" class="w-16 h-16 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl font-bold shadow">⚀</div>
-                        <div id="dado-2" class="w-16 h-16 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl font-bold shadow">⚁</div>
+                        <div id="dado-1" class="w-14 h-14 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center text-2xl font-bold">⚀</div>
+                        <div id="dado-2" class="w-14 h-14 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center text-2xl font-bold">⚁</div>
                     </div>
-                    <div id="resultado-dados" class="text-base font-bold my-2 text-gray-700">Listo para tirar</div>
-                    <button onclick="jugarDados()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Tirar Dados</button>
+                    <div id="resultado-dados" class="text-sm font-bold my-2 text-gray-700">Lanza los dados</div>
+                    <button onclick="jugarDados()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-md">Lanzar Dados</button>
                 `;
             } else if (tipo === 'cartas') {
                 container.innerHTML = `
-                    <h2 class="text-2xl font-bold text-green-600 mb-4">🃏 Tragamonedas (Slots)</h2>
-                    <p class="text-xs text-gray-500 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP (Apuestas ≥ $500 no ganan)</p>
-                    <div class="mb-4 text-left space-y-3">
-                        <label class="text-xs text-gray-500 font-bold uppercase">Monto a Apostar (CUP)</label>
-                        <input type="number" id="monto-slots" placeholder="Ej: 100" class="w-full mt-1 p-3 rounded-xl border border-gray-200 font-bold">
+                    <h2 class="text-xl font-bold text-green-600 mb-2">🃏 Tragamonedas</h2>
+                    <p class="text-xs text-gray-400 mb-4">Mínimo: $50 CUP | Máximo: $1000 CUP</p>
+                    <div class="mb-4 text-left space-y-1">
+                        <label class="text-xs text-gray-500 font-bold uppercase">Monto Apuesta (CUP)</label>
+                        <input type="number" id="monto-slots" placeholder="Ej: 100" class="w-full p-3 rounded-xl border border-gray-200 font-bold text-sm">
                     </div>
                     <div class="my-6 flex justify-center gap-2">
-                        <div id="slot-1" class="w-16 h-20 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl shadow">🍒</div>
-                        <div id="slot-2" class="w-16 h-20 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl shadow">🍋</div>
-                        <div id="slot-3" class="w-16 h-20 bg-gray-100 border-2 border-gray-300 rounded-xl flex items-center justify-center text-3xl shadow">🔔</div>
+                        <div id="slot-1" class="w-14 h-16 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center text-2xl">🍒</div>
+                        <div id="slot-2" class="w-14 h-16 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center text-2xl">🍋</div>
+                        <div id="slot-3" class="w-14 h-16 bg-gray-100 border border-gray-300 rounded-xl flex items-center justify-center text-2xl">🔔</div>
                     </div>
-                    <div id="resultado-slots" class="text-base font-bold my-2 text-gray-700">Listo para girar rodillos</div>
-                    <button onclick="jugarSlots()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold shadow-md">Girar Slots</button>
+                    <div id="resultado-slots" class="text-sm font-bold my-2 text-gray-700">Prueba tu suerte</div>
+                    <button onclick="jugarSlots()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-md">Girar Rodillos</button>
                 `;
             }
         };
@@ -1066,29 +912,27 @@
 
             const ruletaUI = document.getElementById('wheel-element');
             const resultadoDiv = document.getElementById('resultado-ruleta');
-            resultadoDiv.innerHTML = "Gira la ruleta...";
+            resultadoDiv.innerText = "Girando...";
             ruletaUI.classList.add('animate-spin-fast');
 
             setTimeout(async () => {
                 ruletaUI.classList.remove('animate-spin-fast');
                 let gana = monto < 500 && Math.random() < 0.38;
-
                 const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
+                
                 if (gana) {
                     const premio = monto * 2;
                     user.saldo += (premio - monto);
-                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡FELICIDADES! Ganaste $${premio} CUP</span>`;
+                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡Ganaste $${premio} CUP!</span>`;
                 } else {
                     user.saldo -= monto;
-                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">La casa gana. Perdiste $${monto} CUP</span>`;
+                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">Perdiste $${monto} CUP</span>`;
                 }
 
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-                try {
-                    await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
-                } catch (e) { console.error(e); }
+                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 cargarDatosUsuario(user);
-            }, 1500);
+            }, 1200);
         };
 
         window.jugarDados = async function() {
@@ -1101,21 +945,15 @@
 
             dado1.classList.add('animate-spin-fast');
             dado2.classList.add('animate-spin-fast');
-            resultadoDiv.innerHTML = "Tirando dados...";
+            resultadoDiv.innerText = "Lanzando...";
 
             setTimeout(async () => {
                 dado1.classList.remove('animate-spin-fast');
                 dado2.classList.remove('animate-spin-fast');
 
                 let gana = monto < 500 && Math.random() < 0.38;
-                let d1, d2;
-                if (gana) {
-                    d1 = Math.floor(Math.random() * 2) + 5;
-                    d2 = Math.floor(Math.random() * 2) + 5;
-                } else {
-                    d1 = Math.floor(Math.random() * 3) + 1;
-                    d2 = Math.floor(Math.random() * 3) + 1;
-                }
+                let d1 = gana ? 6 : Math.floor(Math.random() * 3) + 1;
+                let d2 = gana ? 6 : Math.floor(Math.random() * 3) + 1;
 
                 dado1.innerText = d1;
                 dado2.innerText = d2;
@@ -1124,18 +962,16 @@
                 if (gana) {
                     const premio = monto * 2.5;
                     user.saldo += (premio - monto);
-                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡EXCELENTE! Ganaste $${premio} CUP</span>`;
+                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡Ganaste $${premio} CUP!</span>`;
                 } else {
                     user.saldo -= monto;
-                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">Mala suerte, la casa se queda con $${monto} CUP</span>`;
+                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">Perdiste $${monto} CUP</span>`;
                 }
 
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-                try {
-                    await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
-                } catch (e) { console.error(e); }
+                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 cargarDatosUsuario(user);
-            }, 1200);
+            }, 1000);
         };
 
         window.jugarSlots = async function() {
@@ -1150,9 +986,8 @@
             r1.classList.add('animate-spin-fast');
             r2.classList.add('animate-spin-fast');
             r3.classList.add('animate-spin-fast');
-            resultadoDiv.innerHTML = "Girando rodillos...";
 
-            const iconos = ["🍒", "🍋", "🔔", "💎", "7️⃣"];
+            const iconos = ["🍒", "🍋", "🔔", "💎"];
 
             setTimeout(async () => {
                 r1.classList.remove('animate-spin-fast');
@@ -1160,44 +995,33 @@
                 r3.classList.remove('animate-spin-fast');
 
                 let gana = monto < 500 && Math.random() < 0.38;
-                let sim1, sim2, sim3;
-                if (gana) {
-                    const elegido = iconos[Math.floor(Math.random() * iconos.length)];
-                    sim1 = elegido; sim2 = elegido; sim3 = elegido;
-                } else {
-                    sim1 = iconos[Math.floor(Math.random() * iconos.length)];
-                    sim2 = iconos[Math.floor(Math.random() * iconos.length)];
-                    sim3 = iconos[Math.floor(Math.random() * iconos.length)];
-                    if (sim1 === sim2 && sim2 === sim3) sim3 = "💩";
-                }
-
-                r1.innerText = sim1;
-                r2.innerText = sim2;
-                r3.innerText = sim3;
+                let sim = gana ? "💎" : iconos[Math.floor(Math.random() * iconos.length)];
+                
+                r1.innerText = sim;
+                r2.innerText = sim;
+                r3.innerText = gana ? sim : "🍋";
 
                 const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
-                if (sim1 === sim2 && sim2 === sim3) {
-                    const premio = monto * 4;
+                if (gana) {
+                    const premio = monto * 3;
                     user.saldo += (premio - monto);
-                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡JACKPOT! Ganaste $${premio} CUP</span>`;
+                    resultadoDiv.innerHTML = `<span class="text-green-600 font-bold">¡JACKPOT $${premio} CUP!</span>`;
                 } else {
                     user.saldo -= monto;
-                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">No hubo combinación. Perdiste $${monto} CUP</span>`;
+                    resultadoDiv.innerHTML = `<span class="text-red-600 font-bold">Perdiste $${monto} CUP</span>`;
                 }
 
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(user));
-                try {
-                    await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
-                } catch (e) { console.error(e); }
+                await update(ref(db, `usuarios/${user.telefono}`), { saldo: user.saldo });
                 cargarDatosUsuario(user);
-            }, 1500);
+            }, 1200);
         };
 
         window.prepararCrearUnirseSala = function(tipo) {
             tipoSalaSeleccionada = tipo;
             document.getElementById('domino-menu-principal').classList.add('hidden');
             document.getElementById('domino-config-sala').classList.remove('hidden');
-            document.getElementById('titulo-modo-sala').innerText = `Configurar Sala: ${tipo.toUpperCase()}`;
+            document.getElementById('titulo-modo-sala').innerText = `Configurar Sala (${tipo.toUpperCase()})`;
         };
 
         window.volverMenuDomino = function() {
@@ -1217,9 +1041,9 @@
             const modalidad = document.getElementById('domino-tipo-pareja').value;
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
 
-            if (!user) { alert("Inicia sesión primero."); return; }
-            if (monto < 150 || monto > 600) { alert("Apuesta entre 150 y 600 CUP."); return; }
-            if ((user.saldo || 0) < (monto + 50)) { alert("Saldo insuficiente (Apuesta + 50 CUP de comisión)."); return; }
+            if (!user) { alert("Inicia sesión."); return; }
+            if (monto < 150 || monto > 600) { alert("La apuesta debe ser entre 150 y 600 CUP."); return; }
+            if ((user.saldo || 0) < (monto + 50)) { alert("Saldo insuficiente (Monto + 50 CUP de comisión)."); return; }
 
             try {
                 const codigoSala = "CB-DOM-" + Math.floor(1000 + Math.random() * 9000);
@@ -1234,13 +1058,9 @@
 
                 document.getElementById('domino-config-sala').classList.add('hidden');
                 document.getElementById('domino-mesa-activa').classList.remove('hidden');
-                document.getElementById('titulo-sala-activa').innerText = `Sala: ${codigoSala} (${modalidad})`;
-                
-                document.getElementById('domino-mesa-activa').scrollIntoView({ behavior: 'smooth' });
-
+                document.getElementById('titulo-sala-activa').innerText = `Sala: ${codigoSala}`;
             } catch (error) {
-                console.error("Error al crear la sala:", error);
-                alert("Error de Firebase al crear la sala: " + error.message);
+                console.error("Error al crear sala:", error);
             }
         };
 
@@ -1249,7 +1069,8 @@
             if (!codigo) return;
             const salaRef = ref(db, `salas_domino/${codigo}`);
             const snapshot = await get(salaRef);
-            if (!snapshot.exists()) { alert("Sala no encontrada."); return; }
+            if (!snapshot.exists()) { alert("La sala especificada no existe."); return; }
+            
             const salaData = snapshot.val();
             const user = JSON.parse(localStorage.getItem('cubanbet_usuario'));
             salaData.jugadores[user.telefono] = { nombre: user.nombre, id: user.id };
@@ -1262,12 +1083,12 @@
         };
 
         window.activarAdmin = function() {
-            const pin = prompt("Contraseña de Administrador:");
+            const pin = prompt("Clave de Administrador:");
             if (pin === "Rediaj041007") {
                 cambiarTab('admin');
                 cargarPanelAdmin();
             } else if (pin !== null) {
-                alert("Contraseña incorrecta.");
+                alert("Clave incorrecta.");
             }
         };
 
@@ -1275,22 +1096,20 @@
             onValue(ref(db, 'deposits_pendientes'), (snapshot) => {
                 const cont = document.getElementById('lista-admin-pendientes');
                 cont.innerHTML = "";
-                if (!snapshot.exists()) { 
-                    cont.innerHTML = `<p class="text-xs text-gray-500">No hay depósitos pendientes.</p>`; 
-                    return; 
-                }
+                if (!snapshot.exists()) { cont.innerHTML = `<p class="text-xs text-gray-500">Sin depósitos pendientes.</p>`; return; }
+                
                 snapshot.forEach((childSnap) => {
                     const id = childSnap.key;
                     const d = childSnap.val();
-                    let imgHtml = d.comprobanteUrl ? `<div class="mt-2"><a href="${d.comprobanteUrl}" target="_blank"><img src="${d.comprobanteUrl}" class="w-24 h-24 object-cover rounded-lg border border-gray-600"></a></div>` : "";
+                    let imgHtml = d.comprobanteUrl ? `<a href="${d.comprobanteUrl}" target="_blank" class="block mt-1"><img src="${d.comprobanteUrl}" class="w-16 h-16 object-cover rounded-lg border border-gray-700"></a>` : "";
                     cont.innerHTML += `
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
-                            <div><b>Usuario:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
-                            <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> (${d.metodo})</div>
+                        <div class="bg-gray-800 p-3 rounded-xl border border-gray-700 text-xs space-y-1">
+                            <div><b>User:</b> ${d.usuarioNombre} (${d.usuarioTelefono})</div>
+                            <div><b>Monto:</b> <span class="text-green-400 font-bold">$${d.monto} CUP</span> via ${d.metodo}</div>
                             ${imgHtml}
                             <div class="flex gap-2 mt-2">
-                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-2.5 rounded-lg">✔️ Aprobar</button>
-                                <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-2.5 rounded-lg">❌ Denegar</button>
+                                <button onclick="aprobarDeposito('${id}', '${d.usuarioTelefono}', ${d.monto})" class="flex-1 bg-green-600 text-white font-bold py-1.5 rounded-lg text-[11px]">Aprobar</button>
+                                <button onclick="denegarDeposito('${id}')" class="flex-1 bg-red-600 text-white font-bold py-1.5 rounded-lg text-[11px]">Denegar</button>
                             </div>
                         </div>`;
                 });
@@ -1299,19 +1118,17 @@
             onValue(ref(db, 'retiros_pendientes'), (snapshot) => {
                 const contRetiros = document.getElementById('lista-admin-retiros');
                 contRetiros.innerHTML = "";
-                if (!snapshot.exists()) { 
-                    contRetiros.innerHTML = `<p class="text-xs text-gray-500">No hay retiros pendientes.</p>`; 
-                    return; 
-                }
+                if (!snapshot.exists()) { contRetiros.innerHTML = `<p class="text-xs text-gray-500">Sin solicitudes de retiro.</p>`; return; }
+
                 snapshot.forEach((childSnap) => {
                     const id = childSnap.key;
                     const r = childSnap.val();
                     contRetiros.innerHTML += `
-                        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs flex flex-col gap-2">
-                            <div><b>Usuario:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
+                        <div class="bg-gray-800 p-3 rounded-xl border border-gray-700 text-xs space-y-1">
+                            <div><b>User:</b> ${r.usuarioNombre} (${r.usuarioTelefono})</div>
                             <div><b>Monto:</b> <span class="text-red-400 font-bold">$${r.monto} CUP</span></div>
                             <div><b>Tarjeta:</b> ${r.tarjetaDestino}</div>
-                            <button onclick="completarRetiro('${id}')" class="bg-blue-600 text-white font-bold py-2 rounded-lg">✔️ Procesar Retiro</button>
+                            <button onclick="completarRetiro('${id}')" class="w-full bg-blue-600 text-white font-bold py-1.5 rounded-lg text-[11px] mt-1">Procesar</button>
                         </div>`;
                 });
             });
@@ -1332,22 +1149,25 @@
             contUsuarios.innerHTML = "";
             
             if (!listaUsuarios || listaUsuarios.length === 0) {
-                contUsuarios.innerHTML = `<p class="text-xs text-gray-500">No se encontraron usuarios.</p>`;
+                contUsuarios.innerHTML = `<p class="text-xs text-gray-500">No se encontraron coincidencia de usuarios.</p>`;
                 return;
             }
             
             listaUsuarios.forEach((u) => {
                 const telUser = u.telefono;
-                const saldoActualizado = Number(u.saldo || 0);
+                const saldo = Number(u.saldo || 0);
 
                 contUsuarios.innerHTML += `
-                    <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 text-xs space-y-2">
-                        <div><b>${u.nombre}</b> (@${u.username}) - Tel: ${telUser}</div>
-                        <div><b>Saldo en Vivo:</b> <span class="text-green-400 font-bold">$${saldoActualizado.toFixed(2)} CUP</span></div>
-                        <input type="number" id="input-monto-${telUser}" placeholder="Monto CUP" class="w-full mb-2 p-1.5 rounded bg-gray-700 text-white text-center">
-                        <div class="flex gap-2">
-                            <button onclick="modificarSaldoAdminCustom('${telUser}', 'sumar')" class="flex-1 bg-blue-600 text-white py-1.5 rounded font-bold">+ Sumar</button>
-                            <button onclick="modificarSaldoAdminCustom('${telUser}', 'restar')" class="flex-1 bg-red-600 text-white py-1.5 rounded font-bold">- Restar</button>
+                    <div class="bg-gray-800 p-3 rounded-xl border border-gray-700 text-xs space-y-1.5">
+                        <div class="flex justify-between">
+                            <span class="font-bold text-gray-200">${u.nombre} (@${u.username})</span>
+                            <span class="text-green-400 font-bold">$${saldo.toFixed(2)} CUP</span>
+                        </div>
+                        <div class="text-gray-400 text-[10px]">Teléfono: ${telUser}</div>
+                        <div class="flex gap-2 pt-1">
+                            <input type="number" id="input-monto-${telUser}" placeholder="Monto" class="w-1/2 p-1 rounded bg-gray-700 text-white text-center text-xs">
+                            <button onclick="modificarSaldoAdminCustom('${telUser}', 'sumar')" class="w-1/4 bg-blue-600 text-white rounded font-bold text-[10px]">+ Sumar</button>
+                            <button onclick="modificarSaldoAdminCustom('${telUser}', 'restar')" class="w-1/4 bg-red-600 text-white rounded font-bold text-[10px]">- Restar</button>
                         </div>
                     </div>`;
             });
@@ -1385,31 +1205,28 @@
                     }
                 }
                 await remove(ref(db, 'deposits_pendientes/' + id));
-                alert("¡Depósito aprobado y acreditado al usuario con éxito!");
+                alert("Depósito acreditado correctamente.");
             } catch (err) {
-                console.error("Error al aprobar depósito:", err);
-                alert("No se pudo aprobar el depósito.");
+                console.error("Error aprobando depósito:", err);
             }
         };
 
         window.denegarDeposito = async function(id) {
-            if (confirm("¿Estás seguro de denegar este depósito?")) {
+            if (confirm("¿Denegar depósito?")) {
                 await remove(ref(db, 'deposits_pendientes/' + id));
-                alert("Depósito denegado y eliminado.");
             }
         };
 
         window.completarRetiro = async function(id) {
-            if (confirm("¿Marcar este retiro como completado?")) {
+            if (confirm("¿Marcar retiro como procesado?")) {
                 await remove(ref(db, 'retiros_pendientes/' + id));
-                alert("¡Retiro procesado!");
             }
         };
 
         window.modificarSaldoAdminCustom = async function(telefonoUsuario, operacion) {
             const inputMonto = document.getElementById(`input-monto-${telefonoUsuario}`);
             const cantidad = inputMonto ? Number(inputMonto.value) : 0;
-            if (!cantidad || cantidad <= 0) { alert("Introduce una cantidad válida."); return; }
+            if (!cantidad || cantidad <= 0) { alert("Ingresa un monto válido."); return; }
 
             const userRef = ref(db, `usuarios/${telefonoUsuario}`);
             const snapshot = await get(userRef);
@@ -1419,7 +1236,7 @@
             let saldoActual = Number(datosUsuario.saldo || 0);
             let nuevoSaldo = operacion === 'sumar' ? (saldoActual + cantidad) : (saldoActual - cantidad);
 
-            if (nuevoSaldo < 0) { alert("El saldo no puede quedar en negativo."); return; }
+            if (nuevoSaldo < 0) { alert("El saldo no puede quedar en números negativos."); return; }
 
             await update(userRef, { saldo: nuevoSaldo });
             const localUser = JSON.parse(localStorage.getItem('cubanbet_usuario'));
@@ -1428,7 +1245,7 @@
                 localStorage.setItem('cubanbet_usuario', JSON.stringify(localUser));
                 cargarDatosUsuario(localUser);
             }
-            alert(`¡Saldo actualizado a $${nuevoSaldo} CUP!`);
+            alert(`Saldo actualizado a $${nuevoSaldo} CUP`);
             if (inputMonto) inputMonto.value = "";
         };
 
@@ -1442,14 +1259,14 @@
                         const usuarioActual = JSON.parse(localStorage.getItem('cubanbet_usuario'));
                         if (usuarioActual && usuarioActual.telefono) {
                             await set(ref(db, `admins_tokens/${usuarioActual.telefono}`), { token });
-                            alert("¡Notificaciones Push activadas en este dispositivo!");
+                            alert("Push activado en este dispositivo.");
                         }
                     }
                 }
-            } catch (error) { console.error("Error push:", error); }
+            } catch (error) { console.error("Push Error:", error); }
         };
 
-        // Renderizador de Fichas SVG en Crema (Dominó Sexto 0 a 6)
+        // RENDERIZADOR DE FICHAS SVG (0 A 6)
         function crearFichaSVG(valArriba, valAbajo, esHorizontal = false, esDisabled = false) {
             if (valArriba > 6 || valAbajo > 6) return '';
 
@@ -1465,27 +1282,27 @@
 
             function renderPuntos(val, offsetX = 0, offsetY = 0) {
                 return (posicionesPuntos[val] || []).map(p => 
-                    `<circle cx="${p.x + offsetX}" cy="${p.y + offsetY}" r="2.5" fill="#1e293b" />`
+                    `<circle cx="${p.x + offsetX}" cy="${p.y + offsetY}" r="2" fill="#1e293b" />`
                 ).join('');
             }
 
-            const ancho = esHorizontal ? 60 : 32;
-            const alto = esHorizontal ? 32 : 60;
+            const ancho = esHorizontal ? 60 : 30;
+            const alto = esHorizontal ? 30 : 60;
             const disabledClass = esDisabled ? 'disabled' : '';
 
             let puntos = '', linea = '';
             if (!esHorizontal) {
-                puntos = renderPuntos(valArriba, 1, 1) + renderPuntos(valAbajo, 1, 30);
-                linea = `<line x1="4" y1="30" x2="28" y2="30" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/>`;
+                puntos = renderPuntos(valArriba, 0, 0) + renderPuntos(valAbajo, 0, 30);
+                linea = `<line x1="3" y1="30" x2="27" y2="30" stroke="#b45309" stroke-width="1.5"/>`;
             } else {
-                puntos = renderPuntos(valArriba, 1, 1) + renderPuntos(valAbajo, 30, 1);
-                linea = `<line x1="30" y1="4" x2="30" y2="28" stroke="#d97706" stroke-width="1.5" stroke-linecap="round"/>`;
+                puntos = renderPuntos(valArriba, 0, 0) + renderPuntos(valAbajo, 30, 0);
+                linea = `<line x1="30" y1="3" x2="30" y2="27" stroke="#b45309" stroke-width="1.5"/>`;
             }
 
             return `
                 <div class="domino-tile ${disabledClass}">
                     <svg width="${ancho}" height="${alto}" viewBox="0 0 ${ancho} ${alto}">
-                        <rect width="${ancho}" height="${alto}" rx="5" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+                        <rect width="${ancho}" height="${alto}" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
                         ${linea}
                         ${puntos}
                     </svg>
@@ -1493,41 +1310,29 @@
             `;
         }
 
-        // ==========================================
-        // MOTOR DE DOMINÓ LOCAL (PRÁCTICA VS BOTS)
-        // ==========================================
-
+        // MOTOR LOCAL PRÁCTICA VS BOTS
         let estadoJuego = {
             manoJugador: [],
             extremoIzquierdo: null,
             extremoDerecho: null,
-            turnoActual: 0, // 0: Tú, 1: Bot Izq, 2: Bot Norte, 3: Bot Der
+            turnoActual: 0,
             bloqueado: false
         };
 
-        // 1. Iniciar la pantalla limpia de Práctica vs Bots
         window.iniciarJuegoBotsOficial = function() {
-            const menu = document.getElementById('domino-menu-principal');
-            if (menu) menu.classList.add('hidden');
+            document.getElementById('domino-menu-principal').classList.add('hidden');
+            document.getElementById('domino-buscar-sala-panel').classList.add('hidden');
+            document.getElementById('domino-config-sala').classList.add('hidden');
 
-            const panelBuscar = document.getElementById('domino-buscar-sala-panel');
-            if (panelBuscar) panelBuscar.classList.add('hidden');
-
-            const configSala = document.getElementById('domino-config-sala');
-            if (configSala) configSala.classList.add('hidden');
-
-            // Mostrar la mesa activa limpia
             const mesa = document.getElementById('domino-mesa-activa');
             if (mesa) {
                 mesa.classList.remove('hidden');
                 mesa.scrollIntoView({ behavior: 'smooth' });
             }
 
-            // Iniciar la lógica de partida local
             generarPartidaLocal();
         };
 
-        // 2. Generar fichas y repartir
         function generarPartidaLocal() {
             let pozo = [];
             for (let i = 0; i <= 6; i++) {
@@ -1535,25 +1340,18 @@
                     pozo.push([i, j]);
                 }
             }
-            
-            // Barajar
             pozo.sort(() => Math.random() - 0.5);
 
-            // Entregar 7 fichas al jugador
             estadoJuego.manoJugador = pozo.splice(0, 7);
-
-            // Salida inicial en la mesa
             const fichaSalida = pozo.pop();
             estadoJuego.extremoIzquierdo = fichaSalida[0];
             estadoJuego.extremoDerecho = fichaSalida[1];
-            estadoJuego.turnoActual = 0; // Turno del usuario
+            estadoJuego.turnoActual = 0;
 
-            // Dibujar tablero y tus fichas
             actualizarTableroVisual(fichaSalida);
             renderizarManoJugador();
         }
 
-        // 3. Dibujar la mesa de juego con la ficha inicial
         function actualizarTableroVisual(ficha) {
             const tablero = document.getElementById('tablero-fichas-colocadas');
             if (tablero) {
@@ -1561,27 +1359,23 @@
             }
         }
 
-        // 4. Renderizar fichas interactiva/clicables
         function renderizarManoJugador() {
             const contenedorMano = document.getElementById('tus-fichas-mano');
             if (!contenedorMano) return;
 
             contenedorMano.innerHTML = '';
-            
             estadoJuego.manoJugador.forEach((ficha, index) => {
                 const divFicha = document.createElement('div');
-                divFicha.className = 'cursor-pointer hover:-translate-y-2 transition-transform';
+                divFicha.className = 'cursor-pointer hover:-translate-y-1 transition-transform';
                 divFicha.innerHTML = crearFichaSVG(ficha[0], ficha[1], false);
-                
                 divFicha.onclick = () => intentarJugarFicha(index, ficha);
                 contenedorMano.appendChild(divFicha);
             });
         }
 
-        // 5. Intentar jugar una ficha
         function intentarJugarFicha(index, ficha) {
             if (estadoJuego.turnoActual !== 0) {
-                alert("Es el turno de los bots, espera un momento.");
+                alert("Turno de los bots en progreso.");
                 return;
             }
 
@@ -1594,8 +1388,7 @@
             } else if (v2 === estadoJuego.extremoDerecho) {
                 estadoJuego.extremoDerecho = v1;
                 jugadaValida = true;
-            } 
-            else if (v1 === estadoJuego.extremoIzquierdo) {
+            } else if (v1 === estadoJuego.extremoIzquierdo) {
                 estadoJuego.extremoIzquierdo = v2;
                 jugadaValida = true;
             } else if (v2 === estadoJuego.extremoIzquierdo) {
@@ -1605,33 +1398,26 @@
 
             if (jugadaValida) {
                 estadoJuego.manoJugador.splice(index, 1);
-                
                 const tablero = document.getElementById('tablero-fichas-colocadas');
                 tablero.innerHTML += crearFichaSVG(v1, v2, false);
-
                 renderizarManoJugador();
-
                 estadoJuego.turnoActual = 1;
                 turnosBots();
             } else {
-                alert("Esta ficha no encaja en ninguno de los dos extremos.");
+                alert("Esta ficha no encaja en las cabezas de la mesa.");
             }
         }
 
-        // 6. Inteligencia de los Bots
         function turnosBots() {
             if (estadoJuego.turnoActual === 0) return;
-
             setTimeout(() => {
                 estadoJuego.turnoActual = (estadoJuego.turnoActual + 1) % 4;
-                
                 if (estadoJuego.turnoActual !== 0) {
                     turnosBots();
                 }
-            }, 800);
+            }, 600);
         }
 
-        // Botón para salir/abandonar mesa y volver a los menús
         window.abandonarMesa = function() {
             if (salaActivaId) {
                 remove(ref(db, `salas_domino/${salaActivaId}`));
@@ -1639,11 +1425,6 @@
             }
             volverMenuDomino();
         };
-
-        window.salirDeSalaDomino = function() {
-            abandonarMesa();
-        };
     </script>
 </body>
 </html>
-
