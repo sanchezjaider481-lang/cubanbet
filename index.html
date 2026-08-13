@@ -1309,9 +1309,12 @@
 
         let estadoJuego = {
             manoJugador: [],
+            fichasMesa: [],
             extremoIzquierdo: null,
             extremoDerecho: null,
-            turnoActual: 0
+            turnoActual: 0,
+            puntosNorteSur: 0,
+            puntosEsteOeste: 0
         };
 
         window.iniciarJuegoBotsOficial = function() {
@@ -1339,19 +1342,23 @@
 
             estadoJuego.manoJugador = pozo.splice(0, 7);
             const fichaSalida = pozo.pop();
+            estadoJuego.fichasMesa = [fichaSalida];
             estadoJuego.extremoIzquierdo = fichaSalida[0];
             estadoJuego.extremoDerecho = fichaSalida[1];
             estadoJuego.turnoActual = 0;
 
-            actualizarTableroVisual(fichaSalida);
+            actualizarTableroVisual();
             renderizarManoJugador();
         }
 
-        function actualizarTableroVisual(ficha) {
+        function actualizarTableroVisual() {
             const tablero = document.getElementById('tablero-fichas-colocadas');
-            if (tablero) {
-                tablero.innerHTML = crearFichaSVG(ficha[0], ficha[1], false);
-            }
+            if (!tablero) return;
+            tablero.innerHTML = '';
+            estadoJuego.fichasMesa.forEach((f, idx) => {
+                const esHoriz = idx > 0 && idx < estadoJuego.fichasMesa.length - 1;
+                tablero.innerHTML += crearFichaSVG(f[0], f[1], esHoriz);
+            });
         }
 
         function renderizarManoJugador() {
@@ -1360,9 +1367,13 @@
 
             contenedorMano.innerHTML = '';
             estadoJuego.manoJugador.forEach((ficha, index) => {
+                const [v1, v2] = ficha;
+                const esPlayable = (v1 === estadoJuego.extremoIzquierdo || v2 === estadoJuego.extremoIzquierdo || 
+                                    v1 === estadoJuego.extremoDerecho || v2 === estadoJuego.extremoDerecho);
+
                 const divFicha = document.createElement('div');
-                divFicha.className = 'cursor-pointer hover:-translate-y-1 transition-transform';
-                divFicha.innerHTML = crearFichaSVG(ficha[0], ficha[1], false);
+                divFicha.className = `cursor-pointer transition-transform ${esPlayable ? 'hover:-translate-y-1' : 'opacity-60'}`;
+                divFicha.innerHTML = crearFichaSVG(v1, v2, false, !esPlayable);
                 divFicha.onclick = () => intentarJugarFicha(index, ficha);
                 contenedorMano.appendChild(divFicha);
             });
@@ -1375,33 +1386,41 @@
             }
 
             const [v1, v2] = ficha;
-            let jugadaValida = false;
+            let colocado = false;
 
-            if (v1 === estadoJuego.extremoDerecho) {
-                estadoJuego.extremoDerecho = v2;
-                jugadaValida = true;
-            } else if (v2 === estadoJuego.extremoDerecho) {
-                estadoJuego.extremoDerecho = v1;
-                jugadaValida = true;
-            } else if (v1 === estadoJuego.extremoIzquierdo) {
-                estadoJuego.extremoIzquierdo = v2;
-                jugadaValida = true;
-            } else if (v2 === estadoJuego.extremoIzquierdo) {
+            if (v2 === estadoJuego.extremoIzquierdo) {
+                estadoJuego.fichasMesa.unshift([v1, v2]);
                 estadoJuego.extremoIzquierdo = v1;
-                jugadaValida = true;
+                colocado = true;
+            } else if (v1 === estadoJuego.extremoIzquierdo) {
+                estadoJuego.fichasMesa.unshift([v2, v1]);
+                estadoJuego.extremoIzquierdo = v2;
+                colocado = true;
+            } else if (v1 === estadoJuego.extremoDerecho) {
+                estadoJuego.fichasMesa.push([v1, v2]);
+                estadoJuego.extremoDerecho = v2;
+                colocado = true;
+            } else if (v2 === estadoJuego.extremoDerecho) {
+                estadoJuego.fichasMesa.push([v2, v1]);
+                estadoJuego.extremoDerecho = v1;
+                colocado = true;
             }
 
-            if (jugadaValida) {
+            if (colocado) {
                 estadoJuego.manoJugador.splice(index, 1);
-                const tablero = document.getElementById('tablero-fichas-colocadas');
-                tablero.innerHTML += crearFichaSVG(v1, v2, false);
+                actualizarTableroVisual();
                 renderizarManoJugador();
+
+                if (estadoJuego.manoJugador.length === 0) {
+                    alert("¡Has ganado la mano!");
+                    volverMenuDomino();
+                    return;
+                }
                 
-                // Pasar el turno a los bots de forma secuencial
                 estadoJuego.turnoActual = 1;
                 ejecutarTurnosBots();
             } else {
-                alert("Esta ficha no encaja en las cabezas actuales de la mesa.");
+                alert("Esta ficha no encaja en los extremos de la mesa.");
             }
         }
 
@@ -1413,8 +1432,7 @@
                 if (estadoJuego.turnoActual !== 0) {
                     ejecutarTurnosBots();
                 } else {
-                    // Turno devuelto al jugador principal
-                    console.log("Turno devuelto al jugador principal.");
+                    renderizarManoJugador();
                 }
             }, 800);
         }
@@ -1429,5 +1447,6 @@
     </script>
 </body>
 </html>
+
 
 
