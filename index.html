@@ -422,7 +422,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
 
-        // CONFIGURACIÓN DE PARÁMETROS GLOBALES Y LÍMITES DINÁMICOS
         const LIMITES_TRANSACCIONALES = {
             depositoMinimo: 500,
             depositoMaximo: 4000,
@@ -455,7 +454,6 @@
         const TELEGRAM_CHAT_ID = "-1004432353397";
 
         window.addEventListener("DOMContentLoaded", () => {
-            // Inicializar textos dinámicos de límites en UI
             document.getElementById('limites-deposito-info').innerText = `Mínimo $${LIMITES_TRANSACCIONALES.depositoMinimo} - Máximo $${LIMITES_TRANSACCIONALES.depositoMaximo} CUP`;
             document.getElementById('limites-retiro-info').innerText = `Límites: Mínimo $${LIMITES_TRANSACCIONALES.retiroMinimo} CUP, Máximo $${LIMITES_TRANSACCIONALES.retiroMaximo} CUP por solicitud.`;
 
@@ -1266,7 +1264,6 @@
             } catch (error) { console.error("Push Error:", error); }
         };
 
-        // RENDERIZADOR DE FICHAS SVG (0 A 6)
         function crearFichaSVG(valArriba, valAbajo, esHorizontal = false, esDisabled = false) {
             if (valArriba > 6 || valAbajo > 6) return '';
 
@@ -1310,13 +1307,11 @@
             `;
         }
 
-        // MOTOR LOCAL PRÁCTICA VS BOTS
         let estadoJuego = {
             manoJugador: [],
             extremoIzquierdo: null,
             extremoDerecho: null,
-            turnoActual: 0,
-            bloqueado: false
+            turnoActual: 0
         };
 
         window.iniciarJuegoBotsOficial = function() {
@@ -1355,7 +1350,7 @@
         function actualizarTableroVisual(ficha) {
             const tablero = document.getElementById('tablero-fichas-colocadas');
             if (tablero) {
-                tablero.innerHTML = crearFichaSVG(estadoJuego.extremoIzquierdo, estadoJuego.extremoDerecho, false);
+                tablero.innerHTML = crearFichaSVG(ficha[0], ficha[1], false);
             }
         }
 
@@ -1375,7 +1370,7 @@
 
         function intentarJugarFicha(index, ficha) {
             if (estadoJuego.turnoActual !== 0) {
-                alert("Turno de los bots en progreso.");
+                alert("Es el turno de los bots, espera un momento.");
                 return;
             }
 
@@ -1401,21 +1396,27 @@
                 const tablero = document.getElementById('tablero-fichas-colocadas');
                 tablero.innerHTML += crearFichaSVG(v1, v2, false);
                 renderizarManoJugador();
+                
+                // Pasar el turno a los bots de forma secuencial
                 estadoJuego.turnoActual = 1;
-                turnosBots();
+                ejecutarTurnosBots();
             } else {
-                alert("Esta ficha no encaja en las cabezas de la mesa.");
+                alert("Esta ficha no encaja en las cabezas actuales de la mesa.");
             }
         }
 
-        function turnosBots() {
+        function ejecutarTurnosBots() {
             if (estadoJuego.turnoActual === 0) return;
+            
             setTimeout(() => {
                 estadoJuego.turnoActual = (estadoJuego.turnoActual + 1) % 4;
                 if (estadoJuego.turnoActual !== 0) {
-                    turnosBots();
+                    ejecutarTurnosBots();
+                } else {
+                    // Turno devuelto al jugador principal
+                    console.log("Turno devuelto al jugador principal.");
                 }
-            }, 600);
+            }, 800);
         }
 
         window.abandonarMesa = function() {
@@ -1428,4 +1429,5 @@
     </script>
 </body>
 </html>
+
 
