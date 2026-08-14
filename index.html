@@ -176,7 +176,7 @@
             <div id="contenedor-azar-interno" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center"></div>
         </section>
 
-        <!-- CONTENEDOR DE DOMINÓ CUBANO -->
+        <!-- CONTENEDOR DE DOMINÓ CUBANO (LISTO DESDE CERO) -->
         <section id="sala-domino" class="tab-content p-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-extrabold text-green-700">🁢🀰 Dominó Cubano (0 al 6)</h2>
@@ -237,7 +237,7 @@
                 </div>
             </div>
 
-            <!-- MESA DE JUEGO MODO TABLERO -->
+            <!-- MESA DE JUEGO MODO TABLERO (LISTA PARA TU NUEVO DESARROLLO) -->
             <div id="domino-mesa-activa" class="hidden relative w-full min-h-[520px] bg-slate-900 rounded-3xl p-3 flex flex-col justify-between select-none overflow-hidden">
                 <div class="flex justify-between items-center bg-slate-800/90 p-3 rounded-2xl backdrop-blur-md z-10">
                     <div>
@@ -259,6 +259,7 @@
                             <span class="text-[10px] font-bold block">🤖 Bot Izq</span>
                         </div>
 
+                        <!-- AQUÍ SE RENDERIZARÁ TU NUEVO TABLERO -->
                         <div id="tablero-fichas-colocadas" class="flex-1 flex items-center justify-center gap-1 overflow-x-auto p-2 min-h-[90px]"></div>
 
                         <div class="bg-amber-950/90 text-amber-200 text-center p-2 rounded-xl border border-amber-700 shadow-md z-10">
@@ -267,6 +268,7 @@
                     </div>
 
                     <div class="w-full flex flex-col items-center z-10">
+                        <!-- AQUÍ SE RENDERIZARÁ TU NUEVA MANO -->
                         <div id="tus-fichas-mano" class="flex justify-center items-center gap-1 overflow-x-auto max-w-full p-2 bg-black/30 rounded-xl backdrop-blur-sm"></div>
                         <div class="bg-amber-950/90 text-amber-200 text-center px-4 py-1 rounded-xl border border-amber-700 shadow-md mt-1">
                             <span class="text-xs font-bold">TÚ (Jugador Principal)</span>
@@ -1264,6 +1266,9 @@
             } catch (error) { console.error("Push Error:", error); }
         };
 
+        // ==========================================
+        // ÁREA DE DOMINÓ (LIMPIA - LISTA PARA HACER DESDE CERO)
+        // ==========================================
         function crearFichaSVG(valArriba, valAbajo, esHorizontal = false, esDisabled = false) {
             if (valArriba > 6 || valAbajo > 6) return '';
 
@@ -1308,13 +1313,7 @@
         }
 
         let estadoJuego = {
-            manoJugador: [],
-            fichasMesa: [],
-            extremoIzquierdo: null,
-            extremoDerecho: null,
-            turnoActual: 0,
-            puntosNorteSur: 0,
-            puntosEsteOeste: 0
+            // Aquí puedes empezar a estructurar tus variables para el dominó desde cero
         };
 
         window.iniciarJuegoBotsOficial = function() {
@@ -1328,114 +1327,8 @@
                 mesa.scrollIntoView({ behavior: 'smooth' });
             }
 
-            generarPartidaLocal();
+            // TODO: Inicializar tu lógica del juego aquí
         };
-
-        function generarPartidaLocal() {
-            let pozo = [];
-            for (let i = 0; i <= 6; i++) {
-                for (let j = i; j <= 6; j++) {
-                    pozo.push([i, j]);
-                }
-            }
-            pozo.sort(() => Math.random() - 0.5);
-
-            estadoJuego.manoJugador = pozo.splice(0, 7);
-            const fichaSalida = pozo.pop();
-            estadoJuego.fichasMesa = [fichaSalida];
-            estadoJuego.extremoIzquierdo = fichaSalida[0];
-            estadoJuego.extremoDerecho = fichaSalida[1];
-            estadoJuego.turnoActual = 0;
-
-            actualizarTableroVisual();
-            renderizarManoJugador();
-        }
-
-        function actualizarTableroVisual() {
-            const tablero = document.getElementById('tablero-fichas-colocadas');
-            if (!tablero) return;
-            tablero.innerHTML = '';
-            estadoJuego.fichasMesa.forEach((f, idx) => {
-                const esHoriz = idx > 0 && idx < estadoJuego.fichasMesa.length - 1;
-                tablero.innerHTML += crearFichaSVG(f[0], f[1], esHoriz);
-            });
-        }
-
-        function renderizarManoJugador() {
-            const contenedorMano = document.getElementById('tus-fichas-mano');
-            if (!contenedorMano) return;
-
-            contenedorMano.innerHTML = '';
-            estadoJuego.manoJugador.forEach((ficha, index) => {
-                const [v1, v2] = ficha;
-                const esPlayable = (v1 === estadoJuego.extremoIzquierdo || v2 === estadoJuego.extremoIzquierdo || 
-                                    v1 === estadoJuego.extremoDerecho || v2 === estadoJuego.extremoDerecho);
-
-                const divFicha = document.createElement('div');
-                divFicha.className = `cursor-pointer transition-transform ${esPlayable ? 'hover:-translate-y-1' : 'opacity-60'}`;
-                divFicha.innerHTML = crearFichaSVG(v1, v2, false, !esPlayable);
-                divFicha.onclick = () => intentarJugarFicha(index, ficha);
-                contenedorMano.appendChild(divFicha);
-            });
-        }
-
-        function intentarJugarFicha(index, ficha) {
-            if (estadoJuego.turnoActual !== 0) {
-                alert("Es el turno de los bots, espera un momento.");
-                return;
-            }
-
-            const [v1, v2] = ficha;
-            let colocado = false;
-
-            if (v2 === estadoJuego.extremoIzquierdo) {
-                estadoJuego.fichasMesa.unshift([v1, v2]);
-                estadoJuego.extremoIzquierdo = v1;
-                colocado = true;
-            } else if (v1 === estadoJuego.extremoIzquierdo) {
-                estadoJuego.fichasMesa.unshift([v2, v1]);
-                estadoJuego.extremoIzquierdo = v2;
-                colocado = true;
-            } else if (v1 === estadoJuego.extremoDerecho) {
-                estadoJuego.fichasMesa.push([v1, v2]);
-                estadoJuego.extremoDerecho = v2;
-                colocado = true;
-            } else if (v2 === estadoJuego.extremoDerecho) {
-                estadoJuego.fichasMesa.push([v2, v1]);
-                estadoJuego.extremoDerecho = v1;
-                colocado = true;
-            }
-
-            if (colocado) {
-                estadoJuego.manoJugador.splice(index, 1);
-                actualizarTableroVisual();
-                renderizarManoJugador();
-
-                if (estadoJuego.manoJugador.length === 0) {
-                    alert("¡Has ganado la mano!");
-                    volverMenuDomino();
-                    return;
-                }
-                
-                estadoJuego.turnoActual = 1;
-                ejecutarTurnosBots();
-            } else {
-                alert("Esta ficha no encaja en los extremos de la mesa.");
-            }
-        }
-
-        function ejecutarTurnosBots() {
-            if (estadoJuego.turnoActual === 0) return;
-            
-            setTimeout(() => {
-                estadoJuego.turnoActual = (estadoJuego.turnoActual + 1) % 4;
-                if (estadoJuego.turnoActual !== 0) {
-                    ejecutarTurnosBots();
-                } else {
-                    renderizarManoJugador();
-                }
-            }, 800);
-        }
 
         window.abandonarMesa = function() {
             if (salaActivaId) {
@@ -1447,6 +1340,3 @@
     </script>
 </body>
 </html>
-
-
-
