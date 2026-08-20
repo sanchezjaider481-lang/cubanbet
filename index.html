@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -3209,4 +3208,3215 @@ setTimeout(
 </script>
 
 </body>
-    </html>
+      </html<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1,
+               maximum-scale=1,
+               user-scalable=no,
+               viewport-fit=cover">
+
+<title>CubanBet Dominó</title>
+
+<style>
+:root{
+    --bg:#020d08;
+    --green:#075b40;
+    --green2:#043d2d;
+    --gold:#f5c842;
+    --gold-dark:#c8991d;
+    --text:#f5f7f5;
+    --muted:#8ca99e;
+
+    /* FICHAS DE MESA */
+    --tile-long:58px;
+    --tile-short:31px;
+
+    /* MANO */
+    --hand-width:43px;
+    --hand-height:59px;
+}
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    margin:0;
+    overflow:hidden;
+
+    background:var(--bg);
+    color:white;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+button{
+    font-family:inherit;
+}
+
+/* =========================================================
+   ORIENTACIÓN
+========================================================= */
+
+#orientation{
+    position:fixed;
+    inset:0;
+
+    z-index:99999;
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #0b6648,
+            #020d08 70%
+        );
+}
+
+.orientation-card{
+    width:min(380px,90vw);
+
+    padding:28px;
+
+    text-align:center;
+
+    border-radius:24px;
+
+    background:rgba(2,24,16,.97);
+
+    border:
+        1px solid rgba(245,200,66,.28);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.7);
+}
+
+.rotate-icon{
+    font-size:54px;
+
+    color:var(--gold);
+
+    animation:
+        rotatePhone 1.8s ease-in-out infinite;
+}
+
+@keyframes rotatePhone{
+    0%{
+        transform:rotate(0deg);
+    }
+
+    50%{
+        transform:rotate(90deg);
+    }
+
+    100%{
+        transform:rotate(90deg);
+    }
+}
+
+.orientation-card h2{
+    margin:12px 0 8px;
+
+    font-size:23px;
+}
+
+.orientation-card p{
+    margin:0;
+
+    color:var(--muted);
+
+    line-height:1.5;
+
+    font-size:13px;
+}
+
+@media
+(max-width:900px)
+and (orientation:portrait){
+
+    #orientation{
+        display:flex;
+    }
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+#app{
+    width:100%;
+    height:100dvh;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+    height:50px;
+    min-height:50px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:
+        0
+        max(10px,env(safe-area-inset-right))
+        0
+        max(10px,env(safe-area-inset-left));
+
+    background:
+        linear-gradient(
+            180deg,
+            #041b12,
+            #02130c
+        );
+
+    border-bottom:
+        1px solid rgba(255,255,255,.06);
+
+    position:relative;
+    z-index:100;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.logo{
+    width:34px;
+    height:34px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffdb51,
+            #c39218
+        );
+
+    color:#181300;
+
+    font-size:13px;
+    font-weight:950;
+}
+
+.brand-name{
+    font-size:13px;
+    font-weight:900;
+}
+
+.brand-sub{
+    color:var(--muted);
+    font-size:8px;
+}
+
+.score{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.score-item{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.avatar{
+    width:28px;
+    height:28px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:50%;
+
+    background:#17372b;
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    font-size:9px;
+    font-weight:900;
+}
+
+.score-item.active .avatar{
+    border-color:var(--gold);
+
+    box-shadow:
+        0 0 0 2px rgba(245,200,66,.1);
+}
+
+.score-number{
+    color:var(--gold);
+
+    font-size:15px;
+    font-weight:950;
+}
+
+.score-line{
+    width:1px;
+    height:24px;
+
+    background:
+        rgba(255,255,255,.1);
+}
+
+.actions{
+    display:flex;
+    gap:6px;
+}
+
+.action{
+    width:37px;
+    height:35px;
+
+    border-radius:10px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    background:
+        rgba(255,255,255,.04);
+
+    color:white;
+
+    font-size:17px;
+
+    cursor:pointer;
+}
+
+/* =========================================================
+   ZONA DE JUEGO
+========================================================= */
+
+/*
+   IMPORTANTE:
+
+   El juego toma TODO el espacio restante.
+   La mano ahora es muy compacta.
+*/
+
+.game{
+    flex:1;
+    min-height:0;
+
+    padding:4px;
+}
+
+/* =========================================================
+   MESA GRANDE
+========================================================= */
+
+.table{
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
+
+    border:
+        5px solid #351f13;
+
+    border-radius:18px;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #087451 0%,
+            #075b40 42%,
+            #043c2d 100%
+        );
+
+    box-shadow:
+        inset 0 0 80px rgba(0,0,0,.28),
+        0 5px 20px rgba(0,0,0,.35);
+}
+
+.table::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    pointer-events:none;
+
+    opacity:.08;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0,
+            transparent 4px,
+            rgba(255,255,255,.05) 5px
+        );
+}
+
+.table::after{
+    content:"";
+
+    position:absolute;
+
+    inset:11px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    border-radius:12px;
+
+    pointer-events:none;
+}
+
+/* =========================================================
+   JUGADORES
+========================================================= */
+
+.player{
+    position:absolute;
+
+    z-index:50;
+
+    display:flex;
+    align-items:center;
+
+    gap:6px;
+
+    padding:
+        4px 8px 4px 4px;
+
+    border-radius:12px;
+
+    background:
+        rgba(1,22,15,.8);
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    backdrop-filter:blur(6px);
+}
+
+.player.top{
+    top:7px;
+    left:50%;
+
+    transform:translateX(-50%);
+}
+
+.player.left{
+    left:7px;
+    top:50%;
+
+    transform:translateY(-50%);
+}
+
+.player.right{
+    right:7px;
+    top:50%;
+
+    transform:translateY(-50%);
+}
+
+.player-avatar{
+    width:25px;
+    height:25px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #316b58,
+            #102f24
+        );
+
+    font-size:8px;
+    font-weight:900;
+}
+
+.player strong{
+    display:block;
+
+    font-size:9px;
+}
+
+.player small{
+    display:block;
+
+    color:var(--muted);
+
+    font-size:7px;
+}
+
+/* =========================================================
+   CADENA
+========================================================= */
+
+#chain{
+    position:absolute;
+    inset:0;
+
+    z-index:20;
+
+    pointer-events:none;
+}
+
+.chain-tile{
+    position:absolute;
+
+    transform:
+        translate(-50%,-50%);
+
+    transition:
+        left .18s ease,
+        top .18s ease;
+
+    filter:
+        drop-shadow(
+            0 3px 3px rgba(0,0,0,.4)
+        );
+}
+
+/*
+   HORIZONTAL:
+   simple = 58 x 31
+   double = 31 x 58
+
+   VERTICAL:
+   simple = 31 x 58
+   double = 58 x 31
+*/
+
+.chain-tile.horizontal.simple{
+    width:var(--tile-long);
+    height:var(--tile-short);
+}
+
+.chain-tile.horizontal.double{
+    width:var(--tile-short);
+    height:var(--tile-long);
+}
+
+.chain-tile.vertical.simple{
+    width:var(--tile-short);
+    height:var(--tile-long);
+}
+
+.chain-tile.vertical.double{
+    width:var(--tile-long);
+    height:var(--tile-short);
+}
+
+/* =========================================================
+   DOMINÓ
+========================================================= */
+
+.domino{
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+
+    overflow:hidden;
+
+    border-radius:5px;
+
+    border:
+        1px solid #aaa69e;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fffefa,
+            #dedbd3
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.95),
+        inset 0 -2px 4px rgba(0,0,0,.1),
+        0 2px 4px rgba(0,0,0,.32);
+}
+
+.domino.horizontal{
+    flex-direction:row;
+}
+
+.domino.vertical{
+    flex-direction:column;
+}
+
+.domino .half{
+    position:relative;
+
+    width:50%;
+    height:100%;
+
+    display:grid;
+    place-items:center;
+}
+
+.domino.vertical .half{
+    width:100%;
+    height:50%;
+}
+
+.divider{
+    position:absolute;
+
+    background:#aaa69e;
+}
+
+.domino.horizontal .divider{
+    top:14%;
+    left:50%;
+
+    width:1px;
+    height:72%;
+}
+
+.domino.vertical .divider{
+    top:50%;
+    left:14%;
+
+    width:72%;
+    height:1px;
+}
+
+.pips{
+    width:19px;
+    height:19px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    grid-template-rows:
+        repeat(3,1fr);
+}
+
+.pip{
+    width:4px;
+    height:4px;
+
+    align-self:center;
+    justify-self:center;
+
+    border-radius:50%;
+
+    background:#1a2420;
+}
+
+/* =========================================================
+   EXTREMOS
+========================================================= */
+
+.endpoint{
+    position:absolute;
+
+    z-index:40;
+
+    width:19px;
+    height:19px;
+
+    display:none;
+    place-items:center;
+
+    border-radius:50%;
+
+    color:var(--gold);
+
+    background:
+        rgba(0,0,0,.5);
+
+    border:
+        1px solid rgba(245,200,66,.5);
+
+    font-size:8px;
+    font-weight:950;
+}
+
+/* =========================================================
+   CENTRO
+========================================================= */
+
+.center{
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    z-index:5;
+
+    pointer-events:none;
+
+    text-align:center;
+}
+
+.center-title{
+    color:rgba(255,255,255,.08);
+
+    font-size:10px;
+
+    letter-spacing:4px;
+
+    font-weight:950;
+}
+
+#status{
+    margin-top:3px;
+
+    color:rgba(255,255,255,.35);
+
+    font-size:9px;
+
+    white-space:nowrap;
+}
+
+/* =========================================================
+   MANO
+========================================================= */
+
+.handbar{
+    height:73px;
+    min-height:73px;
+
+    display:flex;
+    align-items:center;
+
+    gap:5px;
+
+    padding:
+        4px
+        max(8px,env(safe-area-inset-right))
+        max(4px,env(safe-area-inset-bottom))
+        max(8px,env(safe-area-inset-left));
+
+    background:
+        linear-gradient(
+            180deg,
+            #031a11,
+            #020d08
+        );
+
+    border-top:
+        1px solid rgba(255,255,255,.06);
+
+    z-index:100;
+}
+
+.hand-info{
+    width:67px;
+    min-width:67px;
+}
+
+.hand-info small{
+    display:block;
+
+    color:var(--muted);
+
+    font-size:7px;
+}
+
+.hand-info strong{
+    display:block;
+
+    margin-top:2px;
+
+    font-size:11px;
+}
+
+#handCount{
+    display:block;
+
+    margin-top:2px;
+
+    color:var(--gold);
+
+    font-size:8px;
+}
+
+#hand{
+    flex:1;
+    min-width:0;
+
+    height:100%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:4px;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+    padding:2px;
+}
+
+#hand::-webkit-scrollbar{
+    height:2px;
+}
+
+#hand::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,.15);
+}
+
+.hand-tile{
+    flex:0 0 auto;
+
+    width:var(--hand-width);
+    height:var(--hand-height);
+
+    padding:0;
+
+    border:0;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    transition:
+        transform .15s ease,
+        opacity .15s ease;
+}
+
+.hand-tile:hover,
+.hand-tile.selected{
+    transform:translateY(-5px);
+}
+
+.hand-tile.disabled{
+    opacity:.38;
+}
+
+.hand-tile .domino{
+    flex-direction:column;
+}
+
+.hand-tile .half{
+    width:100%;
+    height:50%;
+}
+
+.hand-tile .divider{
+    top:50%;
+    left:14%;
+
+    width:72%;
+    height:1px;
+}
+
+/* =========================================================
+   PASAR
+========================================================= */
+
+.controls{
+    width:66px;
+    min-width:66px;
+
+    display:flex;
+    justify-content:flex-end;
+}
+
+#pass{
+    height:35px;
+
+    padding:
+        0 12px;
+
+    border:0;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffdb54,
+            #c3941c
+        );
+
+    color:#1a1400;
+
+    font-size:9px;
+    font-weight:950;
+
+    cursor:pointer;
+}
+
+#pass:disabled{
+    opacity:.3;
+
+    cursor:default;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast{
+    position:fixed;
+
+    left:50%;
+    bottom:84px;
+
+    z-index:500;
+
+    padding:
+        8px 13px;
+
+    border-radius:9px;
+
+    background:
+        rgba(0,0,0,.8);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    font-size:9px;
+    font-weight:800;
+
+    opacity:0;
+
+    transform:
+        translate(-50%,10px);
+
+    pointer-events:none;
+
+    transition:.2s ease;
+}
+
+#toast.show{
+    opacity:1;
+
+    transform:
+        translate(-50%,0);
+}
+
+/* =========================================================
+   MODALES
+========================================================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+
+    z-index:1000;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:
+        rgba(0,0,0,.72);
+
+    backdrop-filter:blur(5px);
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-card{
+    width:min(390px,90vw);
+
+    padding:24px;
+
+    border-radius:19px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #092f21,
+            #02150d
+        );
+
+    border:
+        1px solid rgba(255,255,255,.08);
+}
+
+.modal-card h2{
+    margin:0 0 8px;
+
+    font-size:20px;
+}
+
+.modal-card p{
+    color:var(--muted);
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+.modal-button{
+    display:block;
+
+    margin:
+        16px 0 0 auto;
+
+    height:38px;
+
+    padding:
+        0 15px;
+
+    border:0;
+
+    border-radius:9px;
+
+    background:var(--gold);
+
+    color:#191300;
+
+    font-size:10px;
+
+    font-weight:950;
+}
+
+/* =========================================================
+   LANDSCAPE PEQUEÑO
+========================================================= */
+
+@media
+(max-height:520px)
+and (orientation:landscape){
+
+    .header{
+        height:46px;
+        min-height:46px;
+    }
+
+    .logo{
+        width:30px;
+        height:30px;
+    }
+
+    .brand-name{
+        font-size:11px;
+    }
+
+    .brand-sub{
+        display:none;
+    }
+
+    .avatar{
+        width:25px;
+        height:25px;
+    }
+
+    .score-number{
+        font-size:13px;
+    }
+
+    .game{
+        padding:3px;
+    }
+
+    .table{
+        border-width:4px;
+        border-radius:15px;
+    }
+
+    .handbar{
+        height:68px;
+        min-height:68px;
+    }
+
+    .hand-tile{
+        width:40px;
+        height:55px;
+    }
+
+    .hand-info{
+        width:60px;
+        min-width:60px;
+    }
+
+    .controls{
+        width:60px;
+        min-width:60px;
+    }
+
+    #pass{
+        height:32px;
+        padding:0 9px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =======================================================
+     AVISO LANDSCAPE
+======================================================= -->
+
+<div id="orientation">
+
+    <div class="orientation-card">
+
+        <div class="rotate-icon">
+            ↻
+        </div>
+
+        <h2>
+            Gira el teléfono
+        </h2>
+
+        <p>
+            CubanBet Dominó está optimizado para jugar
+            exclusivamente en posición horizontal.
+        </p>
+
+    </div>
+
+</div>
+
+<!-- =======================================================
+     APP
+======================================================= -->
+
+<div id="app">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <div class="logo">
+                CB
+            </div>
+
+            <div>
+                <div class="brand-name">
+                    CubanBet Dominó
+                </div>
+
+                <div class="brand-sub">
+                    DOBLE SEIS
+                </div>
+            </div>
+
+        </div>
+
+        <div class="score">
+
+            <div
+                id="playerScoreBox"
+                class="score-item active">
+
+                <div class="avatar">
+                    TÚ
+                </div>
+
+                <span
+                    id="playerScore"
+                    class="score-number">
+                    0
+                </span>
+
+            </div>
+
+            <div class="score-line"></div>
+
+            <div
+                id="botScoreBox"
+                class="score-item">
+
+                <div class="avatar">
+                    IA
+                </div>
+
+                <span
+                    id="botScore"
+                    class="score-number">
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="actions">
+
+            <button
+                id="restart"
+                class="action">
+                ↻
+            </button>
+
+            <button
+                id="rules"
+                class="action">
+                ?
+            </button>
+
+        </div>
+
+    </header>
+
+    <!-- ===================================================
+         MESA
+    ==================================================== -->
+
+    <main class="game">
+
+        <section
+            id="table"
+            class="table">
+
+            <!-- RIVAL -->
+
+            <div class="player top">
+
+                <div class="player-avatar">
+                    IA
+                </div>
+
+                <div>
+                    <strong>
+                        Rival
+                    </strong>
+
+                    <small id="botCount">
+                        7 fichas
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- JUGADOR IZQUIERDO -->
+
+            <div class="player left">
+
+                <div class="player-avatar">
+                    ◆
+                </div>
+
+                <div>
+                    <strong>
+                        Jugador 3
+                    </strong>
+
+                    <small>
+                        Observador
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- JUGADOR DERECHO -->
+
+            <div class="player right">
+
+                <div class="player-avatar">
+                    ◆
+                </div>
+
+                <div>
+                    <strong>
+                        Jugador 4
+                    </strong>
+
+                    <small>
+                        Observador
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- CADENA -->
+
+            <div id="chain"></div>
+
+            <!-- EXTREMOS -->
+
+            <div
+                id="leftEnd"
+                class="endpoint">
+            </div>
+
+            <div
+                id="rightEnd"
+                class="endpoint">
+            </div>
+
+            <!-- CENTRO -->
+
+            <div class="center">
+
+                <div class="center-title">
+                    DOMINÓ
+                </div>
+
+                <div id="status">
+                    Preparando...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ===================================================
+         MANO
+    ==================================================== -->
+
+    <section class="handbar">
+
+        <div class="hand-info">
+
+            <small>
+                TUS FICHAS
+            </small>
+
+            <strong>
+                Mano
+            </strong>
+
+            <span id="handCount">
+                7 fichas
+            </span>
+
+        </div>
+
+        <div id="hand"></div>
+
+        <div class="controls">
+
+            <!-- NO EXISTE ROBAR -->
+
+            <button
+                id="pass"
+                disabled>
+                Pasar
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- TOAST -->
+
+<div id="toast"></div>
+
+<!-- =======================================================
+     REGLAS
+======================================================= -->
+
+<div
+    id="rulesModal"
+    class="modal">
+
+    <div class="modal-card">
+
+        <h2>
+            Cómo jugar
+        </h2>
+
+        <p>
+            Cada jugador recibe 7 fichas.
+        </p>
+
+        <p>
+            Coloca una ficha haciendo coincidir uno de sus
+            números con cualquiera de los dos extremos.
+        </p>
+
+        <p>
+            No existe robo. Si no tienes ninguna jugada
+            válida, debes pasar.
+        </p>
+
+        <p>
+            La cadena utiliza una ruta de mesa y realiza
+            giros de 90° automáticamente para mantenerse
+            dentro del tablero.
+        </p>
+
+        <button
+            id="closeRules"
+            class="modal-button">
+            Entendido
+        </button>
+
+    </div>
+
+</div>
+
+<!-- =======================================================
+     FINAL
+======================================================= -->
+
+<div
+    id="finishModal"
+    class="modal">
+
+    <div class="modal-card">
+
+        <h2 id="finishTitle">
+            Partida terminada
+        </h2>
+
+        <p id="finishText"></p>
+
+        <button
+            id="again"
+            class="modal-button">
+            Nueva partida
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
+
+const CONFIG = {
+
+    max:6,
+
+    handSize:7,
+
+    /*
+       Separación entre centros de fichas.
+
+       Tiene que ser MAYOR que las dimensiones
+       máximas de una ficha para evitar solapamientos.
+    */
+
+    cellX:66,
+    cellY:69,
+
+    botDelay:650
+};
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+const state = {
+
+    player:[],
+
+    bot:[],
+
+    chain:[],
+
+    current:"player",
+
+    playerScore:0,
+
+    botScore:0,
+
+    leftEnd:null,
+
+    rightEnd:null,
+
+    gameOver:false,
+
+    /*
+       Índice del centro dentro de la ruta.
+    */
+
+    centerIndex:0,
+
+    path:[]
+};
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const table =
+    document.getElementById("table");
+
+const chainDOM =
+    document.getElementById("chain");
+
+const handDOM =
+    document.getElementById("hand");
+
+const statusDOM =
+    document.getElementById("status");
+
+const passButton =
+    document.getElementById("pass");
+
+/* =========================================================
+   UTILIDADES
+========================================================= */
+
+function makeTile(a,b){
+
+    return {
+        id:
+            Math.random()
+                .toString(36)
+                .slice(2),
+
+        a,
+        b
+    };
+}
+
+function isDouble(tile){
+
+    return tile.a === tile.b;
+}
+
+function points(tile){
+
+    return tile.a + tile.b;
+}
+
+function shuffle(array){
+
+    for(
+        let i=array.length-1;
+        i>0;
+        i--
+    ){
+
+        const j=
+            Math.floor(
+                Math.random()*(i+1)
+            );
+
+        [
+            array[i],
+            array[j]
+        ]=[
+            array[j],
+            array[i]
+        ];
+    }
+
+    return array;
+}
+
+/* =========================================================
+   CREAR DOMINÓ
+========================================================= */
+
+function createDeck(){
+
+    const deck=[];
+
+    for(
+        let a=0;
+        a<=CONFIG.max;
+        a++
+    ){
+
+        for(
+            let b=a;
+            b<=CONFIG.max;
+            b++
+        ){
+
+            deck.push(
+                makeTile(a,b)
+            );
+        }
+    }
+
+    return shuffle(deck);
+}
+
+/* =========================================================
+   PIPS
+========================================================= */
+
+const PIPS={
+
+    0:[],
+
+    1:[
+        [1,1]
+    ],
+
+    2:[
+        [0,0],
+        [2,2]
+    ],
+
+    3:[
+        [0,0],
+        [1,1],
+        [2,2]
+    ],
+
+    4:[
+        [0,0],
+        [0,2],
+        [2,0],
+        [2,2]
+    ],
+
+    5:[
+        [0,0],
+        [0,2],
+        [1,1],
+        [2,0],
+        [2,2]
+    ],
+
+    6:[
+        [0,0],
+        [0,2],
+        [1,0],
+        [1,2],
+        [2,0],
+        [2,2]
+    ]
+};
+
+function pipElement(number){
+
+    const box=
+        document.createElement("div");
+
+    box.className="pips";
+
+    for(
+        const [row,col]
+        of PIPS[number]
+    ){
+
+        const pip=
+            document.createElement("span");
+
+        pip.className="pip";
+
+        pip.style.gridRow=
+            row+1;
+
+        pip.style.gridColumn=
+            col+1;
+
+        box.appendChild(pip);
+    }
+
+    return box;
+}
+
+/* =========================================================
+   FICHA VISUAL
+========================================================= */
+
+function dominoElement(
+    tile,
+    orientation
+){
+
+    const domino=
+        document.createElement("div");
+
+    domino.className=
+        `domino ${orientation}`;
+
+    const first=
+        document.createElement("div");
+
+    first.className="half";
+
+    first.appendChild(
+        pipElement(tile.a)
+    );
+
+    const second=
+        document.createElement("div");
+
+    second.className="half";
+
+    second.appendChild(
+        pipElement(tile.b)
+    );
+
+    const divider=
+        document.createElement("div");
+
+    divider.className="divider";
+
+    domino.appendChild(first);
+    domino.appendChild(second);
+    domino.appendChild(divider);
+
+    return domino;
+}
+
+/* =========================================================
+   VALIDACIÓN
+========================================================= */
+
+function canPlay(tile){
+
+    if(
+        state.chain.length===0
+    ){
+        return true;
+    }
+
+    return (
+
+        tile.a===state.leftEnd ||
+
+        tile.b===state.leftEnd ||
+
+        tile.a===state.rightEnd ||
+
+        tile.b===state.rightEnd
+    );
+}
+
+function playable(hand){
+
+    return hand.filter(
+        canPlay
+    );
+}
+
+/* =========================================================
+   EXTREMO
+========================================================= */
+
+function otherValue(
+    tile,
+    value
+){
+
+    if(tile.a===value){
+        return tile.b;
+    }
+
+    if(tile.b===value){
+        return tile.a;
+    }
+
+    return null;
+}
+
+/* =========================================================
+   RUTA DE LA MESA
+========================================================= */
+
+/*
+   ESTA ES LA CORRECCIÓN PRINCIPAL.
+
+   En lugar de calcular cada ficha
+   independientemente, primero construimos
+   una ruta física de la mesa.
+
+   Ejemplo:
+
+   → → → → →
+             ↓
+   ← ← ← ← ←
+   ↓
+   → → → → →
+
+   Así el codo siempre es de 90°.
+*/
+
+function buildPath(){
+
+    const rect=
+        table.getBoundingClientRect();
+
+    const width=
+        rect.width;
+
+    const height=
+        rect.height;
+
+    /*
+       Márgenes generosos para que las fichas
+       nunca choquen contra el borde.
+    */
+
+    const marginX=70;
+    const marginY=70;
+
+    const cols=
+        Math.max(
+            5,
+            Math.floor(
+                (
+                    width -
+                    marginX*2
+                ) /
+                CONFIG.cellX
+            )
+        );
+
+    const rows=
+        Math.max(
+            3,
+            Math.floor(
+                (
+                    height -
+                    marginY*2
+                ) /
+                CONFIG.cellY
+            )
+        );
+
+    const actualWidth=
+        (cols-1) *
+        CONFIG.cellX;
+
+    const actualHeight=
+        (rows-1) *
+        CONFIG.cellY;
+
+    const startX=
+        (
+            width -
+            actualWidth
+        ) / 2;
+
+    const startY=
+        (
+            height -
+            actualHeight
+        ) / 2;
+
+    const path=[];
+
+    /*
+       Snake horizontal.
+    */
+
+    for(
+        let row=0;
+        row<rows;
+        row++
+    ){
+
+        const reverse=
+            row%2===1;
+
+        for(
+            let c=0;
+            c<cols;
+            c++
+        ){
+
+            const col=
+                reverse
+                    ? cols-1-c
+                    : c;
+
+            path.push({
+
+                x:
+                    startX +
+                    col *
+                    CONFIG.cellX,
+
+                y:
+                    startY +
+                    row *
+                    CONFIG.cellY
+            });
+        }
+    }
+
+    /*
+       El centro de la cadena siempre
+       se coloca en el centro de esta ruta.
+    */
+
+    state.path=path;
+
+    state.centerIndex=
+        Math.floor(
+            path.length/2
+        );
+}
+
+/* =========================================================
+   DIRECCIÓN ENTRE DOS PUNTOS
+========================================================= */
+
+function directionBetween(
+    a,
+    b
+){
+
+    const dx=b.x-a.x;
+    const dy=b.y-a.y;
+
+    if(
+        Math.abs(dx)>
+        Math.abs(dy)
+    ){
+
+        return dx>0
+            ? "right"
+            : "left";
+    }
+
+    return dy>0
+        ? "down"
+        : "up";
+}
+
+/* =========================================================
+   OBTENER POSICIÓN DE UNA FICHA
+========================================================= */
+
+function chainPosition(
+    chainIndex
+){
+
+    const pathIndex=
+        state.centerIndex +
+        chainIndex;
+
+    return state.path[
+        pathIndex
+    ];
+}
+
+/* =========================================================
+   ORIENTACIÓN DE FICHA
+========================================================= */
+
+/*
+   SIMPLE:
+
+       horizontal → horizontal
+       vertical   → vertical
+
+   DOBLE:
+
+       horizontal → VERTICAL
+       vertical   → HORIZONTAL
+
+   Esto produce el aspecto tradicional:
+   el doble queda atravesado respecto al tramo.
+*/
+
+function tileOrientation(
+    tile,
+    direction
+){
+
+    const horizontal=
+        direction==="left" ||
+        direction==="right";
+
+    if(
+        isDouble(tile)
+    ){
+
+        return horizontal
+            ? "vertical"
+            : "horizontal";
+    }
+
+    return horizontal
+        ? "horizontal"
+        : "vertical";
+}
+
+/* =========================================================
+   RENDERIZAR CADENA
+========================================================= */
+
+function renderChain(){
+
+    chainDOM.innerHTML="";
+
+    if(
+        state.chain.length===0
+    ){
+
+        document.getElementById(
+            "leftEnd"
+        ).style.display="none";
+
+        document.getElementById(
+            "rightEnd"
+        ).style.display="none";
+
+        return;
+    }
+
+    state.chain.forEach(
+        (entry,index)=>{
+
+            const pos=
+                chainPosition(
+                    index
+                );
+
+            if(!pos){
+                return;
+            }
+
+            /*
+               Determinar orientación
+               mirando al siguiente tramo.
+            */
+
+            let direction="right";
+
+            if(
+                state.chain.length>1
+            ){
+
+                if(
+                    index<
+                    state.chain.length-1
+                ){
+
+                    const next=
+                        chainPosition(
+                            index+1
+                        );
+
+                    direction=
+                        directionBetween(
+                            pos,
+                            next
+                        );
+
+                }else{
+
+                    const previous=
+                        chainPosition(
+                            index-1
+                        );
+
+                    direction=
+                        directionBetween(
+                            previous,
+                            pos
+                        );
+                }
+            }
+
+            const orientation=
+                tileOrientation(
+                    entry.tile,
+                    direction
+                );
+
+            const wrapper=
+                document.createElement(
+                    "div"
+                );
+
+            wrapper.className=
+                `chain-tile
+                 ${direction==="left" ||
+                   direction==="right"
+                     ? "horizontal"
+                     : "vertical"}
+                 ${isDouble(entry.tile)
+                     ? "double"
+                     : "simple"}`;
+
+            wrapper.style.left=
+                `${pos.x}px`;
+
+            wrapper.style.top=
+                `${pos.y}px`;
+
+            wrapper.appendChild(
+                dominoElement(
+                    entry.tile,
+                    orientation
+                )
+            );
+
+            chainDOM.appendChild(
+                wrapper
+            );
+        }
+    );
+
+    renderEndpoints();
+}
+
+/* =========================================================
+   EXTREMOS
+========================================================= */
+
+function renderEndpoints(){
+
+    const left=
+        document.getElementById(
+            "leftEnd"
+        );
+
+    const right=
+        document.getElementById(
+            "rightEnd"
+        );
+
+    if(
+        state.chain.length===0
+    ){
+
+        left.style.display="none";
+        right.style.display="none";
+
+        return;
+    }
+
+    const first=
+        chainPosition(0);
+
+    const second=
+        chainPosition(
+            Math.min(
+                1,
+                state.chain.length-1
+            )
+        );
+
+    const lastIndex=
+        state.chain.length-1;
+
+    const last=
+        chainPosition(
+            lastIndex
+        );
+
+    const previous=
+        chainPosition(
+            Math.max(
+                0,
+                lastIndex-1
+            )
+        );
+
+    /*
+       Extremo izquierdo.
+    */
+
+    const leftDir=
+        state.chain.length>1
+            ? directionBetween(
+                second,
+                first
+            )
+            : "left";
+
+    /*
+       Extremo derecho.
+    */
+
+    const rightDir=
+        state.chain.length>1
+            ? directionBetween(
+                previous,
+                last
+            )
+            : "right";
+
+    const leftVector=
+        vector(leftDir);
+
+    const rightVector=
+        vector(rightDir);
+
+    const offset=35;
+
+    left.style.left=
+        `${
+            first.x +
+            leftVector.x*offset -
+            9
+        }px`;
+
+    left.style.top=
+        `${
+            first.y +
+            leftVector.y*offset -
+            9
+        }px`;
+
+    right.style.left=
+        `${
+            last.x +
+            rightVector.x*offset -
+            9
+        }px`;
+
+    right.style.top=
+        `${
+            last.y +
+            rightVector.y*offset -
+            9
+        }px`;
+
+    left.textContent=
+        state.leftEnd;
+
+    right.textContent=
+        state.rightEnd;
+
+    left.style.display="grid";
+    right.style.display="grid";
+}
+
+/* =========================================================
+   VECTOR
+========================================================= */
+
+function vector(direction){
+
+    switch(direction){
+
+        case "left":
+            return {
+                x:-1,
+                y:0
+            };
+
+        case "right":
+            return {
+                x:1,
+                y:0
+            };
+
+        case "up":
+            return {
+                x:0,
+                y:-1
+            };
+
+        case "down":
+            return {
+                x:0,
+                y:1
+            };
+    }
+
+    return {
+        x:1,
+        y:0
+    };
+}
+
+/* =========================================================
+   EXTREMO / LADO
+========================================================= */
+
+function chooseSide(tile){
+
+    if(
+        state.chain.length===0
+    ){
+        return "right";
+    }
+
+    const canLeft=
+        tile.a===state.leftEnd ||
+        tile.b===state.leftEnd;
+
+    const canRight=
+        tile.a===state.rightEnd ||
+        tile.b===state.rightEnd;
+
+    if(
+        canRight &&
+        !canLeft
+    ){
+        return "right";
+    }
+
+    if(
+        canLeft &&
+        !canRight
+    ){
+        return "left";
+    }
+
+    /*
+       Si puede ir en ambos extremos,
+       alternamos según longitud.
+    */
+
+    return state.chain.length%2
+        ? "right"
+        : "left";
+}
+
+/* =========================================================
+   AÑADIR FICHA
+========================================================= */
+
+function addTile(
+    tile,
+    side
+){
+
+    /*
+       PRIMERA FICHA
+    */
+
+    if(
+        state.chain.length===0
+    ){
+
+        state.leftEnd=
+            tile.a;
+
+        state.rightEnd=
+            tile.b;
+
+        state.chain=[
+            {
+                tile,
+                side:"right"
+            }
+        ];
+
+        renderChain();
+
+        return;
+    }
+
+    /*
+       Validación final.
+    */
+
+    if(!canPlay(tile)){
+        return false;
+    }
+
+    if(
+        side==="left"
+    ){
+
+        state.leftEnd=
+            otherValue(
+                tile,
+                state.leftEnd
+            );
+
+        state.chain.unshift({
+            tile,
+            side:"left"
+        });
+
+    }else{
+
+        state.rightEnd=
+            otherValue(
+                tile,
+                state.rightEnd
+            );
+
+        state.chain.push({
+            tile,
+            side:"right"
+        });
+    }
+
+    renderChain();
+
+    return true;
+}
+
+/* =========================================================
+   RENDER MANO
+========================================================= */
+
+function renderHand(){
+
+    handDOM.innerHTML="";
+
+    state.player.forEach(
+        tile=>{
+
+            const button=
+                document.createElement(
+                    "button"
+                );
+
+            button.className=
+                "hand-tile";
+
+            const allowed=
+                state.current==="player" &&
+                !state.gameOver &&
+                canPlay(tile);
+
+            if(!allowed){
+
+                button.classList.add(
+                    "disabled"
+                );
+            }
+
+            button.appendChild(
+                dominoElement(
+                    tile,
+                    "vertical"
+                )
+            );
+
+            button.onclick=()=>{
+
+                if(!allowed){
+
+                    showToast(
+                        "No puedes colocar esa ficha"
+                    );
+
+                    return;
+                }
+
+                playPlayer(tile);
+            };
+
+            handDOM.appendChild(
+                button
+            );
+        }
+    );
+
+    document.getElementById(
+        "handCount"
+    ).textContent=
+        `${state.player.length} ${
+            state.player.length===1
+                ? "ficha"
+                : "fichas"
+        }`;
+
+    document.getElementById(
+        "botCount"
+    ).textContent=
+        `${state.bot.length} fichas`;
+}
+
+/* =========================================================
+   JUGADOR
+========================================================= */
+
+function playPlayer(tile){
+
+    if(
+        state.current!=="player" ||
+        state.gameOver
+    ){
+        return;
+    }
+
+    if(!canPlay(tile)){
+        return;
+    }
+
+    const index=
+        state.player.findIndex(
+            t=>t.id===tile.id
+        );
+
+    if(index<0){
+        return;
+    }
+
+    state.player.splice(
+        index,
+        1
+    );
+
+    const side=
+        chooseSide(tile);
+
+    addTile(
+        tile,
+        side
+    );
+
+    if(
+        state.player.length===0
+    ){
+
+        finish("player");
+
+        return;
+    }
+
+    state.current="bot";
+
+    renderAll();
+
+    setTimeout(
+        botTurn,
+        CONFIG.botDelay
+    );
+}
+
+/* =========================================================
+   IA
+========================================================= */
+
+function chooseBotTile(){
+
+    const options=
+        playable(
+            state.bot
+        );
+
+    if(
+        options.length===0
+    ){
+        return null;
+    }
+
+    /*
+       IA sencilla:
+
+       primero dobles,
+       después fichas de mayor valor.
+    */
+
+    options.sort(
+        (a,b)=>{
+
+            if(
+                isDouble(a)!==
+                isDouble(b)
+            ){
+
+                return isDouble(b)
+                    ? 1
+                    : -1;
+            }
+
+            return points(b)-
+                   points(a);
+        }
+    );
+
+    return options[0];
+}
+
+function botTurn(){
+
+    if(
+        state.gameOver ||
+        state.current!=="bot"
+    ){
+        return;
+    }
+
+    const tile=
+        chooseBotTile();
+
+    /*
+       NO ROBA.
+    */
+
+    if(!tile){
+
+        showToast(
+            "El rival pasa"
+        );
+
+        state.current="player";
+
+        renderAll();
+
+        checkBlocked();
+
+        return;
+    }
+
+    const index=
+        state.bot.findIndex(
+            t=>t.id===tile.id
+        );
+
+    if(index>=0){
+
+        state.bot.splice(
+            index,
+            1
+        );
+    }
+
+    addTile(
+        tile,
+        chooseSide(tile)
+    );
+
+    if(
+        state.bot.length===0
+    ){
+
+        finish("bot");
+
+        return;
+    }
+
+    state.current="player";
+
+    renderAll();
+}
+
+/* =========================================================
+   PASAR
+========================================================= */
+
+function playerPass(){
+
+    if(
+        state.current!=="player" ||
+        state.gameOver
+    ){
+        return;
+    }
+
+    /*
+       Solamente se puede pasar
+       cuando NO hay jugada.
+    */
+
+    if(
+        playable(
+            state.player
+        ).length>0
+    ){
+
+        showToast(
+            "Tienes una jugada disponible"
+        );
+
+        return;
+    }
+
+    showToast(
+        "Pasas"
+    );
+
+    state.current="bot";
+
+    renderAll();
+
+    setTimeout(
+        botTurn,
+        CONFIG.botDelay
+    );
+}
+
+/* =========================================================
+   BLOQUEO
+========================================================= */
+
+function checkBlocked(){
+
+    if(state.gameOver){
+        return;
+    }
+
+    const playerCan=
+        playable(
+            state.player
+        ).length>0;
+
+    const botCan=
+        playable(
+            state.bot
+        ).length>0;
+
+    if(
+        !playerCan &&
+        !botCan
+    ){
+
+        finish("blocked");
+    }
+}
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+function finish(winner){
+
+    state.gameOver=true;
+
+    let title="";
+    let text="";
+
+    if(
+        winner==="player"
+    ){
+
+        state.playerScore++;
+
+        title="¡Ganaste!";
+
+        text=
+            "Te quedaste sin fichas.";
+
+    }else if(
+        winner==="bot"
+    ){
+
+        state.botScore++;
+
+        title="Ganó el rival";
+
+        text=
+            "El rival se quedó sin fichas.";
+
+    }else{
+
+        const playerPoints=
+            state.player.reduce(
+                (sum,t)=>
+                    sum+points(t),
+                0
+            );
+
+        const botPoints=
+            state.bot.reduce(
+                (sum,t)=>
+                    sum+points(t),
+                0
+            );
+
+        if(
+            playerPoints<
+            botPoints
+        ){
+
+            state.playerScore++;
+
+            title=
+                "¡Ganaste por puntos!";
+
+        }else if(
+            botPoints<
+            playerPoints
+        ){
+
+            state.botScore++;
+
+            title=
+                "Ganó el rival por puntos";
+
+        }else{
+
+            title="Empate";
+        }
+
+        text=
+            `Tus puntos: ${playerPoints}. `+
+            `Rival: ${botPoints}.`;
+    }
+
+    document.getElementById(
+        "playerScore"
+    ).textContent=
+        state.playerScore;
+
+    document.getElementById(
+        "botScore"
+    ).textContent=
+        state.botScore;
+
+    document.getElementById(
+        "finishTitle"
+    ).textContent=
+        title;
+
+    document.getElementById(
+        "finishText"
+    ).textContent=
+        text;
+
+    document.getElementById(
+        "finishModal"
+    ).classList.add(
+        "show"
+    );
+
+    renderAll();
+}
+
+/* =========================================================
+   TURNO
+========================================================= */
+
+function renderTurn(){
+
+    const playerBox=
+        document.getElementById(
+            "playerScoreBox"
+        );
+
+    const botBox=
+        document.getElementById(
+            "botScoreBox"
+        );
+
+    playerBox.classList.toggle(
+        "active",
+        state.current==="player"
+    );
+
+    botBox.classList.toggle(
+        "active",
+        state.current==="bot"
+    );
+
+    if(
+        state.gameOver
+    ){
+
+        statusDOM.textContent=
+            "Partida terminada";
+
+        passButton.disabled=true;
+
+        return;
+    }
+
+    if(
+        state.current==="player"
+    ){
+
+        statusDOM.textContent=
+            "Tu turno";
+
+        passButton.disabled=
+            playable(
+                state.player
+            ).length>0;
+
+    }else{
+
+        statusDOM.textContent=
+            "Turno del rival...";
+
+        passButton.disabled=true;
+    }
+}
+
+/* =========================================================
+   RENDER TODO
+========================================================= */
+
+function renderAll(){
+
+    renderHand();
+
+    renderChain();
+
+    renderTurn();
+}
+
+/* =========================================================
+   NUEVA PARTIDA
+========================================================= */
+
+function newGame(){
+
+    document.getElementById(
+        "finishModal"
+    ).classList.remove(
+        "show"
+    );
+
+    const deck=
+        createDeck();
+
+    /*
+       EXACTAMENTE 7.
+    */
+
+    state.player=
+        deck.splice(
+            0,
+            CONFIG.handSize
+        );
+
+    state.bot=
+        deck.splice(
+            0,
+            CONFIG.handSize
+        );
+
+    /*
+       Las fichas restantes NO forman
+       pozo de robo.
+    */
+
+    state.chain=[];
+
+    state.leftEnd=null;
+
+    state.rightEnd=null;
+
+    state.gameOver=false;
+
+    /*
+       Construimos la ruta de la mesa
+       antes de colocar fichas.
+    */
+
+    buildPath();
+
+    /*
+       Determinar salida.
+    */
+
+    const playerDoubles=
+        state.player
+            .filter(isDouble)
+            .sort(
+                (a,b)=>b.a-a.a
+            );
+
+    const botDoubles=
+        state.bot
+            .filter(isDouble)
+            .sort(
+                (a,b)=>b.a-a.a
+            );
+
+    if(
+        playerDoubles.length &&
+        botDoubles.length
+    ){
+
+        state.current=
+            playerDoubles[0].a >=
+            botDoubles[0].a
+                ? "player"
+                : "bot";
+
+    }else if(
+        playerDoubles.length
+    ){
+
+        state.current="player";
+
+    }else if(
+        botDoubles.length
+    ){
+
+        state.current="bot";
+
+    }else{
+
+        const playerBest=
+            Math.max(
+                ...state.player.map(
+                    points
+                )
+            );
+
+        const botBest=
+            Math.max(
+                ...state.bot.map(
+                    points
+                )
+            );
+
+        state.current=
+            playerBest>=botBest
+                ? "player"
+                : "bot";
+    }
+
+    renderAll();
+
+    if(
+        state.current==="bot"
+    ){
+
+        showToast(
+            "El rival tiene la salida"
+        );
+
+        setTimeout(
+            botTurn,
+            CONFIG.botDelay
+        );
+
+    }else{
+
+        showToast(
+            "Tienes la salida"
+        );
+    }
+}
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function rebuildLayout(){
+
+    if(
+        state.path.length===0
+    ){
+        return;
+    }
+
+    /*
+       Solo reconstruimos las posiciones.
+       NO cambiamos las fichas.
+    */
+
+    buildPath();
+
+    renderChain();
+}
+
+window.addEventListener(
+    "resize",
+    ()=>{
+        checkOrientation();
+
+        clearTimeout(
+            window.layoutTimer
+        );
+
+        window.layoutTimer=
+            setTimeout(
+                rebuildLayout,
+                80
+            );
+    }
+);
+
+window.addEventListener(
+    "orientationchange",
+    ()=>{
+        setTimeout(
+            ()=>{
+                checkOrientation();
+                rebuildLayout();
+            },
+            150
+        );
+    }
+);
+
+/* =========================================================
+   ORIENTACIÓN
+========================================================= */
+
+function checkOrientation(){
+
+    const portrait=
+        window.innerWidth<=900 &&
+        window.innerHeight>
+        window.innerWidth;
+
+    document.getElementById(
+        "orientation"
+    ).style.display=
+        portrait
+            ? "flex"
+            : "none";
+}
+
+/*
+   Algunos navegadores Android permiten
+   bloquear orientación únicamente después
+   de una interacción del usuario.
+*/
+
+async function lockLandscape(){
+
+    try{
+
+        if(
+            screen.orientation &&
+            screen.orientation.lock
+        ){
+
+            await screen.orientation.lock(
+                "landscape"
+            );
+        }
+
+    }catch(e){
+
+        /*
+           El overlay CSS sigue funcionando
+           aunque el navegador no permita
+           orientation.lock().
+        */
+    }
+
+    checkOrientation();
+}
+
+document.addEventListener(
+    "pointerdown",
+    lockLandscape,
+    {
+        once:true,
+        passive:true
+    }
+);
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(text){
+
+    const toast=
+        document.getElementById(
+            "toast"
+        );
+
+    toast.textContent=text;
+
+    toast.classList.add(
+        "show"
+    );
+
+    clearTimeout(
+        toastTimer
+    );
+
+    toastTimer=
+        setTimeout(
+            ()=>{
+                toast.classList.remove(
+                    "show"
+                );
+            },
+            1400
+        );
+}
+
+/* =========================================================
+   REGLAS
+========================================================= */
+
+document.getElementById(
+    "rules"
+).onclick=()=>{
+
+    document.getElementById(
+        "rulesModal"
+    ).classList.add(
+        "show"
+    );
+};
+
+document.getElementById(
+    "closeRules"
+).onclick=()=>{
+
+    document.getElementById(
+        "rulesModal"
+    ).classList.remove(
+        "show"
+    );
+};
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+document.getElementById(
+    "restart"
+).onclick=
+    newGame;
+
+document.getElementById(
+    "again"
+).onclick=
+    newGame;
+
+passButton.onclick=
+    playerPass;
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+checkOrientation();
+
+setTimeout(
+    newGame,
+    100
+);
+
+</script>
+
+</body>
+      </html>        
+        
