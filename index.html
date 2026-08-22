@@ -1502,6 +1502,54 @@
       })
       .catch(error => console.log('Error al consultar la API:', error));
 
+    const apiKey = "dceaf38daffc3485c2ee36d3ae63efb7";
+    const today = new Date().toISOString().split('T')[0];
+
+    const myHeaders = new Headers();
+    myHeaders.append("x-apisports-key", apiKey);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log("Partidos de hoy:", result);
+        
+        const listaElement = document.getElementById('lista-partidos');
+        if (listaElement) {
+            listaElement.innerHTML = '';
+            if (result.response && result.response.length > 0) {
+                result.response.forEach(match => {
+                    // Creamos un contenedor interactivo para cada partido
+                    const card = document.createElement('div');
+                    card.style.padding = "10px";
+                    card.style.margin = "8px 0";
+                    card.style.background = "#f4f4f4";
+                    card.style.borderRadius = "8px";
+                    card.style.cursor = "pointer";
+
+                    card.innerHTML = `<strong>${match.teams.home.name}</strong> vs <strong>${match.teams.away.name}</strong> <br><small>🏟️ ${match.fixture.venue.name || 'Estadio'}</small>`;
+
+                    // Evento al hacer clic en el partido
+                    card.onclick = () => {
+                        alert(`Seleccionaste el partido: ${match.teams.home.name} vs ${match.teams.away.name}`);
+                        // Aquí puedes abrir el panel de apuestas o mandar el partido al boleto
+                    };
+
+                    listaElement.appendChild(card);
+                });
+            } else {
+                listaElement.innerHTML = '<p>No hay partidos para hoy.</p>';
+            }
+        }
+      })
+      .catch(error => console.log('Error al consultar la API:', error));
+
+
     </script>
 </body>
       </html>
