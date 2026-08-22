@@ -374,6 +374,42 @@
 
         <!-- PANEL ADMIN -->
         <section id="admin" class="tab-content p-4">
+            <!-- CREACIÓN MANUAL DE PARTIDOS -->
+<div class="bg-gray-950 text-white p-5 rounded-2xl shadow-lg border border-green-500/40 space-y-4 mb-6">
+    <h3 class="text-xs font-bold text-green-400 uppercase tracking-wider">⚽ Añadir Partido Manualmente</h3>
+    <div class="grid grid-cols-2 gap-2">
+        <div>
+            <label class="text-[10px] text-gray-400 font-bold uppercase">Equipo Local</label>
+            <input type="text" id="admin-partido-local" placeholder="Ej: Real Madrid" class="w-full mt-1 p-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs">
+        </div>
+        <div>
+            <label class="text-[10px] text-gray-400 font-bold uppercase">Equipo Visitante</label>
+            <input type="text" id="admin-partido-visita" placeholder="Ej: Barcelona" class="w-full mt-1 p-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs">
+        </div>
+    </div>
+    <div>
+        <label class="text-[10px] text-gray-400 font-bold uppercase">Liga / Torneo</label>
+        <input type="text" id="admin-partido-liga" placeholder="Ej: La Liga EA Sports" class="w-full mt-1 p-2.5 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs">
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+        <div>
+            <label class="text-[10px] text-gray-400 font-bold uppercase">Cuota 1</label>
+            <input type="number" step="0.01" id="admin-cuota-local" placeholder="1.85" class="w-full mt-1 p-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs text-center">
+        </div>
+        <div>
+            <label class="text-[10px] text-gray-400 font-bold uppercase">Cuota X</label>
+            <input type="number" step="0.01" id="admin-cuota-empate" placeholder="3.40" class="w-full mt-1 p-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs text-center">
+        </div>
+        <div>
+            <label class="text-[10px] text-gray-400 font-bold uppercase">Cuota 2</label>
+            <input type="number" step="0.01" id="admin-cuota-visita" placeholder="2.10" class="w-full mt-1 p-2 rounded-xl bg-gray-900 border border-gray-800 text-white text-xs text-center">
+        </div>
+    </div>
+    <button onclick="crearPartidoManual()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl shadow transition text-xs">
+        ➕ Publicar Partido en Deportes
+    </button>
+</div>
+
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-black text-green-600">Panel Admin</h2>
                 <button onclick="cambiarTab('perfil')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl font-bold text-xs">Volver</button>
@@ -412,7 +448,7 @@
     <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around py-3 shadow-lg z-30">
         <button onclick="cambiarTab('inicio')" class="text-green-600 text-xs font-bold flex flex-col items-center"><span>🏠</span>Inicio</button>
         <button onclick="cambiarTab('minijuegos')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>🎰</span>Juegos</button>
-        <button onclick="cambiarTab('deportes')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>⚽</span>Deportes</button>
+        <button onclick="cambiarTab('deportes'); cargarPartidosDeportes();" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>⚽</span>Deportes</button>
         <button onclick="cambiarTab('boleta')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>🎟️</span>Boleta</button>
         <button onclick="cambiarTab('perfil')" class="text-gray-500 text-xs font-bold flex flex-col items-center"><span>👤</span>Perfil</button>
     </nav>
@@ -1337,6 +1373,101 @@
             }
             volverMenuDomino();
         };
+                // ==========================================
+        // GESTIÓN DE DEPORTES (API + MANUALES)
+        // ==========================================
+        const API_KEY_DEPORTES = "468fdc899a62ac243f11ac1bbc53fdc8fd273214fa6a899c8be637b8856a8b4e";
+
+        async function cargarPartidosDeportes() {
+            const contenedor = document.getElementById('lista-partidos');
+            contenedor.innerHTML = `<p class="text-xs text-gray-500">Cargando eventos deportivos...</p>`;
+
+            try {
+                let partidosHTML = "";
+                
+                // Obtener partidos manuales creados por el Admin desde Firebase
+                const snapshotManuales = await get(child(ref(db), 'partidos_manuales'));
+                if (snapshotManuales.exists()) {
+                    snapshotManuales.forEach((childSnap) => {
+                        const p = childSnap.val();
+                        partidosHTML += renderizarTarjetaPartido(childSnap.key, p.local, p.visitante, p.liga, p.cuotaLocal, p.cuotaEmpate, p.cuotaVisita, true);
+                    });
+                }
+
+                if (partidosHTML === "") {
+                    contenedor.innerHTML = `<p class="text-xs text-gray-400 py-8">No hay eventos deportivos disponibles en este momento.</p>`;
+                } else {
+                    contenedor.innerHTML = `<div class="space-y-3">${partidosHTML}</div>`;
+                }
+
+            } catch (error) {
+                console.error("Error cargando partidos:", error);
+                contenedor.innerHTML = `<p class="text-xs text-red-500">Error al cargar los eventos deportivos.</p>`;
+            }
+        }
+
+        function renderizarTarjetaPartido(id, local, visitante, liga, cLocal, cEmpate, cVisita, esManual) {
+            return `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 text-left space-y-3">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase">
+                        <span>${liga}</span>
+                        <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full">${esManual ? 'Manual' : 'En Vivo'}</span>
+                    </div>
+                    <div class="flex justify-between items-center font-black text-gray-800 text-sm">
+                        <span>${local}</span>
+                        <span class="text-xs text-gray-400">VS</span>
+                        <span>${visitante}</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <button onclick="agregarABoleta('${local}', '${visitante}', '1', ${cLocal})" class="bg-gray-50 hover:bg-green-50 border border-gray-200 p-2 rounded-xl text-center transition">
+                            <span class="block text-[10px] text-gray-500 font-bold">1 (${local})</span>
+                            <span class="text-xs font-black text-green-600">${cLocal}</span>
+                        </button>
+                        <button onclick="agregarABoleta('${local}', '${visitante}', 'X', ${cEmpate})" class="bg-gray-50 hover:bg-green-50 border border-gray-200 p-2 rounded-xl text-center transition">
+                            <span class="block text-[10px] text-gray-500 font-bold">X (Empate)</span>
+                            <span class="text-xs font-black text-green-600">${cEmpate}</span>
+                        </button>
+                        <button onclick="agregarABoleta('${local}', '${visitante}', '2', ${cVisita})" class="bg-gray-50 hover:bg-green-50 border border-gray-200 p-2 rounded-xl text-center transition">
+                            <span class="block text-[10px] text-gray-500 font-bold">2 (${visitante})</span>
+                            <span class="text-xs font-black text-green-600">${cVisita}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.crearPartidoManual = async function() {
+            const local = document.getElementById('admin-partido-local').value.trim();
+            const visitante = document.getElementById('admin-partido-visita').value.trim();
+            const liga = document.getElementById('admin-partido-liga').value.trim();
+            const cuotaLocal = Number(document.getElementById('admin-cuota-local').value);
+            const cuotaEmpate = Number(document.getElementById('admin-cuota-empate').value);
+            const cuotaVisita = Number(document.getElementById('admin-cuota-visita').value);
+
+            if (!local || !visitante || !liga || !cuotaLocal || !cuotaEmpate || !cuotaVisita) {
+                alert("Por favor completa todos los campos del partido.");
+                return;
+            }
+
+            try {
+                const nuevoPartidoRef = push(ref(db, 'partidos_manuales'));
+                await set(nuevoPartidoRef, {
+                    local, visitante, liga, cuotaLocal, cuotaEmpate, cuotaVisita, fecha: Date.now()
+                });
+                alert("¡Partido creado y publicado con éxito!");
+                document.getElementById('admin-partido-local').value = "";
+                document.getElementById('admin-partido-visita').value = "";
+                document.getElementById('admin-partido-liga').value = "";
+                document.getElementById('admin-cuota-local').value = "";
+                document.getElementById('admin-cuota-empate').value = "";
+                document.getElementById('admin-cuota-visita').value = "";
+                cargarPartidosDeportes();
+            } catch (e) {
+                console.error(e);
+                alert("Error al publicar el partido.");
+            }
+        };
+
     </script>
 </body>
       </html>
