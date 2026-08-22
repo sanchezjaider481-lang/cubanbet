@@ -1468,6 +1468,40 @@
             }
         };
 
+    const apiKey = "dceaf38daffc3485c2ee36d3ae63efb7";
+    const today = new Date().toISOString().split('T')[0];
+
+    const myHeaders = new Headers();
+    myHeaders.append("x-apisports-key", apiKey);
+
+    const requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`https://v3.football.api-sports.io/fixtures?date=${today}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log("Partidos de hoy:", result);
+        
+        // Si tienes un elemento en tu HTML con id 'lista-partidos', aquí se pintarán
+        const listaElement = document.getElementById('lista-partidos');
+        if (listaElement) {
+            listaElement.innerHTML = '';
+            if (result.response && result.response.length > 0) {
+                result.response.forEach(match => {
+                    const li = document.createElement('li');
+                    li.textContent = `${match.teams.home.name} vs ${match.teams.away.name}`;
+                    listaElement.appendChild(li);
+                });
+            } else {
+                listaElement.innerHTML = '<li>No hay partidos para hoy.</li>';
+            }
+        }
+      })
+      .catch(error => console.log('Error al consultar la API:', error));
+
     </script>
 </body>
       </html>
